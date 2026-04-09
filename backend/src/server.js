@@ -20,8 +20,9 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:3000",
-  process.env.FRONTEND_URL
-];
+  "https://doodleai-murex.vercel.app",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
