@@ -7,6 +7,9 @@ import {
   Sparkles, Users, TrendingUp, Code, Rocket, Star, ChevronDown
 } from "lucide-react";
 import BotWidget, { SvgIcon as BotIcon } from "@components/BotWidget";
+import Logo from "@images/logo.svg";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function HomePage() {
   const router = useRouter();
@@ -26,12 +29,9 @@ export default function HomePage() {
       <nav className="relative z-10 border-b border-zinc-800/50 backdrop-blur-xl bg-zinc-900/50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-purple-500 flex items-center justify-center shadow-lg shadow-purple-500/25">
-              <MessageSquare size={20} className="text-white" />
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
-              AI ChatBot
-            </span>
+            <Link href="/" className="flex items-center gap-2">
+              <Image src={Logo} alt="Doodle AI"  />
+            </Link>
           </div>
           <div className="flex items-center gap-4">
             <button 
@@ -72,7 +72,7 @@ export default function HomePage() {
               </h1>
               
               <p className="text-xl text-gray-400 leading-relaxed max-w-xl">
-                Deploy intelligent AI chatbots in minutes. Engage visitors, capture leads, 
+                Deploy intelligent Doodle AIs in minutes. Engage visitors, capture leads, 
                 and provide 24/7 support with our powerful chatbot platform.
               </p>
               
@@ -305,7 +305,7 @@ export default function HomePage() {
                 </span>
               </h2>
               <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-                Join thousands of businesses using AI chatbots to engage customers and grow faster.
+                Join thousands of businesses using Doodle AIs to engage customers and grow faster.
               </p>
               <div className="flex flex-wrap justify-center gap-4 pt-4">
                 <button 
@@ -345,13 +345,12 @@ export default function HomePage() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-purple-500 flex items-center justify-center">
-                  <MessageSquare size={16} className="text-white" />
-                </div>
-                <span className="font-bold text-lg">AI ChatBot</span>
+                <Link href="/" className="flex items-center gap-2">
+                  <Image src={Logo} alt="Doodle AI"  />
+                </Link>
               </div>
               <p className="text-gray-400 text-sm">
-                The most powerful AI chatbot platform for modern businesses.
+                The most powerful Doodle AI platform for modern businesses.
               </p>
             </div>
             
@@ -386,7 +385,7 @@ export default function HomePage() {
           
           <div className="pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm">
-              © 2026 AI ChatBot. All rights reserved.
+              © 2026 Doodle AI. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
               {["Twitter", "LinkedIn", "GitHub"].map((social, i) => (
