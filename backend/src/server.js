@@ -21,7 +21,7 @@ const app = express();
 // CORS configuration to allow multiple origins
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://doodleai.vercel.app',
+  'https://doodleai-murex.vercel.app',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
