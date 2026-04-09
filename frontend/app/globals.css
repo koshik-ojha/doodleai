@@ -1,0 +1,233 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  @apply bg-zinc-950 text-white antialiased;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #18181b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
+
+/* Smooth transitions for dark mode */
+* {
+  transition-property: background-color, border-color, color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(300%) rotate(45deg);
+  }
+}
+
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(20px, -20px) scale(1.1);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  75% {
+    transform: translate(20px, 20px) scale(1.05);
+  }
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: translateX(-50%) scaleX(1) scaleY(1);
+  }
+  25% {
+    transform: translateX(-50%) scaleX(1.2) scaleY(0.8);
+  }
+  50% {
+    transform: translateX(-50%) scaleX(0.9) scaleY(1.1);
+  }
+  75% {
+    transform: translateX(-50%) scaleX(1.1) scaleY(0.9);
+  }
+}
+
+@keyframes blob-wave {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.1);
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(0.9);
+    border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%;
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(1.05);
+    border-radius: 60% 40% 60% 40% / 60% 50% 40% 50%;
+  }
+}
+
+@keyframes bar-wave {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.5);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Tailwind custom animations */
+@layer utilities {
+  .animate-shimmer {
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  
+  .animate-blob {
+    animation: blob ease-in-out infinite;
+  }
+  
+  .animate-wave {
+    animation: wave ease-in-out infinite;
+  }
+  
+  .animate-blob-wave {
+    animation: blob-wave ease-in-out infinite;
+  }
+  
+  .animate-bar-wave {
+    animation: bar-wave ease-in-out infinite;
+  }
+  
+  .animate-spin-slow {
+    animation: spin-slow 20s linear infinite;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
+
+.animate-shake {
+  animation: shake 0.3s ease-out;
+}
+
+.delay-500 {
+  animation-delay: 0.5s;
+}
+
+.delay-1000 {
+  animation-delay: 1s;
+}
+
+/* Focus visible for accessibility */
+input:focus-visible,
+button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}

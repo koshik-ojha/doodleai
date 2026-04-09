@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:openrouter.ai)",
+      "Bash(npm run:*)",
+      "Bash(npx next:*)"
+    ]
+  }
+}
