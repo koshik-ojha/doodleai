@@ -18,23 +18,8 @@ dotenv.config();
 
 const app = express();
 
-// CORS configuration to allow multiple origins
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://doodleai-murex.vercel.app',
-  process.env.FRONTEND_URL,
-].filter(Boolean);
-
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, Postman, etc.)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: process.env.FRONTEND_URL,
   credentials: true,
 }));
 
