@@ -188,7 +188,7 @@ function widgetScript(botId, apiUrl) {
       'display:flex;align-items:center;justify-content:center;gap:4px;flex-shrink:0;');
     footer.innerHTML =
       '<span style="font-size:10px;color:#9ca3af;line-height:1.5;">Powered by</span>' +
-      '<span style="font-size:10px;font-weight:600;color:#7c3aed;line-height:1.5;">DoodleAI</span>';
+      '<a href="https://doodleai-murex.vercel.app" target="_blank" style="font-size:10px;font-weight:600;color:#7c3aed;line-height:1.5;text-decoration:none;">DoodleAI</a>';
     panel.appendChild(footer);
 
     /* ── View: Quick ── */
