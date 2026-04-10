@@ -41,8 +41,22 @@ const isDomainAllowed = (allowedDomains, requestDomain) => {
 
 export const getChatbots = async (req, res) => {
   try {
-    const chatbots = await Chatbot.find({ userId: req.user.id }).sort({ createdAt: -1 });
-    res.json(chatbots);
+    const isAdmin = req.user.role === "admin";
+    const query = isAdmin ? {} : { userId: req.user.id };
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(50, parseInt(req.query.limit) || 12);
+    const skip = (page - 1) * limit;
+
+    const [chatbots, total] = await Promise.all([
+      Chatbot.find(query)
+        .populate(isAdmin ? { path: "userId", select: "name email" } : "")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Chatbot.countDocuments(query),
+    ]);
+
+    res.json({ chatbots, total, page, hasMore: skip + chatbots.length < total });
   } catch {
     res.status(500).json({ error: "Failed to fetch chatbots" });
   }

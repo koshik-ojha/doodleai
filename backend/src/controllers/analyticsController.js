@@ -20,14 +20,26 @@ export const getAnalytics = async (req, res) => {
   try {
     const { range = "7days" } = req.query;
     const { from, days } = getRangeDate(range);
+    const isAdmin = req.user.role === "admin";
 
     // ── Previous period (same duration, immediately before current) ──
     const prevFrom = new Date(from);
     prevFrom.setDate(prevFrom.getDate() - days);
 
+    // ── Base chat filter (admin = all, user = own chats only) ──
+    const chatFilter = isAdmin ? {} : { userId: req.user.id };
+
+    // For message queries we need chatIds belonging to the user
+    // Admin: no restriction; User: restrict to their chat IDs
+    let msgMatchBase = {};
+    if (!isAdmin) {
+      const userChatIds = await Chat.distinct("_id", chatFilter);
+      msgMatchBase = { chatId: { $in: userChatIds } };
+    }
+
     // ── Daily activity: chats created per day ──
     const dailyChats = await Chat.aggregate([
-      { $match: { createdAt: { $gte: from } } },
+      { $match: { ...chatFilter, createdAt: { $gte: from } } },
       {
         $group: {
           _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
@@ -53,9 +65,8 @@ export const getAnalytics = async (req, res) => {
     }
 
     // ── Hourly activity for heatmap (day-of-week × hour) ──
-    // $dayOfWeek: 1=Sun … 7=Sat  →  we remap to 0=Mon … 6=Sun
     const hourlyRaw = await Message.aggregate([
-      { $match: { createdAt: { $gte: from } } },
+      { $match: { ...msgMatchBase, createdAt: { $gte: from } } },
       {
         $group: {
           _id: {
@@ -67,7 +78,6 @@ export const getAnalytics = async (req, res) => {
       },
     ]);
 
-    // Build nested map: { dayIdx: { hour: count } }
     const hourlyActivity = {};
     hourlyRaw.forEach(({ _id: { dayOfWeek, hour }, count }) => {
       const dayIdx = (dayOfWeek + 5) % 7; // 0=Mon … 6=Sun
@@ -77,7 +87,7 @@ export const getAnalytics = async (req, res) => {
 
     // ── Top chats by message count ──
     const topChatsAgg = await Message.aggregate([
-      { $match: { createdAt: { $gte: from } } },
+      { $match: { ...msgMatchBase, createdAt: { $gte: from } } },
       { $group: { _id: "$chatId", messageCount: { $sum: 1 } } },
       { $sort: { messageCount: -1 } },
       { $limit: 5 },
@@ -101,18 +111,22 @@ export const getAnalytics = async (req, res) => {
       uniqueUsers,
       newUsers,
     ] = await Promise.all([
-      Chat.countDocuments({ createdAt: { $gte: from } }),
-      Message.countDocuments({ role: "user", createdAt: { $gte: from } }),
-      Message.countDocuments({ role: "assistant", createdAt: { $gte: from } }),
-      Chat.distinct("userId", { createdAt: { $gte: from } }),
-      User.countDocuments({ createdAt: { $gte: from } }),
+      Chat.countDocuments({ ...chatFilter, createdAt: { $gte: from } }),
+      Message.countDocuments({ ...msgMatchBase, role: "user", createdAt: { $gte: from } }),
+      Message.countDocuments({ ...msgMatchBase, role: "assistant", createdAt: { $gte: from } }),
+      Chat.distinct("userId", { ...chatFilter, createdAt: { $gte: from } }),
+      isAdmin
+        ? User.countDocuments({ createdAt: { $gte: from }, role: { $ne: "admin" } })
+        : Promise.resolve(0),
     ]);
 
     // ── Previous period counts (for trends) ──
     const [prevChats, prevMessages, prevNewUsers] = await Promise.all([
-      Chat.countDocuments({ createdAt: { $gte: prevFrom, $lt: from } }),
-      Message.countDocuments({ role: "user", createdAt: { $gte: prevFrom, $lt: from } }),
-      User.countDocuments({ createdAt: { $gte: prevFrom, $lt: from } }),
+      Chat.countDocuments({ ...chatFilter, createdAt: { $gte: prevFrom, $lt: from } }),
+      Message.countDocuments({ ...msgMatchBase, role: "user", createdAt: { $gte: prevFrom, $lt: from } }),
+      isAdmin
+        ? User.countDocuments({ createdAt: { $gte: prevFrom, $lt: from }, role: { $ne: "admin" } })
+        : Promise.resolve(0),
     ]);
 
     const aiCompletionRate =
@@ -130,6 +144,7 @@ export const getAnalytics = async (req, res) => {
       newUsers,
       avgMessagesPerChat,
       aiCompletionRate: `${aiCompletionRate}%`,
+      isAdmin,
       trends: {
         chats: calcTrend(totalChats, prevChats),
         messages: calcTrend(userMessages, prevMessages),

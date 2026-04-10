@@ -190,7 +190,7 @@ export default function ChatPage() {
           {/* Search */}
           <div className="p-3 border-b border-purple-500/10">
             <div className="relative">
-              <Search size={13} className="absolute left-2.5 top-2.5 text-gray-600" />
+              <Search size={13} className="absolute left-2.5 top-3.5 text-gray-600" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -219,10 +219,10 @@ export default function ChatPage() {
                         : "hover:bg-purple-500/10 border border-transparent"
                     }`}
                   >
-                    <MessageSquare
+                    {/* <MessageSquare
                       size={13}
                       className={`flex-shrink-0 ${isActive ? "text-purple-400" : "text-gray-600"}`}
-                    />
+                    /> */}
                     <div className="flex-1 min-w-0">
                       <p className="text-gray-300 text-xs truncate leading-tight">{chat.title}</p>
                       <p className="text-gray-700 text-[10px] mt-0.5">{timeAgo(chat.updatedAt)} ago</p>

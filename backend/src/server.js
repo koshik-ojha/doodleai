@@ -13,6 +13,9 @@ import submissionRoutes from "./routes/submissionRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 import widgetRoutes from "./routes/widgetRoutes.js";
 import chatbotRoutes from "./routes/chatbotRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import bcrypt from "bcryptjs";
+import User from "./models/User.js";
 
 dotenv.config();
 
@@ -53,8 +56,24 @@ app.use(rateLimit({
   max: 100,
 }));
 
+async function seedAdmin() {
+  const email = "admin@wedoodles.com";
+  const existing = await User.findOne({ email });
+  if (!existing) {
+    const hashed = await bcrypt.hash("Wdinfotech@2k26", 10);
+    await User.create({ name: "Admin", email, password: hashed, role: "admin" });
+    console.log("Admin user created");
+  } else if (existing.role !== "admin") {
+    await User.updateOne({ email }, { role: "admin" });
+    console.log("Admin role assigned to existing user");
+  }
+}
+
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
+  .then(async () => {
+    console.log("MongoDB connected");
+    await seedAdmin();
+  })
   .catch((err) => console.error("MongoDB error:", err.message));
 
 app.get("/", (req, res) => {
@@ -70,6 +89,7 @@ app.use("/api/submissions", submissionRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/widget", widgetRoutes);
 app.use("/api/chatbots", chatbotRoutes);
+app.use("/api/admin", adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

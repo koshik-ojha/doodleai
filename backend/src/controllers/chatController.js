@@ -13,22 +13,35 @@ export const createChat = async (req, res) => {
 
 export const getChats = async (req, res) => {
   try {
-    const chats = await Chat.find({ userId: req.user.id }).sort({ updatedAt: -1 });
+    const isAdmin = req.user.role === "admin";
+    const query = isAdmin ? {} : { userId: req.user.id };
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(50, parseInt(req.query.limit) || 15);
+    const skip = (page - 1) * limit;
+
+    const [chats, total] = await Promise.all([
+      Chat.find(query)
+        .populate(isAdmin ? { path: "userId", select: "name email" } : "")
+        .sort({ updatedAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Chat.countDocuments(query),
+    ]);
 
     const chatIds = chats.map((c) => c._id);
     const msgCounts = await Message.aggregate([
       { $match: { chatId: { $in: chatIds } } },
-      { $group: { _id: "$chatId", count: { $sum: 1 } } }
+      { $group: { _id: "$chatId", count: { $sum: 1 } } },
     ]);
     const countMap = {};
     msgCounts.forEach((m) => { countMap[m._id.toString()] = m.count; });
 
     const result = chats.map((c) => ({
       ...c.toObject(),
-      messageCount: countMap[c._id.toString()] || 0
+      messageCount: countMap[c._id.toString()] || 0,
     }));
 
-    res.json(result);
+    res.json({ chats: result, total, page, hasMore: skip + result.length < total });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch chats" });
   }

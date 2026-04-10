@@ -6,7 +6,7 @@ import { isTempEmail } from "../utils/tempMailDomains.js";
 import { sendOtpEmail, sendPasswordResetEmail } from "../services/emailService.js";
 
 const createToken = (user) => jwt.sign(
-  { id: user._id, email: user.email, name: user.name },
+  { id: user._id, email: user.email, name: user.name, role: user.role || "user" },
   process.env.JWT_SECRET,
   { expiresIn: "7d" }
 );
@@ -67,7 +67,7 @@ export const verifyOtp = async (req, res) => {
     res.status(201).json({
       success: true,
       token: createToken(user),
-      user: { id: user._id, name: user.name, email: user.email },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role || "user" },
     });
   } catch (error) {
     console.error("OTP verify error:", error.message);
@@ -150,10 +150,14 @@ export const login = async (req, res) => {
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.status(400).json({ error: "Invalid credentials" });
 
+    if (user.isSuspended) {
+      return res.status(403).json({ error: "Your account has been suspended. Please contact support." });
+    }
+
     res.json({
       success: true,
       token: createToken(user),
-      user: { id: user._id, name: user.name, email: user.email },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role || "user" },
     });
   } catch (error) {
     console.error("Login error:", error.message);

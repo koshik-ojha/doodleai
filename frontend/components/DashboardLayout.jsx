@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   MessageSquare,
+  MessagesSquare,
   FileText,
   Settings,
   LogOut,
@@ -54,14 +55,16 @@ export default function DashboardLayout({ children }) {
     }
   }, []);
 
+  const isAdmin = userData?.role === "admin";
+
   const navigation = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { name: "Chat", icon: MessageSquare, href: "/dashboard/chat" },
     { name: "Chatbots", icon: Bot, href: "/dashboard/chatbots" },
-    { name: "Conversations", icon: MessageSquare, href: "/dashboard/conversations" },
+    { name: "Conversations", icon: MessagesSquare, href: "/dashboard/conversations" },
     { name: "Form Submissions", icon: FileText, href: "/dashboard/submissions" },
     { name: "Analytics", icon: BarChart3, href: "/dashboard/analytics" },
-    { name: "Users", icon: Users, href: "/dashboard/users" },
+    ...(isAdmin ? [{ name: "Users", icon: Users, href: "/dashboard/admin" }] : []),
     { name: "Integration", icon: Code, href: "/dashboard/integration" },
     { name: "Settings", icon: Settings, href: "/dashboard/settings" },
   ];

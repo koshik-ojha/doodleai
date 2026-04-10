@@ -109,14 +109,14 @@ export default function AnalyticsPage() {
           icon: MessageCircle,
           label: "Total Chats",
           value: data.totalChats.toLocaleString(),
-          sub: `${data.uniqueUsers} active user${data.uniqueUsers !== 1 ? "s" : ""}`,
+          sub: `avg ${data.avgMessagesPerChat} msg / chat`,
           trend: data.trends?.chats,
         },
         {
           icon: BarChart2,
           label: "Messages Sent",
           value: data.totalMessages.toLocaleString(),
-          sub: `avg ${data.avgMessagesPerChat} msg / chat`,
+          sub: "user messages in period",
           trend: data.trends?.messages,
         },
         {
@@ -126,13 +126,21 @@ export default function AnalyticsPage() {
           sub: "of prompts answered",
           trend: null,
         },
-        {
-          icon: UserPlus,
-          label: "New Users",
-          value: data.newUsers.toLocaleString(),
-          sub: `${data.uniqueUsers} total active`,
-          trend: data.trends?.users,
-        },
+        data.isAdmin
+          ? {
+              icon: UserPlus,
+              label: "New Users",
+              value: data.newUsers.toLocaleString(),
+              sub: `${data.uniqueUsers} total active`,
+              trend: data.trends?.users,
+            }
+          : {
+              icon: Users,
+              label: "Unique Visitors",
+              value: data.uniqueUsers.toLocaleString(),
+              sub: `avg ${data.avgMessagesPerChat} msg / session`,
+              trend: null,
+            },
       ]
     : [];
 
