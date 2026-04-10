@@ -377,7 +377,7 @@ function widgetScript(botId, apiUrl) {
           '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
           '<polyline points="20 6 9 17 4 12"/></svg></div>' +
           '<p style="font-size:14px;font-weight:600;color:#111827;margin-bottom:4px;">Thank You!</p>' +
-          '<p style="font-size:12px;color:#6b7280;">We\'ll get back to you soon.</p>';
+          '<p style="font-size:12px;color:#6b7280;">We&#39;ll get back to you soon.</p>';
         chatBody.appendChild(ok);
         setTimeout(function () { showQuick(); }, 2500);
       };

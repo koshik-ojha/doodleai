@@ -10,7 +10,8 @@ function getKey() {
 
 export function encryptBotId(botId) {
   const key = getKey();
-  const iv = crypto.randomBytes(16);
+  // Deterministic IV derived from botId — same bot always produces the same token
+  const iv = crypto.createHash("sha256").update(botId).digest().subarray(0, 16);
   const cipher = crypto.createCipheriv(ALGO, key, iv);
   const encrypted = Buffer.concat([cipher.update(botId, "utf8"), cipher.final()]);
   return Buffer.concat([iv, encrypted]).toString("base64url");
