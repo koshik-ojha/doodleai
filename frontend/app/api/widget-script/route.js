@@ -71,11 +71,11 @@ function widgetScript(botId, apiUrl) {
   /* ── Global styles ── */
   var _style = document.createElement('style');
   _style.textContent = [
-    '#doodleai-widget-root * { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }',
+    '#doodleai-widget-root * { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; line-height:1.5; }',
     '#doodleai-chat-body::-webkit-scrollbar { width:4px; }',
     '#doodleai-chat-body::-webkit-scrollbar-thumb { background:#d1d5db; border-radius:2px; }',
     '#doodleai-chat-inp:focus { outline:none; }',
-    '#doodleai-chat-inp::placeholder { color:#9ca3af; }',
+    '#doodleai-chat-inp::placeholder { color:#9ca3af; line-height:1.5; }',
     '@keyframes daiFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }',
     '@keyframes daiPing  { 0%,100%{transform:scale(1);opacity:0.25} 50%{transform:scale(1.15);opacity:0.1} }',
     '@keyframes daiSpin  { to{transform:rotate(360deg)} }',
@@ -142,13 +142,13 @@ function widgetScript(botId, apiUrl) {
       '<div style="color:#fff;font-weight:600;font-size:14px;line-height:1.3;">' + esc(botName) + '</div>' +
       '<div style="display:flex;align-items:center;gap:4px;margin-top:3px;">' +
         '<div style="width:8px;height:8px;background:#4ade80;border-radius:50%;"></div>' +
-        '<div style="color:rgba(255,255,255,0.8);font-size:12px;">Online</div>' +
+        '<div style="color:rgba(255,255,255,0.8);font-size:12px;line-height:1.3;">Online</div>' +
       '</div>';
     hdrL.appendChild(avWrap);
     hdrL.appendChild(hdrTxt);
     var closeBtn = mk('button',
       'width:32px;height:32px;background:rgba(255,255,255,0.2);border:none;cursor:pointer;' +
-      'border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;');
+      'border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;');
     closeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
     hdr.appendChild(hdrL);
     hdr.appendChild(closeBtn);
@@ -161,12 +161,12 @@ function widgetScript(botId, apiUrl) {
 
     /* Input area */
     var inputArea = mk('div', 'padding:16px;background:#fff;border-top:1px solid #f3f4f6;flex-shrink:0;');
-    var backBtn = mk('button', 'background:none;border:none;cursor:pointer;color:#9ca3af;font-size:12px;margin-bottom:8px;display:none;padding:0;');
+    var backBtn = mk('button', 'background:none;border:none;cursor:pointer;color:#9ca3af;font-size:12px;line-height:1.5;margin-bottom:8px;display:none;padding:0;');
     backBtn.textContent = '\u2190 Back to menu';
     backBtn.onmouseover = function () { backBtn.style.color = '#6b7280'; };
     backBtn.onmouseout  = function () { backBtn.style.color = '#9ca3af'; };
     var inputRow = mk('div', 'display:flex;gap:8px;align-items:center;');
-    var inp = mk('input', 'flex:1;border:1.5px solid #e5e7eb;background:#f9fafb;color:#111827;border-radius:9999px;padding:10px 16px;font-size:13px;');
+    var inp = mk('input', 'flex:1;border:1.5px solid #e5e7eb;background:#f9fafb;color:#111827;border-radius:9999px;padding:10px 16px;font-size:13px;line-height:1.5;');
     inp.id = 'doodleai-chat-inp';
     inp.type = 'text';
     inp.placeholder = 'Type a message...';
@@ -174,7 +174,7 @@ function widgetScript(botId, apiUrl) {
     inp.onblur  = function () { inp.style.borderColor = '#e5e7eb'; };
     var sendBtn = mk('button',
       'width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;' +
-      'display:flex;align-items:center;justify-content:center;flex-shrink:0;background:' + color + ';');
+      'display:flex;align-items:center;justify-content:center;flex-shrink:0;background:' + color + ';line-height:1;');
     sendBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
     inputRow.appendChild(inp);
     inputRow.appendChild(sendBtn);
@@ -205,7 +205,7 @@ function widgetScript(botId, apiUrl) {
       inner.appendChild(wRow);
 
       /* "How can we help?" */
-      var heading = mk('p', 'font-weight:600;font-size:14px;margin-bottom:12px;color:' + color + ';');
+      var heading = mk('p', 'font-weight:600;font-size:14px;line-height:1.5;margin-bottom:12px;color:' + color + ';');
       heading.textContent = 'How can we help you?';
       inner.appendChild(heading);
 
@@ -213,7 +213,7 @@ function widgetScript(botId, apiUrl) {
       var questions = qrs.length > 0 ? qrs : faqs;
       if (questions.length > 0) {
         var qSec = mk('div', 'margin-bottom:8px;');
-        var qLbl = mk('div', 'display:flex;align-items:center;gap:6px;color:#6b7280;font-size:12px;margin-bottom:8px;');
+        var qLbl = mk('div', 'display:flex;align-items:center;gap:6px;color:#6b7280;font-size:12px;line-height:1.5;margin-bottom:8px;');
         qLbl.innerHTML =
           '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">' +
           '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
@@ -269,8 +269,8 @@ function widgetScript(botId, apiUrl) {
       if (isUser) {
         avatar.style.cssText =
           'width:36px;height:36px;border-radius:50%;background:#e5e7eb;' +
-          'display:flex;align-items:center;justify-content:center;flex-shrink:0;';
-        avatar.innerHTML = '<span style="color:#6b7280;font-size:12px;font-weight:600;">U</span>';
+          'display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;';
+        avatar.innerHTML = '<span style="color:#6b7280;font-size:12px;font-weight:600;line-height:1;">U</span>';
       } else {
         avatar.innerHTML = botSvg(36);
       }
@@ -281,7 +281,7 @@ function widgetScript(botId, apiUrl) {
         ? 'border-radius:16px 4px 16px 16px;padding:12px 16px;font-size:13px;line-height:1.5;color:#fff;word-break:break-word;background:' + color + ';'
         : 'border-radius:4px 16px 16px 16px;padding:12px 16px;font-size:13px;line-height:1.5;color:#1f2937;word-break:break-word;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.08);');
       bubble.textContent = content;
-      var ts = mk('span', 'font-size:11px;color:#9ca3af;margin-top:4px;padding:0 4px;' + (isUser ? 'text-align:right;' : ''));
+      var ts = mk('span', 'font-size:11px;line-height:1.5;color:#9ca3af;margin-top:4px;padding:0 4px;' + (isUser ? 'text-align:right;' : ''));
       ts.textContent = fmtTime(time);
 
       col.appendChild(bubble);
@@ -302,7 +302,7 @@ function widgetScript(botId, apiUrl) {
         'box-shadow:0 1px 4px rgba(0,0,0,0.08);display:flex;align-items:center;gap:6px;');
       bubble.innerHTML =
         '<svg style="animation:daiSpin 1s linear infinite;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>' +
-        '<span style="color:#9ca3af;font-size:13px;">Typing...</span>';
+        '<span style="color:#9ca3af;font-size:13px;line-height:1.5;">Typing...</span>';
       row.appendChild(av);
       row.appendChild(bubble);
       msgsDiv.appendChild(row);
@@ -382,7 +382,7 @@ function widgetScript(botId, apiUrl) {
   function qBtn(label, color, onClick) {
     var rgba = hex2rgba(color, 0.1);
     var btn = mk('button',
-      'width:100%;text-align:left;border-radius:8px;padding:12px 16px;font-size:13px;' +
+      'width:100%;text-align:left;border-radius:8px;padding:12px 16px;font-size:13px;line-height:1.5;' +
       'cursor:pointer;display:flex;align-items:center;justify-content:space-between;' +
       'border:none;margin-bottom:8px;background:' + rgba + ';color:' + color + ';');
     btn.innerHTML =
