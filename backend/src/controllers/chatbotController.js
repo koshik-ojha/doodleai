@@ -1,5 +1,6 @@
 import Chatbot from "../models/Chatbot.js";
 import { crawlSite } from "../services/crawlService.js";
+import { encryptBotId } from "../utils/embedToken.js";
 
 const normalizeDomain = (d) =>
   d.replace(/^https?:\/\//, "").replace(/\/.*$/, "").toLowerCase().trim();
@@ -103,6 +104,18 @@ export const clearCrawledData = async (req, res) => {
     res.json({ success: true });
   } catch {
     res.status(500).json({ error: "Failed to clear crawled data" });
+  }
+};
+
+export const getEmbedToken = async (req, res) => {
+  try {
+    const chatbot = await Chatbot.findOne({ _id: req.params.id, userId: req.user.id });
+    if (!chatbot) return res.status(404).json({ error: "Not found" });
+    const token = encryptBotId(req.params.id);
+    res.json({ token });
+  } catch (err) {
+    console.error("Embed token error:", err.message);
+    res.status(500).json({ error: "Failed to generate embed token" });
   }
 };
 

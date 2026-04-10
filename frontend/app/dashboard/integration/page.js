@@ -157,6 +157,7 @@ export default function IntegrationPage() {
   const [quickReplies, setQuickReplies] = useState([]);
   const [newQuickReply, setNewQuickReply] = useState({ question: "", answer: "" });
   const [crawledSources, setCrawledSources] = useState([]);
+  const [embedToken, setEmbedToken] = useState(null);
 
   // UI state
   const [copied, setCopied] = useState(false);
@@ -203,11 +204,19 @@ export default function IntegrationPage() {
       setCrawledSources(data.crawledSources || []);
       setShowWidget(false);
     }).catch(console.error);
+
+    // Fetch encrypted embed token
+    setEmbedToken(null);
+    api.get(`/chatbots/${selectedBotId}/embed-token`)
+      .then(({ data }) => setEmbedToken(data.token))
+      .catch(console.error);
   }, [selectedBotId]);
 
-  const embedCode = selectedBotId
+  const embedCode = embedToken
     ? `<!-- DoodleAI Chat Widget -->
-<script src="${FRONTEND_URL}/api/widget-script?botId=${selectedBotId}" defer></script>`
+<script src="${FRONTEND_URL}/api/widget-script?token=${embedToken}" defer></script>`
+    : selectedBotId
+    ? "<!-- DoodleAI Chat Widget -->\n<!-- Loading embed code... -->"
     : "Select a chatbot to generate embed code.";
 
   const handleCopy = () => {

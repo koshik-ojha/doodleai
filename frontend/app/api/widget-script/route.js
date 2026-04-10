@@ -1,12 +1,38 @@
+import crypto from "crypto";
+
 export const dynamic = "force-dynamic";
+
+function decryptBotId(token) {
+  const secret = process.env.WIDGET_SECRET;
+  if (!secret) throw new Error("WIDGET_SECRET is not configured");
+  const key = crypto.scryptSync(secret, "doodleai-embed-salt", 32);
+  const buf = Buffer.from(token, "base64url");
+  const iv = buf.subarray(0, 16);
+  const encrypted = buf.subarray(16);
+  const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
+  return Buffer.concat([decipher.update(encrypted), decipher.final()]).toString("utf8");
+}
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const botId = searchParams.get("botId") || "";
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
+  // Accept either encrypted token (new) or raw botId (legacy)
+  const token = searchParams.get("token");
+  let botId = searchParams.get("botId") || "";
+
+  if (token) {
+    try {
+      botId = decryptBotId(token);
+    } catch {
+      return new Response("// Invalid or tampered token", {
+        headers: { "Content-Type": "application/javascript" },
+      });
+    }
+  }
+
   if (!botId) {
-    return new Response("// Missing botId", {
+    return new Response("// Missing token or botId", {
       headers: { "Content-Type": "application/javascript" },
     });
   }
