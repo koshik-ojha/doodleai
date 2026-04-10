@@ -182,6 +182,15 @@ function widgetScript(botId, apiUrl) {
     inputArea.appendChild(inputRow);
     panel.appendChild(inputArea);
 
+    /* Copyright footer */
+    var footer = mk('div',
+      'padding:6px 16px;background:#fff;border-top:1px solid #f3f4f6;' +
+      'display:flex;align-items:center;justify-content:center;gap:4px;flex-shrink:0;');
+    footer.innerHTML =
+      '<span style="font-size:10px;color:#9ca3af;line-height:1.5;">Powered by</span>' +
+      '<span style="font-size:10px;font-weight:600;color:#7c3aed;line-height:1.5;">DoodleAI</span>';
+    panel.appendChild(footer);
+
     /* ── View: Quick ── */
     function showQuick() {
       view = 'quick';
