@@ -1,6 +1,33 @@
 import Chatbot from "../models/Chatbot.js";
 import { crawlSite } from "../services/crawlService.js";
 import { encryptBotId } from "../utils/embedToken.js";
+import { getAIResponse } from "../services/aiService.js";
+
+async function generateQuickReplies(text) {
+  try {
+    const snippet = text.slice(0, 4000);
+    const reply = await getAIResponse(
+      [{
+        role: "user",
+        content:
+          "Based on the website content below, generate exactly 5 short questions a visitor would commonly ask. " +
+          "Return ONLY a valid JSON array of strings, no explanation, no markdown. " +
+          'Example: ["What services do you offer?","How do I contact you?"]\n\nContent:\n' + snippet,
+      }],
+      ""
+    );
+    const match = reply.match(/\[[\s\S]*?\]/);
+    if (match) {
+      const arr = JSON.parse(match[0]);
+      if (Array.isArray(arr) && arr.length > 0) {
+        return arr.slice(0, 5).map((q) => ({ question: String(q), answer: "" }));
+      }
+    }
+  } catch (e) {
+    console.warn("Quick reply generation failed:", e.message);
+  }
+  return [];
+}
 
 const normalizeDomain = (d) =>
   d.replace(/^https?:\/\//, "").replace(/\/.*$/, "").toLowerCase().trim();
@@ -81,12 +108,18 @@ export const crawlChatbotSite = async (req, res) => {
 
     const source = { url, pages: result.pages, siteName: result.siteName, crawledAt: new Date() };
 
+    // Generate quick replies from crawled content (runs in parallel with save)
+    const quickReplies = await generateQuickReplies(result.text);
+
     await Chatbot.findByIdAndUpdate(req.params.id, {
-      knowledgeBase: newKnowledge,
+      $set: {
+        knowledgeBase: newKnowledge,
+        ...(quickReplies.length > 0 && { quickReplies }),
+      },
       $push: { crawledSources: source },
     });
 
-    res.json({ pages: result.pages, siteName: result.siteName, source });
+    res.json({ pages: result.pages, siteName: result.siteName, source, quickReplies });
   } catch (error) {
     console.error("Crawl error:", error.message);
     res.status(500).json({ error: error.message || "Failed to crawl website" });

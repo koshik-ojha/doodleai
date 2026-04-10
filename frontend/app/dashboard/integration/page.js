@@ -30,7 +30,7 @@ function CrawlSection({ botId, crawledSources = [], onCrawlDone, onClearAll }) {
     setError("");
     try {
       const { data } = await api.post(`/chatbots/${botId}/crawl`, { url: url.trim() });
-      onCrawlDone(data.source);
+      onCrawlDone(data.source, data.quickReplies || []);
       setLastInfo(data);
       setUrl("");
       setStatus("done");
@@ -228,8 +228,11 @@ export default function IntegrationPage() {
   };
 
   // Called by CrawlSection after successful crawl — backend already saved, just sync local state
-  const handleCrawlDone = (source) => {
+  const handleCrawlDone = (source, suggestedQuickReplies) => {
     setCrawledSources((prev) => [...prev, source]);
+    if (suggestedQuickReplies && suggestedQuickReplies.length > 0) {
+      setQuickReplies(suggestedQuickReplies);
+    }
   };
 
   const handleClearCrawlData = async () => {

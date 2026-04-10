@@ -186,6 +186,7 @@ function widgetScript(botId, apiUrl) {
     function showQuick() {
       view = 'quick';
       backBtn.style.display = 'none';
+      inputArea.style.display = '';
       chatBody.innerHTML = '';
 
       var inner = mk('div', 'padding:16px;');
@@ -236,6 +237,25 @@ function widgetScript(botId, apiUrl) {
         inner.appendChild(qSec);
       }
 
+      /* Contact Us section — always shown */
+      var cSec = mk('div', 'margin-top:4px;');
+      var cLbl = mk('div', 'display:flex;align-items:center;gap:6px;color:#6b7280;font-size:12px;line-height:1.5;margin-bottom:8px;');
+      cLbl.innerHTML =
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
+        '<span>Contact Us</span>';
+      cSec.appendChild(cLbl);
+      [
+        { label: 'Fill out contact form', type: 'contact' },
+        { label: 'Request a quote',       type: 'quote' },
+        { label: 'Schedule a consultation', type: 'consultation' },
+      ].forEach(function (item) {
+        cSec.appendChild(qBtn(item.label, color, (function (t) {
+          return function () { showForm(t); };
+        })(item.type)));
+      });
+      inner.appendChild(cSec);
+
       chatBody.appendChild(inner);
     }
 
@@ -243,12 +263,161 @@ function widgetScript(botId, apiUrl) {
     function showChat() {
       view = 'chat';
       backBtn.style.display = 'block';
+      inputArea.style.display = '';
       chatBody.innerHTML = '';
       var msgsDiv = mk('div', 'padding:16px;display:flex;flex-direction:column;gap:16px;');
       msgsDiv.id = 'doodleai-msgs';
       chatBody.appendChild(msgsDiv);
       messages.forEach(function (m) { renderMsg(msgsDiv, m.role, m.content, m.time); });
       scrollDown();
+    }
+
+    /* ── View: Form ── */
+    function showForm(formType) {
+      view = 'form';
+      backBtn.style.display = 'block';
+      inputArea.style.display = 'none';
+      chatBody.innerHTML = '';
+
+      var FORM_CFG = {
+        contact:      { title: 'Contact Us',              submitLabel: 'Send Message' },
+        quote:        { title: 'Request a Quote',         submitLabel: 'Request Quote' },
+        consultation: { title: 'Schedule a Consultation', submitLabel: 'Book Consultation' },
+      };
+      var fc = FORM_CFG[formType] || FORM_CFG.contact;
+
+      var wrap = mk('div', 'padding:16px;overflow-y:auto;height:100%;');
+      var titleEl = mk('p', 'font-size:14px;font-weight:600;color:#111827;margin-bottom:12px;');
+      titleEl.textContent = fc.title;
+      wrap.appendChild(titleEl);
+
+      var form = document.createElement('form');
+      form.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
+
+      /* Common fields */
+      form.appendChild(fInp('text',  'Full name *',      'name',  true));
+      form.appendChild(fInp('email', 'Email address *',  'email', true));
+      form.appendChild(fInp('tel',   'Phone number',     'phone', false));
+
+      if (formType === 'contact') {
+        form.appendChild(fInp('text', 'Company',  'company', false));
+        form.appendChild(fInp('text', 'Subject',  'subject', false));
+        form.appendChild(fTa('Message *', 'message', true, 3));
+      }
+      if (formType === 'quote') {
+        form.appendChild(fInp('text', 'Company', 'company', false));
+        form.appendChild(fTa('Describe your project *', 'message', true, 3));
+        form.appendChild(fSel('budget', [
+          { value: '',                label: 'Budget range' },
+          { value: 'Under $1,000',   label: 'Under $1,000' },
+          { value: '$1,000\u2013$5,000',  label: '$1,000 \u2013 $5,000' },
+          { value: '$5,000\u2013$10,000', label: '$5,000 \u2013 $10,000' },
+          { value: '$10,000\u2013$25,000',label: '$10,000 \u2013 $25,000' },
+          { value: '$25,000+',       label: '$25,000+' },
+        ]));
+      }
+      if (formType === 'consultation') {
+        form.appendChild(fInp('text', 'Topic / what to discuss *', 'topic',   true));
+        form.appendChild(fTa('Additional details', 'message', false, 2));
+      }
+
+      var submitBtn = mk('button',
+        'width:100%;padding:9px 16px;border-radius:8px;border:none;cursor:pointer;color:#fff;' +
+        'font-size:13px;font-weight:600;margin-top:4px;background:' + color + ';');
+      submitBtn.type = 'submit';
+      submitBtn.textContent = fc.submitLabel;
+      submitBtn.onmouseover = function () { submitBtn.style.opacity = '0.88'; };
+      submitBtn.onmouseout  = function () { submitBtn.style.opacity = '1'; };
+      form.appendChild(submitBtn);
+
+      form.onsubmit = function (e) {
+        e.preventDefault();
+        var data = {};
+        form.querySelectorAll('[name]').forEach(function (el) { data[el.name] = el.value; });
+
+        /* API submission */
+        fetch(API + '/api/submissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.assign({}, data, {
+            subject: data.subject || formType,
+            formType: formType,
+            botId: BOT_ID,
+          })),
+        }).catch(function () {});
+
+        /* WhatsApp */
+        if (cfg.whatsappNumber) {
+          var lines = ['*New ' + fc.title + '*', 'Name: ' + data.name, 'Email: ' + data.email];
+          if (data.phone)   lines.push('Phone: ' + data.phone);
+          if (data.company) lines.push('Company: ' + data.company);
+          if (formType === 'contact') {
+            if (data.subject) lines.push('Subject: ' + data.subject);
+            if (data.message) lines.push('Message: ' + data.message);
+          }
+          if (formType === 'quote') {
+            if (data.message) lines.push('Project: ' + data.message);
+            if (data.budget)  lines.push('Budget: ' + data.budget);
+          }
+          if (formType === 'consultation') {
+            if (data.topic)   lines.push('Topic: ' + data.topic);
+            if (data.message) lines.push('Details: ' + data.message);
+          }
+          window.open('https://wa.me/' + cfg.whatsappNumber + '?text=' + encodeURIComponent(lines.join('\\n')), '_blank');
+        }
+
+        /* Success screen */
+        chatBody.innerHTML = '';
+        var ok = mk('div',
+          'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
+          'height:100%;padding:32px;text-align:center;');
+        ok.innerHTML =
+          '<div style="width:48px;height:48px;background:#ecfdf5;border-radius:50%;' +
+          'display:flex;align-items:center;justify-content:center;margin-bottom:12px;">' +
+          '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+          '<polyline points="20 6 9 17 4 12"/></svg></div>' +
+          '<p style="font-size:14px;font-weight:600;color:#111827;margin-bottom:4px;">Thank You!</p>' +
+          '<p style="font-size:12px;color:#6b7280;">We\'ll get back to you soon.</p>';
+        chatBody.appendChild(ok);
+        setTimeout(function () { showQuick(); }, 2500);
+      };
+
+      wrap.appendChild(form);
+      chatBody.appendChild(wrap);
+    }
+
+    /* ── Form field helpers (scoped inside build so they close over `color`) ── */
+    function fInp(type, placeholder, name, required) {
+      var el = mk('input',
+        'width:100%;border:1.5px solid #e5e7eb;background:#f9fafb;color:#111827;' +
+        'border-radius:8px;padding:9px 12px;font-size:13px;');
+      el.type = type; el.placeholder = placeholder; el.name = name; el.required = required;
+      el.onfocus = function () { el.style.borderColor = color; el.style.outline = 'none'; };
+      el.onblur  = function () { el.style.borderColor = '#e5e7eb'; };
+      return el;
+    }
+    function fTa(placeholder, name, required, rows) {
+      var el = mk('textarea',
+        'width:100%;border:1.5px solid #e5e7eb;background:#f9fafb;color:#111827;' +
+        'border-radius:8px;padding:9px 12px;font-size:13px;resize:none;font-family:inherit;');
+      el.placeholder = placeholder; el.name = name; el.required = required; el.rows = rows || 3;
+      el.onfocus = function () { el.style.borderColor = color; el.style.outline = 'none'; };
+      el.onblur  = function () { el.style.borderColor = '#e5e7eb'; };
+      return el;
+    }
+    function fSel(name, options) {
+      var el = mk('select',
+        'width:100%;border:1.5px solid #e5e7eb;background:#f9fafb;color:#111827;' +
+        'border-radius:8px;padding:9px 12px;font-size:13px;');
+      el.name = name;
+      options.forEach(function (opt) {
+        var o = document.createElement('option');
+        o.value = opt.value; o.textContent = opt.label;
+        el.appendChild(o);
+      });
+      el.onfocus = function () { el.style.borderColor = color; el.style.outline = 'none'; };
+      el.onblur  = function () { el.style.borderColor = '#e5e7eb'; };
+      return el;
     }
 
     function addMsg(role, content) {
@@ -338,8 +507,8 @@ function widgetScript(botId, apiUrl) {
       if (isOpen) {
         panel.style.display = 'flex';
         panel.style.animation = 'daiFadeUp 0.2s ease';
-        if (view === 'chat') showChat(); else showQuick();
-        setTimeout(function () { inp.focus(); }, 250);
+        if (view === 'chat') showChat(); else showQuick(); // form always resets to quick
+        if (view !== 'form') setTimeout(function () { inp.focus(); }, 250);
       } else {
         panel.style.display = 'none';
       }
