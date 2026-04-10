@@ -186,6 +186,7 @@ function widgetScript(botId, apiUrl) {
     function showQuick() {
       view = 'quick';
       backBtn.style.display = 'none';
+      inputRow.style.display = '';
       inputArea.style.display = '';
       chatBody.innerHTML = '';
 
@@ -263,6 +264,7 @@ function widgetScript(botId, apiUrl) {
     function showChat() {
       view = 'chat';
       backBtn.style.display = 'block';
+      inputRow.style.display = '';
       inputArea.style.display = '';
       chatBody.innerHTML = '';
       var msgsDiv = mk('div', 'padding:16px;display:flex;flex-direction:column;gap:16px;');
@@ -275,8 +277,9 @@ function widgetScript(botId, apiUrl) {
     /* ── View: Form ── */
     function showForm(formType) {
       view = 'form';
-      backBtn.style.display = 'block';
-      inputArea.style.display = 'none';
+      backBtn.style.display = 'none';
+      inputRow.style.display = 'none';   // hide chat input but keep inputArea for spacing
+      inputArea.style.display = 'none';  // hide entirely — form has its own close button
       chatBody.innerHTML = '';
 
       var FORM_CFG = {
@@ -287,9 +290,19 @@ function widgetScript(botId, apiUrl) {
       var fc = FORM_CFG[formType] || FORM_CFG.contact;
 
       var wrap = mk('div', 'padding:16px;overflow-y:auto;height:100%;');
-      var titleEl = mk('p', 'font-size:14px;font-weight:600;color:#111827;margin-bottom:12px;');
+
+      /* Title row with close button — matches ChatbotForm.jsx */
+      var titleRow = mk('div', 'display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;');
+      var titleEl = mk('p', 'font-size:14px;font-weight:600;color:#111827;line-height:1.5;');
       titleEl.textContent = fc.title;
-      wrap.appendChild(titleEl);
+      var formCloseBtn = mk('button', 'background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;color:#9ca3af;line-height:1;');
+      formCloseBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+      formCloseBtn.onmouseover = function () { formCloseBtn.style.background = '#f3f4f6'; formCloseBtn.style.color = '#374151'; };
+      formCloseBtn.onmouseout  = function () { formCloseBtn.style.background = 'none';    formCloseBtn.style.color = '#9ca3af'; };
+      formCloseBtn.onclick = function () { showQuick(); };
+      titleRow.appendChild(titleEl);
+      titleRow.appendChild(formCloseBtn);
+      wrap.appendChild(titleRow);
 
       var form = document.createElement('form');
       form.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
