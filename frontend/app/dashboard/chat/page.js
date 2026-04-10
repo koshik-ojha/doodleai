@@ -333,7 +333,7 @@ export default function ChatPage() {
           {/* Input */}
           <div className="p-4 border-t border-purple-500/10">
             <div className="max-w-3xl mx-auto">
-              <div className="bg-[#1a1a2e]/80 border border-purple-500/20 rounded-2xl px-4 py-3 flex items-end gap-3">
+              <div className="bg-[#1a1a2e]/80 border border-purple-500/20 rounded-2xl px-4 py-3 flex items-center gap-3">
                 <textarea
                   ref={textareaRef}
                   value={input}

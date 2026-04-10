@@ -6,6 +6,7 @@ import DashboardLayout from "@components/DashboardLayout";
 import {
   Code, Copy, Check, Eye, EyeOff, Save, Plus, Trash2,
   ChevronDown, ChevronRight, Bot, Upload, FileText, Settings2,
+  Globe, Loader2, AlertCircle, Download,
 } from "lucide-react";
 import ChatWidget from "@components/ChatWidget";
 import { Input, Select, Textarea, Toggle } from "@components/ui";
@@ -14,6 +15,114 @@ import api from "@lib/api";
 
 const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL;
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+function CrawlSection({ botId, crawledSources = [], onCrawlDone, onClearAll }) {
+  const [url, setUrl] = useState("");
+  const [status, setStatus] = useState(null); // null | "crawling" | "done" | "error"
+  const [lastInfo, setLastInfo] = useState(null);
+  const [error, setError] = useState("");
+  const [clearing, setClearing] = useState(false);
+
+  const handleFetch = async () => {
+    if (!url.trim()) return;
+    setStatus("crawling");
+    setLastInfo(null);
+    setError("");
+    try {
+      const { data } = await api.post(`/chatbots/${botId}/crawl`, { url: url.trim() });
+      onCrawlDone(data.source);
+      setLastInfo(data);
+      setUrl("");
+      setStatus("done");
+    } catch (e) {
+      setError(e.response?.data?.error || "Failed to crawl website. Check the URL and try again.");
+      setStatus("error");
+    }
+  };
+
+  const handleClear = async () => {
+    setClearing(true);
+    try { await onClearAll(); } finally { setClearing(false); }
+  };
+
+  const busy = status === "crawling";
+
+  return (
+    <div className="space-y-4">
+      {/* Crawled sources list */}
+      {crawledSources.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-gray-400 font-medium">Fetched sources</p>
+            <button
+              onClick={handleClear}
+              disabled={clearing}
+              className="flex items-center gap-1 text-xs text-red-400 hover:text-red-300 transition-colors disabled:opacity-50"
+            >
+              {clearing ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} />}
+              Clear all
+            </button>
+          </div>
+          <div className="space-y-1.5">
+            {crawledSources.map((src, i) => (
+              <div key={i} className="flex items-center gap-3 bg-purple-500/5 border border-purple-500/15 rounded-lg px-3 py-2">
+                <Globe size={13} className="text-purple-400 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-gray-200 truncate font-medium">{src.siteName || src.url}</p>
+                  <p className="text-xs text-gray-500 truncate">{src.url} · {src.pages} page{src.pages !== 1 ? "s" : ""}</p>
+                </div>
+                <Check size={13} className="text-green-400 flex-shrink-0" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* URL input */}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Globe size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+          <input
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && !busy && handleFetch()}
+            placeholder="https://example.com"
+            disabled={busy}
+            className="w-full bg-black/20 border border-purple-500/15 text-gray-200 placeholder-gray-600 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40 disabled:opacity-50"
+          />
+        </div>
+        <button
+          onClick={handleFetch}
+          disabled={!url.trim() || busy}
+          className="flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-sm font-medium rounded-xl transition-all whitespace-nowrap"
+        >
+          {busy
+            ? <><Loader2 size={15} className="animate-spin" /> Crawling…</>
+            : <><Globe size={15} /> {crawledSources.length > 0 ? "Add Source" : "Fetch & Save"}</>}
+        </button>
+      </div>
+
+      {busy && (
+        <p className="text-xs text-purple-400 flex items-center gap-1.5">
+          <Loader2 size={12} className="animate-spin" />
+          Crawling pages… this may take 10–30 seconds
+        </p>
+      )}
+      {status === "done" && lastInfo && (
+        <div className="flex items-center gap-2 text-xs text-green-400 bg-green-400/10 border border-green-400/20 rounded-lg px-3 py-2">
+          <Check size={13} />
+          Fetched {lastInfo.pages} page{lastInfo.pages !== 1 ? "s" : ""} from <span className="font-medium ml-1">{lastInfo.siteName}</span> — saved automatically.
+        </div>
+      )}
+      {status === "error" && (
+        <div className="flex items-center gap-2 text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
+          <AlertCircle size={13} />
+          {error}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function IntegrationPage() {
   const router = useRouter();
@@ -34,7 +143,9 @@ export default function IntegrationPage() {
     position: "bottom-right",
     autoOpen: false,
     whatsappNumber: "",
+    allowedDomains: [],
   });
+  const [newDomain, setNewDomain] = useState("");
 
   // Knowledge base state
   const [knowledgeBase, setKnowledgeBase] = useState("");
@@ -45,6 +156,7 @@ export default function IntegrationPage() {
   const [deleteConfirmIdx, setDeleteConfirmIdx] = useState(null);
   const [quickReplies, setQuickReplies] = useState([]);
   const [newQuickReply, setNewQuickReply] = useState({ question: "", answer: "" });
+  const [crawledSources, setCrawledSources] = useState([]);
 
   // UI state
   const [copied, setCopied] = useState(false);
@@ -83,27 +195,19 @@ export default function IntegrationPage() {
         position: data.position,
         autoOpen: data.autoOpen,
         whatsappNumber: data.whatsappNumber || "",
+        allowedDomains: data.allowedDomains || [],
       });
       setKnowledgeBase(data.knowledgeBase || "");
       setFaqs(data.faqs || []);
       setQuickReplies(data.quickReplies || []);
+      setCrawledSources(data.crawledSources || []);
       setShowWidget(false);
     }).catch(console.error);
   }, [selectedBotId]);
 
   const embedCode = selectedBotId
-    ? `<!-- AI Chatbot Widget -->
-<script>
-  (function() {
-    var iframe = document.createElement('iframe');
-    iframe.src = '${FRONTEND_URL}/widget?botId=${selectedBotId}';
-    iframe.style.cssText = 'position:fixed;bottom:0;right:0;width:420px;height:680px;border:none;z-index:9999;background:transparent;';
-    iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('allowtransparency', 'true');
-    iframe.setAttribute('title', 'Chat Widget');
-    document.body.appendChild(iframe);
-  })();
-</script>`
+    ? `<!-- DoodleAI Chat Widget -->
+<script src="${FRONTEND_URL}/api/widget-script?botId=${selectedBotId}" defer></script>`
     : "Select a chatbot to generate embed code.";
 
   const handleCopy = () => {
@@ -111,6 +215,17 @@ export default function IntegrationPage() {
     navigator.clipboard.writeText(embedCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Called by CrawlSection after successful crawl — backend already saved, just sync local state
+  const handleCrawlDone = (source) => {
+    setCrawledSources((prev) => [...prev, source]);
+  };
+
+  const handleClearCrawlData = async () => {
+    await api.delete(`/chatbots/${selectedBotId}/crawl-data`);
+    setCrawledSources([]);
+    setKnowledgeBase("");
   };
 
   const handleSave = async () => {
@@ -147,6 +262,28 @@ export default function IntegrationPage() {
     setFaqs((prev) => prev.filter((_, i) => i !== idx));
     setDeleteConfirmIdx(null);
     if (expandedFaq === idx) setExpandedFaq(null);
+  };
+
+  // Download sample CSV
+  const handleDownloadSample = () => {
+    const rows = [
+      ["Question", "Answer"],
+      ["What are your business hours?", "We are open Monday to Friday, 9 AM to 6 PM EST."],
+      ["How can I contact support?", "You can reach us at support@example.com or call +1-800-123-4567."],
+      ["What is your return policy?", "We offer a 30-day return policy on all unused items in original packaging."],
+      ["Do you offer free shipping?", "Yes, free shipping is available on orders over $50 within the US."],
+      ["How long does delivery take?", "Standard delivery takes 3-5 business days. Express shipping is available at checkout."],
+      ["Can I track my order?", "Yes, you will receive a tracking link via email once your order has been dispatched."],
+      ["Do you ship internationally?", "Currently we ship to the US, UK, Canada, and Australia."],
+      ["How do I reset my password?", "Click 'Forgot Password' on the login page and follow the instructions sent to your email."],
+    ];
+    const csv = rows.map((r) => r.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "faq-sample.csv";
+    link.click();
+    URL.revokeObjectURL(link.href);
   };
 
   // CSV import
@@ -292,28 +429,80 @@ export default function IntegrationPage() {
                     onChange={(e) => update("whatsappNumber", e.target.value)}
                   />
                 </div>
+
+                {/* Allowed Domains */}
+                <div>
+                  <label className="block text-sm text-gray-400 font-medium mb-1">
+                    Allowed Domains
+                    <span className="ml-2 text-xs text-gray-600 font-normal">Widget only appears on these domains. Leave empty to allow all.</span>
+                  </label>
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      value={newDomain}
+                      onChange={(e) => setNewDomain(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          const d = newDomain.trim().replace(/^https?:\/\//, "").replace(/\/$/, "");
+                          if (d && !config.allowedDomains.includes(d)) {
+                            update("allowedDomains", [...config.allowedDomains, d]);
+                          }
+                          setNewDomain("");
+                        }
+                      }}
+                      placeholder="e.g. www.example.com"
+                      className="flex-1 bg-black/20 border border-purple-500/15 text-gray-200 placeholder-gray-600 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
+                    />
+                    <button
+                      onClick={() => {
+                        const d = newDomain.trim().replace(/^https?:\/\//, "").replace(/\/$/, "");
+                        if (d && !config.allowedDomains.includes(d)) {
+                          update("allowedDomains", [...config.allowedDomains, d]);
+                        }
+                        setNewDomain("");
+                      }}
+                      disabled={!newDomain.trim()}
+                      className="flex items-center gap-1.5 px-4 py-2.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-sm font-medium rounded-xl transition-all"
+                    >
+                      <Plus size={15} /> Add
+                    </button>
+                  </div>
+                  {config.allowedDomains.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {config.allowedDomains.map((d, i) => (
+                        <span key={i} className="flex items-center gap-1.5 bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs rounded-lg px-3 py-1.5">
+                          {d}
+                          <button onClick={() => update("allowedDomains", config.allowedDomains.filter((_, idx) => idx !== i))} className="text-purple-400 hover:text-red-400 transition-colors ml-0.5">
+                            <Trash2 size={11} />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-600">No restrictions — widget loads on any domain.</p>
+                  )}
+                </div>
               </div>
             )}
 
             {activeTab === "knowledge" && (
               <div className="space-y-4">
-                {/* General Knowledge */}
+                {/* Fetch from Website */}
                 <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-6 hover:border-purple-500/20 transition-colors">
                   <div className="mb-4">
-                    <h2 className="text-xl font-semibold text-white">General Site Knowledge</h2>
+                    <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                      Auto-fetch from Website
+                    </h2>
                     <p className="text-gray-500 text-sm mt-1">
-                      Describe your website, products, services, policies, and any information the chatbot should know about.
-                      The bot will answer questions ONLY based on this content.
+                      Enter your website URL and we'll crawl up to 20 pages and extract the content automatically.
                     </p>
                   </div>
-                  <textarea
-                    value={knowledgeBase}
-                    onChange={(e) => setKnowledgeBase(e.target.value)}
-                    rows={10}
-                    placeholder={`Example:\nWe are TechStore, an online electronics retailer.\n\nProducts: Laptops, phones, tablets, accessories.\nReturn Policy: 30-day returns on all items.\nShipping: Free shipping over $50. 3-5 business days.\nSupport hours: Mon-Fri 9am-6pm EST.\nContact: support@techstore.com | +1-800-123-4567`}
-                    className="w-full bg-black/20 border border-purple-500/15 text-gray-200 placeholder-gray-600 rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/40 leading-relaxed"
+                  <CrawlSection
+                    botId={selectedBotId}
+                    crawledSources={crawledSources}
+                    onCrawlDone={handleCrawlDone}
+                    onClearAll={handleClearCrawlData}
                   />
-                  <p className="text-gray-600 text-xs mt-2">{knowledgeBase.length} characters</p>
                 </div>
 
                 {/* FAQ Builder */}
@@ -325,6 +514,13 @@ export default function IntegrationPage() {
                     </div>
                     <div className="flex gap-2">
                       <input ref={csvRef} type="file" accept=".csv" onChange={handleCsvImport} className="hidden" />
+                      <button
+                        onClick={handleDownloadSample}
+                        title="Download sample CSV"
+                        className="flex items-center gap-1.5 px-3 py-2 bg-[#1a1a2e]/80 border border-purple-500/20 hover:border-purple-500/40 rounded-lg text-gray-400 hover:text-gray-200 text-xs font-medium transition-all"
+                      >
+                        <Download size={13} /> Sample
+                      </button>
                       <button
                         onClick={() => csvRef.current?.click()}
                         className="flex items-center gap-1.5 px-3 py-2 bg-[#1a1a2e]/80 border border-purple-500/20 hover:border-purple-500/40 rounded-lg text-gray-400 hover:text-gray-200 text-xs font-medium transition-all"
@@ -522,8 +718,8 @@ export default function IntegrationPage() {
                   <h3 className="text-white font-medium">Installation Steps</h3>
                   {[
                     "Copy the embed code above",
-                    "Paste it before the closing </body> tag in your HTML",
-                    "Save & deploy — the widget will appear automatically",
+                    "Paste it anywhere inside <head> or before </body> on your website",
+                    "Save & deploy — the widget appears automatically on allowed domains",
                   ].map((step, i) => (
                     <div key={i} className="flex gap-3 items-start">
                       <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">{i + 1}</div>

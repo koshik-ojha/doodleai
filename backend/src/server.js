@@ -35,6 +35,11 @@ app.use(cors({
   credentials: true,
 }));
 
+// Public widget endpoints must accept requests from any domain
+const openCors = cors({ origin: "*", credentials: false });
+app.use("/api/widget", openCors);
+app.use("/api/chatbots/public", openCors);
+
 app.use(express.json());
 
 app.use(rateLimit({

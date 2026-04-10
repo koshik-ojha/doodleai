@@ -3,7 +3,8 @@
     "allow": [
       "WebFetch(domain:openrouter.ai)",
       "Bash(npm run:*)",
-      "Bash(npx next:*)"
+      "Bash(npx next:*)",
+      "Bash(npm install:*)"
     ]
   }
 }

@@ -433,6 +433,40 @@ export default function HomePage() {
   );
 }
 
+// Reusable OTP input grid
+function OtpGrid({ otp, setOtp, refs }) {
+  const handleChange = (i, val) => {
+    if (!/^\d*$/.test(val)) return;
+    const next = [...otp];
+    next[i] = val.slice(-1);
+    setOtp(next);
+    if (val && i < 5) refs[i + 1].current?.focus();
+  };
+  const handleKeyDown = (i, e) => {
+    if (e.key === "Backspace" && !otp[i] && i > 0) refs[i - 1].current?.focus();
+  };
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (!pasted) return;
+    const next = pasted.split("").concat(Array(6).fill("")).slice(0, 6);
+    setOtp(next);
+    refs[Math.min(pasted.length, 5)].current?.focus();
+  };
+  return (
+    <div className="flex justify-center gap-3 mb-6">
+      {otp.map((digit, i) => (
+        <input key={i} ref={refs[i]} type="text" inputMode="numeric" maxLength={1} value={digit}
+          onChange={(e) => handleChange(i, e.target.value)}
+          onKeyDown={(e) => handleKeyDown(i, e)}
+          onPaste={handlePaste}
+          className="w-12 h-14 text-center text-xl font-bold bg-zinc-800/50 border border-zinc-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+        />
+      ))}
+    </div>
+  );
+}
+
 // Auth Modal Component
 function AuthModal({ isLogin, setIsLogin, onClose }) {
   const router = useRouter();
@@ -440,18 +474,43 @@ function AuthModal({ isLogin, setIsLogin, onClose }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // "register-otp" | "forgot-email" | "forgot-otp" | "forgot-password" | null
+  const [step, setStep] = useState(null);
+  const [pendingEmail, setPendingEmail] = useState("");
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [resending, setResending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resetDone, setResetDone] = useState(false);
+
+  const otpRefs = Array.from({ length: 6 }, () => ({ current: null }));
+
+  const startCooldown = () => {
+    setResendCooldown(60);
+    const t = setInterval(() => setResendCooldown((p) => { if (p <= 1) { clearInterval(t); return 0; } return p - 1; }), 1000);
+  };
+
+  const resetOtp = () => setOtp(["", "", "", "", "", ""]);
+
+  // ── Register ──────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       const api = (await import("@lib/api")).default;
-      const endpoint = isLogin ? "/auth/login" : "/auth/register";
-      const { data } = await api.post(endpoint, form);
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      router.push("/dashboard");
+      if (isLogin) {
+        const { data } = await api.post("/auth/login", form);
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        router.push("/dashboard");
+      } else {
+        await api.post("/auth/register", form);
+        setPendingEmail(form.email);
+        setStep("register-otp");
+        startCooldown();
+      }
     } catch (err) {
       setError(err.response?.data?.error || "Something went wrong");
     } finally {
@@ -459,87 +518,259 @@ function AuthModal({ isLogin, setIsLogin, onClose }) {
     }
   };
 
+  const handleVerifyRegister = async () => {
+    const code = otp.join("");
+    if (code.length < 6) { setError("Enter the complete 6-digit code."); return; }
+    setError(""); setLoading(true);
+    try {
+      const api = (await import("@lib/api")).default;
+      const { data } = await api.post("/auth/verify-otp", { email: pendingEmail, otp: code });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.error || "Invalid OTP");
+      resetOtp(); otpRefs[0].current?.focus();
+    } finally { setLoading(false); }
+  };
+
+  const handleResendRegister = async () => {
+    if (resendCooldown > 0) return;
+    setResending(true); setError("");
+    try {
+      const api = (await import("@lib/api")).default;
+      await api.post("/auth/resend-otp", { email: pendingEmail });
+      startCooldown();
+    } catch (err) { setError(err.response?.data?.error || "Failed to resend"); }
+    finally { setResending(false); }
+  };
+
+  // ── Forgot password ───────────────────────────────────────────────
+  const handleForgotEmail = async (e) => {
+    e.preventDefault();
+    setError(""); setLoading(true);
+    try {
+      const api = (await import("@lib/api")).default;
+      await api.post("/auth/forgot-password", { email: pendingEmail });
+      setStep("forgot-otp");
+      startCooldown();
+    } catch (err) { setError(err.response?.data?.error || "Something went wrong"); }
+    finally { setLoading(false); }
+  };
+
+  const handleVerifyReset = async () => {
+    const code = otp.join("");
+    if (code.length < 6) { setError("Enter the complete 6-digit code."); return; }
+    setError(""); setLoading(true);
+    try {
+      // Just validate OTP exists — actual reset happens on next step
+      // We'll store the code and move on; server validates on submit
+      setStep("forgot-newpass");
+    } finally { setLoading(false); }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) { setError("Passwords do not match."); return; }
+    if (newPassword.length < 6) { setError("Password must be at least 6 characters."); return; }
+    setError(""); setLoading(true);
+    try {
+      const api = (await import("@lib/api")).default;
+      await api.post("/auth/reset-password", { email: pendingEmail, otp: otp.join(""), newPassword });
+      setResetDone(true);
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to reset password");
+      if (err.response?.data?.error?.includes("OTP")) { setStep("forgot-otp"); resetOtp(); }
+    } finally { setLoading(false); }
+  };
+
+  const handleResendReset = async () => {
+    if (resendCooldown > 0) return;
+    setResending(true); setError("");
+    try {
+      const api = (await import("@lib/api")).default;
+      await api.post("/auth/forgot-password", { email: pendingEmail });
+      startCooldown();
+    } catch (err) { setError(err.response?.data?.error || "Failed to resend"); }
+    finally { setResending(false); }
+  };
+
+  const emailIcon = (
+    <div className="w-14 h-14 rounded-2xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center mx-auto mb-4">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+    </div>
+  );
+
+  const ErrorBox = ({ msg }) => msg ? (
+    <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-center">{msg}</div>
+  ) : null;
+
+  const ResendRow = ({ onResend }) => (
+    <div className="text-center text-sm text-gray-400 mt-4">
+      Didn&apos;t receive it?{" "}
+      <button onClick={onResend} disabled={resendCooldown > 0 || resending}
+        className="text-purple-400 hover:text-purple-300 disabled:opacity-50 font-medium transition-colors">
+        {resending ? "Sending…" : resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
+      </button>
+    </div>
+  );
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="relative bg-zinc-900 border border-zinc-800 rounded-3xl p-8 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
-        >
-          ✕
-        </button>
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">✕</button>
 
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-white mb-2">
-            {isLogin ? "Welcome Back" : "Create Account"}
-          </h2>
-          <p className="text-gray-400 text-sm">
-            {isLogin ? "Login to your dashboard" : "Start your free trial today"}
-          </p>
-        </div>
-
-        <div className="flex gap-2 p-1 bg-zinc-800/50 rounded-xl mb-6">
-          <button
-            type="button"
-            onClick={() => setIsLogin(true)}
-            className={`flex-1 py-2 rounded-lg font-medium text-sm transition-all ${
-              isLogin ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            Login
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsLogin(false)}
-            className={`flex-1 py-2 rounded-lg font-medium text-sm transition-all ${
-              !isLogin ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            Sign Up
-          </button>
-        </div>
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
-            {error}
+        {/* ── Register OTP ── */}
+        {step === "register-otp" && (
+          <div>
+            <div className="text-center mb-6">{emailIcon}
+              <h2 className="text-2xl font-bold text-white mb-2">Check your email</h2>
+              <p className="text-gray-400 text-sm">We sent a 6-digit code to<br /><span className="text-purple-400 font-medium">{pendingEmail}</span></p>
+            </div>
+            <ErrorBox msg={error} />
+            <OtpGrid otp={otp} setOtp={setOtp} refs={otpRefs} />
+            <button onClick={handleVerifyRegister} disabled={loading || otp.join("").length < 6}
+              className="w-full py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 disabled:opacity-50 rounded-xl text-white font-semibold transition-all shadow-lg shadow-purple-500/30">
+              {loading ? "Verifying…" : "Verify Email"}
+            </button>
+            <ResendRow onResend={handleResendRegister} />
+            <div className="text-center mt-3">
+              <button onClick={() => { setStep(null); resetOtp(); setError(""); }} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">← Back to sign up</button>
+            </div>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
-            <input
-              type="text"
-              placeholder="Full Name"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
-              required
-            />
-          )}
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
-            required
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 disabled:opacity-50 rounded-xl text-white font-semibold transition-all shadow-lg shadow-purple-500/30"
-          >
-            {loading ? "Please wait..." : (isLogin ? "Login" : "Create Account")}
-          </button>
-        </form>
+        {/* ── Forgot: enter email ── */}
+        {step === "forgot-email" && (
+          <div>
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center mx-auto mb-4">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">Forgot Password?</h2>
+              <p className="text-gray-400 text-sm">Enter your email and we&apos;ll send a reset code.</p>
+            </div>
+            <ErrorBox msg={error} />
+            <form onSubmit={handleForgotEmail} className="space-y-4">
+              <input type="email" placeholder="Email Address" value={pendingEmail}
+                onChange={(e) => setPendingEmail(e.target.value)}
+                className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                required autoFocus />
+              <button type="submit" disabled={loading}
+                className="w-full py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 disabled:opacity-50 rounded-xl text-white font-semibold transition-all shadow-lg shadow-purple-500/30">
+                {loading ? "Sending…" : "Send Reset Code"}
+              </button>
+            </form>
+            <div className="text-center mt-4">
+              <button onClick={() => { setStep(null); setError(""); setPendingEmail(""); }} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">← Back to login</button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Forgot: enter OTP ── */}
+        {step === "forgot-otp" && (
+          <div>
+            <div className="text-center mb-6">{emailIcon}
+              <h2 className="text-2xl font-bold text-white mb-2">Enter Reset Code</h2>
+              <p className="text-gray-400 text-sm">We sent a 6-digit code to<br /><span className="text-purple-400 font-medium">{pendingEmail}</span></p>
+            </div>
+            <ErrorBox msg={error} />
+            <OtpGrid otp={otp} setOtp={setOtp} refs={otpRefs} />
+            <button onClick={handleVerifyReset} disabled={loading || otp.join("").length < 6}
+              className="w-full py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 disabled:opacity-50 rounded-xl text-white font-semibold transition-all shadow-lg shadow-purple-500/30">
+              {loading ? "Verifying…" : "Continue"}
+            </button>
+            <ResendRow onResend={handleResendReset} />
+            <div className="text-center mt-3">
+              <button onClick={() => { setStep("forgot-email"); resetOtp(); setError(""); }} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">← Change email</button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Forgot: new password ── */}
+        {step === "forgot-newpass" && !resetDone && (
+          <div>
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-green-500/15 border border-green-500/30 flex items-center justify-center mx-auto mb-4">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">Set New Password</h2>
+              <p className="text-gray-400 text-sm">Choose a strong password for your account.</p>
+            </div>
+            <ErrorBox msg={error} />
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <input type="password" placeholder="New Password" value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)} minLength={6}
+                className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                required autoFocus />
+              <input type="password" placeholder="Confirm New Password" value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                required />
+              <button type="submit" disabled={loading}
+                className="w-full py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 disabled:opacity-50 rounded-xl text-white font-semibold transition-all shadow-lg shadow-purple-500/30">
+                {loading ? "Saving…" : "Reset Password"}
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* ── Reset success ── */}
+        {step === "forgot-newpass" && resetDone && (
+          <div className="text-center py-4">
+            <div className="w-16 h-16 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center mx-auto mb-4">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-2">Password Reset!</h2>
+            <p className="text-gray-400 text-sm mb-6">Your password has been updated successfully.</p>
+            <button onClick={() => { setStep(null); setIsLogin(true); setResetDone(false); resetOtp(); setNewPassword(""); setConfirmPassword(""); setError(""); }}
+              className="w-full py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 rounded-xl text-white font-semibold transition-all shadow-lg shadow-purple-500/30">
+              Back to Login
+            </button>
+          </div>
+        )}
+
+        {/* ── Login / Register ── */}
+        {!step && (
+          <div>
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-white mb-2">{isLogin ? "Welcome Back" : "Create Account"}</h2>
+              <p className="text-gray-400 text-sm">{isLogin ? "Login to your dashboard" : "Start your free trial today"}</p>
+            </div>
+            <div className="flex gap-2 p-1 bg-zinc-800/50 rounded-xl mb-6">
+              <button type="button" onClick={() => { setIsLogin(true); setError(""); }}
+                className={`flex-1 py-2 rounded-lg font-medium text-sm transition-all ${isLogin ? "bg-purple-600 text-white" : "text-gray-400 hover:text-white"}`}>Login</button>
+              <button type="button" onClick={() => { setIsLogin(false); setError(""); }}
+                className={`flex-1 py-2 rounded-lg font-medium text-sm transition-all ${!isLogin ? "bg-purple-600 text-white" : "text-gray-400 hover:text-white"}`}>Sign Up</button>
+            </div>
+            <ErrorBox msg={error} />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <input type="text" placeholder="Full Name" value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" required />
+              )}
+              <input type="email" placeholder="Email Address" value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" required />
+              <input type="password" placeholder="Password" value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" required />
+              {isLogin && (
+                <div className="text-right">
+                  <button type="button" onClick={() => { setStep("forgot-email"); setPendingEmail(form.email); setError(""); }}
+                    className="text-sm text-purple-400 hover:text-purple-300 transition-colors">
+                    Forgot password?
+                  </button>
+                </div>
+              )}
+              <button type="submit" disabled={loading}
+                className="w-full py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 disabled:opacity-50 rounded-xl text-white font-semibold transition-all shadow-lg shadow-purple-500/30">
+                {loading ? "Please wait…" : isLogin ? "Login" : "Continue"}
+              </button>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );

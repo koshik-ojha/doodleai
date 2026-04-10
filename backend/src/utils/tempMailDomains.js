@@ -1,0 +1,51 @@
+// Common disposable / temporary email domains
+const TEMP_DOMAINS = new Set([
+  "mailinator.com","guerrillamail.com","guerrillamail.net","guerrillamail.org",
+  "guerrillamail.biz","guerrillamail.de","guerrillamail.info","guerrillamail.l.com",
+  "sharklasers.com","guerrillamailblock.com","grr.la","guerrillamail.biz",
+  "throwam.com","throwam.net","yopmail.com","yopmail.fr","yopmail.net",
+  "cool.fr.nf","jetable.fr.nf","nospam.ze.tc","nomail.xl.cx","mega.zik.dj",
+  "speed.1s.fr","courriel.fr.nf","moncourrier.fr.nf","monemail.fr.nf",
+  "monmail.fr.yopmail.com","10minutemail.com","10minutemail.net","10minutemail.org",
+  "10minutemail.de","10minutemail.co.uk","10minemail.com","10minutesemail.com",
+  "tempmail.com","tempmail.net","tempmail.org","tempmail.de","temp-mail.org",
+  "temp-mail.ru","temp-mail.io","tempinbox.com","tmpeml.com","tmpmail.net",
+  "tmails.net","fakeinbox.com","fakeinbox.net","fakeinbox.org","fakeinbox.info",
+  "trashmail.com","trashmail.net","trashmail.org","trashmail.me","trashmail.at",
+  "trashmail.io","trashmail.xyz","trashmailer.com","disposablemail.com",
+  "dispostable.com","dispostable.net","throwam.com","throwaway.email",
+  "maildrop.cc","mailnull.com","mailnull.net","spamgourmet.com","spamgourmet.net",
+  "spamgourmet.org","mailnesia.com","mailcatch.com","mailcatch.net",
+  "mailbolt.com","mailblocks.com","mailexpire.com","mailf5.com","mailfa.tk",
+  "mailin8r.com","mailinator2.com","mailme.lv","mailmetrash.com","mailnew.com",
+  "mailnull.com","mailpick.biz","mailseal.de","mailshell.com","mailslapping.com",
+  "mailzilla.com","mailzilla.org","maxi-mail.com","mega-email.com","myspamless.com",
+  "spamfree.eu","spamfree24.de","spamfree24.eu","spamfree24.info","spamfree24.net",
+  "spamfree24.org","spamglobal.com","spamhole.com","spamify.com","spamkill.info",
+  "spaml.com","spaml.de","spammotel.com","spamnot.com","spamoff.de","spamspot.com",
+  "spamthis.co.uk","spamtroll.net","spamwc.de","speed.1s.fr","squizzy.de",
+  "supermailer.jp","suremail.info","tempalias.com","tempe-mail.com","tempr.email",
+  "tempsky.com","thankyou2010.com","thanksnospam.info","thisisnotmyrealemail.com",
+  "throwam.com","trash2009.com","trashdevil.com","trashdevil.de","trashemail.de",
+  "trashimail.de","trashmail2.de","vomoto.com","wetrash.de","willselfdestruct.com",
+  "wmail.cf","wronghead.com","wuzupmail.net","xoxy.net","xsmail.com","yapped.net",
+  "yeah.net","yep.it","yertxenor.tk","yogamaven.com","yopmail.pp.ua","ypmail.weebly.com",
+  "z1p.biz","za.com","zehnminuten.de","zehnminutenmail.de","zoemail.net","zomg.info",
+  "mohmal.com","getairmail.com","crazymailing.com","discardmail.com","discardmail.de",
+  "spam4.me","nwldx.com","filzmail.com","harakirimail.com","kurzepost.de",
+  "objectmail.com","onewaymail.com","pepbot.com","put2.net","qq.com",
+  "refugeeks.com","rklips.com","rmqkr.net","royal.net","s0ny.net","safe-mail.net",
+  "safetypost.de","sam.net","satukosong.com","selfdestructingmail.com",
+  "sendspamhere.com","sharedmailbox.org","shieldemail.com","shiftmail.com",
+  "shortmail.net","sibmail.com","skeefmail.com","sl.pt","slippery.email",
+  "smellfear.com","snkmail.com","sofimail.com","solvemail.info","sogetthis.com",
+  "soodonims.com","spam.care","spam.la","spambob.net","spambob.org","spambox.info",
+  "spambox.irishspringrealty.com","spambox.us","spamcannon.com","spamcannon.net",
+  "spamcero.com","spamcon.org","spamday.com","spamdecoy.net","spamex.com",
+]);
+
+export function isTempEmail(email) {
+  const domain = email.split("@")[1]?.toLowerCase();
+  if (!domain) return true;
+  return TEMP_DOMAINS.has(domain);
+}

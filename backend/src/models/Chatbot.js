@@ -18,6 +18,13 @@ const chatbotSchema = new mongoose.Schema({
   faqs: [faqSchema],
   quickReplies: [{ question: { type: String, required: true }, answer: { type: String, default: "" } }],
   isActive: { type: Boolean, default: true },
+  allowedDomains: [{ type: String }],
+  crawledSources: [{
+    url: { type: String },
+    pages: { type: Number },
+    siteName: { type: String },
+    crawledAt: { type: Date, default: Date.now },
+  }],
 }, { timestamps: true });
 
 export default mongoose.model("Chatbot", chatbotSchema);

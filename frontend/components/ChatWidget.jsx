@@ -12,6 +12,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function ChatWidget({
   botId = null,
+  domain = "",
   botName = "Support Assistant",
   welcomeMessage = "Hello! How can I help you today?",
   primaryColor = "#7c3aed",
@@ -57,6 +58,7 @@ export default function ChatWidget({
         message: msg,
         sessionId,
         botId,
+        ...(domain && { domain }),
       });
       setSessionId(data.sessionId);
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply, time: new Date() }]);
