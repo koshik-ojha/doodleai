@@ -386,7 +386,6 @@ function widgetScript(botId, apiUrl) {
       chatBody.appendChild(wrap);
     }
 
-    /* ── Form field helpers (scoped inside build so they close over `color`) ── */
     function fInp(type, placeholder, name, required) {
       var el = mk('input',
         'width:100%;border:1.5px solid #e5e7eb;background:#f9fafb;color:#111827;' +
