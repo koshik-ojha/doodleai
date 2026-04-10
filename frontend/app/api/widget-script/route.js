@@ -165,7 +165,7 @@ function widgetScript(botId, apiUrl) {
     backBtn.textContent = '\u2190 Back to menu';
     backBtn.onmouseover = function () { backBtn.style.color = '#6b7280'; };
     backBtn.onmouseout  = function () { backBtn.style.color = '#9ca3af'; };
-    var inputRow = mk('div', 'display:flex;gap:8px;align-items:center;border:1px solid #e5e7eb;border-radius:9999px;padding:10px 16px;');
+    var inputRow = mk('div', 'display:flex;gap:8px;align-items:center;');
     var inp = mk('input', 'flex:1;border:1.5px solid #e5e7eb;background:#f9fafb;color:#111827;border-radius:9999px;padding:10px 16px;font-size:13px;line-height:1.5;');
     inp.id = 'doodleai-chat-inp';
     inp.type = 'text';
