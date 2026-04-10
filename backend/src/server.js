@@ -24,21 +24,27 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-}));
+// Single CORS middleware: open for public widget routes, restricted for everything else
+app.use((req, res, next) => {
+  const isPublic =
+    req.path.startsWith("/api/widget") ||
+    req.path.startsWith("/api/chatbots/public");
 
-// Public widget endpoints must accept requests from any domain
-const openCors = cors({ origin: "*", credentials: false });
-app.use("/api/widget", openCors);
-app.use("/api/chatbots/public", openCors);
+  if (isPublic) {
+    cors({ origin: "*", credentials: false })(req, res, next);
+  } else {
+    cors({
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
+      credentials: true,
+    })(req, res, next);
+  }
+});
 
 app.use(express.json());
 
