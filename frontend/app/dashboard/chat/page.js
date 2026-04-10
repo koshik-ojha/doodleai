@@ -17,6 +17,8 @@ export default function ChatPage() {
   const [confirmId, setConfirmId] = useState(null);
   const [search, setSearch] = useState("");
   const [showOptions, setShowOptions] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const messagesEndRef = useRef(null);
   const optionsRef = useRef(null);
   const textareaRef = useRef(null);
@@ -33,6 +35,19 @@ export default function ChatPage() {
     sendMessage,
     deleteChat,
   } = useChatStore();
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (!mobile) setSidebarOpen(true);
+    };
+    
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -78,11 +93,13 @@ export default function ChatPage() {
   const handleSelectChat = (chat) => {
     setActiveChat(chat);
     fetchMessages(chat._id);
+    if (isMobile) setSidebarOpen(false);
   };
 
   const handleNewChat = async () => {
     const chat = await createChat();
     if (chat) fetchMessages(chat._id);
+    if (isMobile) setSidebarOpen(false);
   };
 
   const handleSend = async () => {
@@ -140,10 +157,25 @@ export default function ChatPage() {
 
   return (
     <DashboardLayout>
-      <div className="h-[calc(100vh-120px)] flex gap-4 overflow-hidden">
+      <div className="h-[calc(100vh-120px)] md:h-[calc(100vh-120px)] flex gap-4 overflow-hidden relative">
+
+        {/* Mobile Overlay */}
+        {isMobile && sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
         {/* ── Chat List Sidebar ── */}
-        <div className="w-64 flex-shrink-0 flex flex-col bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl overflow-hidden">
+        <aside className={`
+          ${isMobile 
+            ? 'fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 ease-in-out' 
+            : 'relative w-64'
+          }
+          ${isMobile && !sidebarOpen ? '-translate-x-full' : 'translate-x-0'}
+          flex-shrink-0 flex flex-col bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl overflow-hidden
+        `}>
           {/* New Chat */}
           <div className="p-3 border-b border-purple-500/10">
             <button
@@ -213,7 +245,17 @@ export default function ChatPage() {
               {chats.length} conversation{chats.length !== 1 ? "s" : ""}
             </p>
           </div>
-        </div>
+        </aside>
+
+        {/* Mobile Toggle Button */}
+        {isMobile && !sidebarOpen && (
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="fixed bottom-6 left-6 z-30 p-4 bg-purple-600 hover:bg-purple-700 rounded-full shadow-lg md:hidden touch-manipulation"
+          >
+            <MessageSquare size={20} />
+          </button>
+        )}
 
         {/* ── Chat Window ── */}
         <div className="flex-1 flex flex-col bg-[#0a0a1a]/50 rounded-2xl border border-purple-500/10 overflow-hidden min-w-0">
@@ -331,9 +373,9 @@ export default function ChatPage() {
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t border-purple-500/10">
+          <div className="p-3 sm:p-4 border-t border-purple-500/10 safe-bottom">
             <div className="max-w-3xl mx-auto">
-              <div className="bg-[#1a1a2e]/80 border border-purple-500/20 rounded-2xl px-4 py-3 flex items-center gap-3">
+              <div className="bg-[#1a1a2e]/80 border border-purple-500/20 rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 flex items-center gap-2 sm:gap-3">
                 <textarea
                   ref={textareaRef}
                   value={input}
@@ -346,15 +388,15 @@ export default function ChatPage() {
                   }}
                   placeholder={activeChat ? "Ask anything…" : "Type to start a new chat…"}
                   rows={1}
-                  className="flex-1 bg-transparent text-gray-200 placeholder-gray-600 text-sm resize-none focus:outline-none leading-relaxed"
+                  className="flex-1 bg-transparent text-gray-200 placeholder-gray-600 text-sm sm:text-base resize-none focus:outline-none leading-relaxed !h-auto !lg:h-[120px]"
                   style={{ minHeight: "22px", maxHeight: "120px" }}
                 />
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || loading}
-                  className="p-2.5 bg-purple-500/20 hover:bg-purple-600 border border-purple-500/30 hover:border-purple-500/50 rounded-xl text-purple-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all flex-shrink-0"
+                  className="p-2.5 sm:p-3 bg-purple-500/20 hover:bg-purple-600 border border-purple-500/30 hover:border-purple-500/50 rounded-xl text-purple-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all flex-shrink-0 touch-manipulation"
                 >
-                  <Send size={17} />
+                  <Send size={18} className="sm:w-5 sm:h-5" />
                 </button>
               </div>
               <p className="text-center text-[11px] text-gray-700 mt-2">

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { 
   MessageSquare, Zap, BarChart3, Globe, ArrowRight, CheckCircle, 
-  Sparkles, Users, TrendingUp, Code, Rocket, Star, ChevronDown
+  Sparkles, Users, TrendingUp, Code, Rocket, Star, ChevronDown, LogIn, UserPlus
 } from "lucide-react";
 import BotWidget, { SvgIcon as BotIcon } from "@components/BotWidget";
 import Logo from "@images/logo.svg";
@@ -27,41 +27,46 @@ export default function HomePage() {
 
       {/* Navigation */}
       <nav className="relative z-10 border-b border-zinc-800/50 backdrop-blur-xl bg-zinc-900/50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2">
-              <Image src={Logo} alt="Doodle AI"  />
+              <Image src={Logo} alt="Doodle AI" className="h-9 sm:h-10 md:h-12 w-auto" />
             </Link>
           </div>
-          <div className="flex items-center gap-4">
+          
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
             <button 
               onClick={() => { setIsLogin(true); setShowAuthModal(true); }}
-              className="px-5 py-2 text-sm text-gray-300 hover:text-white transition-colors"
+              className="w-8 h-8 sm:w-auto sm:h-auto sm:px-5 sm:py-2.5 border border-purple-500 text-purple-400 hover:bg-purple-500/10 rounded-lg transition-all flex items-center justify-center gap-2 touch-manipulation"
+              title="Login"
             >
-              Login
+              <LogIn size={20} className="sm:w-5 sm:h-5" />
+              <span className="hidden md:inline text-sm font-medium">Login</span>
             </button>
             <button 
               onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
-              className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 rounded-lg text-white text-sm font-medium transition-all shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
+              className="w-8 h-8 sm:w-auto sm:h-auto sm:px-5 md:px-6 sm:py-2.5 border border-purple-500 text-purple-400 hover:bg-purple-500/10 rounded-lg transition-all flex items-center justify-center gap-2 touch-manipulation"
+              title="Get Started"
             >
-              Get Started
+              <UserPlus size={20} className="sm:w-5 sm:h-5" />
+              <span className="hidden md:inline text-sm font-medium">Get Started</span>
             </button>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 pt-20 pb-32 px-6">
+      <section className="relative z-10 pt-12 sm:pt-16 md:pt-20 pb-16 sm:pb-24 md:pb-32 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
             {/* Left Content */}
-            <div className="space-y-8 animate-fade-in">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-sm">
-                <Sparkles size={16} />
+            <div className="space-y-6 sm:space-y-8 animate-fade-in">
+              <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-sm sm:text-base">
+                <Sparkles size={18} className="sm:w-5 sm:h-5" />
                 <span>Powered by Advanced AI</span>
               </div>
               
-              <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 <span className="bg-gradient-to-r from-white via-white to-zinc-400 bg-clip-text text-transparent">
                   Transform Your
                 </span>
@@ -71,46 +76,46 @@ export default function HomePage() {
                 </span>
               </h1>
               
-              <p className="text-xl text-gray-400 leading-relaxed max-w-xl">
+              <p className="text-lg sm:text-xl md:text-2xl text-gray-400 leading-relaxed max-w-xl">
                 Deploy intelligent Doodle AIs in minutes. Engage visitors, capture leads, 
                 and provide 24/7 support with our powerful chatbot platform.
               </p>
               
-              <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
                 <button 
                   onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
-                  className="group px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 rounded-xl text-white font-semibold transition-all shadow-xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 flex items-center gap-2"
+                  className="group px-5 sm:px-9 py-3 sm:py-4 !text-sm sm:text-lg bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 rounded-xl text-white font-semibold transition-all shadow-xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 flex items-center justify-center gap-2 touch-manipulation"
                 >
                   Start Free Trial
-                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight size={20} className="sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button 
                   onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}
-                  className="px-8 py-4 bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700 rounded-xl text-white font-semibold transition-all flex items-center gap-2"
+                  className="px-5 sm:px-9 py-3 sm:py-4 !text-sm sm:text-lg bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700 rounded-xl text-white font-semibold transition-all flex items-center justify-center gap-2 touch-manipulation"
                 >
                   See How It Works
-                  <ChevronDown size={20} />
+                  <ChevronDown size={20} className="sm:w-6 sm:h-6" />
                 </button>
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 pt-8 border-t border-zinc-800">
+              <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8 border-t border-zinc-800">
                 {[
                   { value: "10k+", label: "Active Users" },
                   { value: "99.9%", label: "Uptime" },
                   { value: "500k+", label: "Conversations" },
                 ].map((stat, i) => (
                   <div key={i}>
-                    <div className="text-2xl font-bold text-white">{stat.value}</div>
-                    <div className="text-sm text-gray-500">{stat.label}</div>
+                    <div className="text-2xl sm:text-3xl font-bold text-white">{stat.value}</div>
+                    <div className="text-sm sm:text-base text-gray-500">{stat.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Right Visual */}
-            <div className="relative animate-slide-up">
-              <div className="relative bg-gradient-to-br from-zinc-900/80 to-zinc-800/80 backdrop-blur-xl rounded-3xl border border-zinc-700/50 p-8 shadow-2xl">
+            <div className="relative animate-slide-up hidden lg:block">
+              <div className="relative bg-gradient-to-br from-zinc-900/80 to-zinc-800/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-zinc-700/50 p-6 sm:p-8 shadow-2xl">
                 {/* Mock Chat Interface */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 pb-4 border-b border-zinc-700">
@@ -165,24 +170,24 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="relative z-10 py-20 px-6 bg-zinc-900/30">
+      <section id="features" className="relative z-10 py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-zinc-900/30">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-sm mb-4">
-              <Star size={16} />
+          <div className="text-center mb-10 sm:mb-12 md:mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-sm sm:text-base mb-4">
+              <Star size={18} className="sm:w-5 sm:h-5" />
               <span>Features</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4">
               <span className="bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
                 Everything You Need
               </span>
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto px-4">
               Powerful features to enhance customer engagement and streamline support
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[
               {
                 icon: MessageSquare,
@@ -223,13 +228,13 @@ export default function HomePage() {
             ].map((feature, i) => (
               <div 
                 key={i} 
-                className="group bg-zinc-800/30 backdrop-blur-sm border border-zinc-700/50 hover:border-purple-500/50 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1"
+                className="group bg-zinc-800/30 backdrop-blur-sm border border-zinc-700/50 hover:border-purple-500/50 rounded-xl sm:rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1"
               >
-                <div className={`w-12 h-12 rounded-xl bg-${feature.color}-500/10 border border-${feature.color}-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  <feature.icon size={24} className={`text-${feature.color}-400`} />
+                <div className={`w-14 h-14 rounded-xl bg-${feature.color}-500/10 border border-${feature.color}-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                  <feature.icon size={28} className={`text-${feature.color}-400`} />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-white">{feature.title}</h3>
-                <p className="text-gray-400 leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl sm:text-2xl font-semibold mb-2 text-white">{feature.title}</h3>
+                <p className="text-base sm:text-lg text-gray-400 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -237,21 +242,21 @@ export default function HomePage() {
       </section>
 
       {/* How It Works */}
-      <section className="relative z-10 py-20 px-6">
+      <section className="relative z-10 py-12 sm:py-16 md:py-20 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-sm mb-4">
-              <Rocket size={16} />
+          <div className="text-center mb-10 sm:mb-12 md:mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-sm sm:text-base mb-4">
+              <Rocket size={18} className="sm:w-5 sm:h-5" />
               <span>Simple Process</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4">
               <span className="bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
                 Get Started in Minutes
               </span>
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {[
               {
                 step: "01",
@@ -273,13 +278,13 @@ export default function HomePage() {
               },
             ].map((step, i) => (
               <div key={i} className="relative">
-                <div className="bg-gradient-to-br from-zinc-800/50 to-zinc-900/50 backdrop-blur-sm border border-zinc-700/50 rounded-2xl p-8">
+                <div className="bg-gradient-to-br from-zinc-800/50 to-zinc-900/50 backdrop-blur-sm border border-zinc-700/50 rounded-xl sm:rounded-2xl p-6 sm:p-8">
                   <div className="text-6xl font-bold text-purple-500/20 mb-4">{step.step}</div>
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-600 to-purple-500 flex items-center justify-center mb-6 shadow-lg shadow-purple-500/30">
-                    <step.icon size={28} className="text-white" />
+                  <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-600 to-purple-500 flex items-center justify-center mb-6 shadow-lg shadow-purple-500/30">
+                    <step.icon size={32} className="text-white" />
                   </div>
-                  <h3 className="text-2xl font-semibold mb-3 text-white">{step.title}</h3>
-                  <p className="text-gray-400 leading-relaxed">{step.description}</p>
+                  <h3 className="text-2xl sm:text-3xl font-semibold mb-3 text-white">{step.title}</h3>
+                  <p className="text-base sm:text-lg text-gray-400 leading-relaxed">{step.description}</p>
                 </div>
                 {i < 2 && (
                   <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-[2px] bg-gradient-to-r from-purple-500 to-transparent"></div>
@@ -291,36 +296,36 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative z-10 py-20 px-6">
+      <section className="relative z-10 py-12 sm:py-16 md:py-20 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="relative bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-purple-500/20 rounded-3xl p-12 md:p-16 overflow-hidden">
+          <div className="relative bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-purple-500/20 rounded-2xl sm:rounded-3xl p-8 sm:p-12 md:p-16 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-blue-500/5 to-purple-500/5"></div>
             <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
             
-            <div className="relative text-center space-y-6">
-              <h2 className="text-4xl md:text-5xl font-bold">
+            <div className="relative text-center space-y-4 sm:space-y-6">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold">
                 <span className="bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
                   Ready to Transform Your Support?
                 </span>
               </h2>
-              <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              <p className="text-lg sm:text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto px-4">
                 Join thousands of businesses using Doodle AIs to engage customers and grow faster.
               </p>
-              <div className="flex flex-wrap justify-center gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 pt-4">
                 <button 
                   onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
-                  className="px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white rounded-xl font-semibold transition-all shadow-xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 flex items-center gap-2"
+                  className="px-7 sm:px-9 py-3.5 sm:py-4 text-base sm:text-lg bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white rounded-xl font-semibold transition-all shadow-xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 flex items-center justify-center gap-2 w-full sm:w-auto touch-manipulation"
                 >
                   Start Your Free Trial
-                  <ArrowRight size={20} />
+                  <ArrowRight size={20} className="sm:w-6 sm:h-6" />
                 </button>
-                <button className="px-8 py-4 bg-zinc-800/50 hover:bg-zinc-800 text-white border border-zinc-700 rounded-xl font-semibold transition-all">
+                <button className="px-7 sm:px-9 py-3.5 sm:py-4 text-base sm:text-lg bg-zinc-800/50 hover:bg-zinc-800 text-white border border-zinc-700 rounded-xl font-semibold transition-all w-full sm:w-auto touch-manipulation">
                   Schedule a Demo
                 </button>
               </div>
               
-              <div className="flex flex-wrap justify-center items-center gap-6 pt-8 text-gray-400">
+              <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 sm:gap-6 pt-6 sm:pt-8 text-sm sm:text-base text-gray-400">
                 <div className="flex items-center gap-2">
                   <CheckCircle size={20} className="text-purple-400" />
                   <span>No credit card required</span>
@@ -340,16 +345,16 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-zinc-800 bg-zinc-900/50 backdrop-blur-xl mt-20">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
+      <footer className="relative z-10 border-t border-zinc-800 bg-zinc-900/50 backdrop-blur-xl mt-12 sm:mt-16 md:mt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8">
+            <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-3 mb-4">
                 <Link href="/" className="flex items-center gap-2">
-                  <Image src={Logo} alt="Doodle AI"  />
+                  <Image src={Logo} alt="Doodle AI" className="h-8 sm:h-10 w-auto" />
                 </Link>
               </div>
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-400 text-xs sm:text-sm">
                 The most powerful Doodle AI platform for modern businesses.
               </p>
             </div>
@@ -369,11 +374,11 @@ export default function HomePage() {
               },
             ].map((col, i) => (
               <div key={i}>
-                <h4 className="font-semibold mb-4">{col.title}</h4>
-                <ul className="space-y-2">
+                <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">{col.title}</h4>
+                <ul className="space-y-1.5 sm:space-y-2">
                   {col.links.map((link, j) => (
                     <li key={j}>
-                      <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+                      <a href="#" className="text-gray-400 hover:text-white text-xs sm:text-sm transition-colors">
                         {link}
                       </a>
                     </li>
@@ -383,13 +388,13 @@ export default function HomePage() {
             ))}
           </div>
           
-          <div className="pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-400 text-sm">
+          <div className="pt-6 sm:pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-gray-400 text-xs sm:text-sm">
               © 2026 Doodle AI. All rights reserved.
             </p>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4 sm:gap-6">
               {["Twitter", "LinkedIn", "GitHub"].map((social, i) => (
-                <a key={i} href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+                <a key={i} href="#" className="text-gray-400 hover:text-white text-xs sm:text-sm transition-colors">
                   {social}
                 </a>
               ))}
@@ -454,13 +459,13 @@ function OtpGrid({ otp, setOtp, refs }) {
     refs[Math.min(pasted.length, 5)].current?.focus();
   };
   return (
-    <div className="flex justify-center gap-3 mb-6">
+    <div className="flex justify-center gap-2 sm:gap-3 mb-6">
       {otp.map((digit, i) => (
         <input key={i} ref={refs[i]} type="text" inputMode="numeric" maxLength={1} value={digit}
           onChange={(e) => handleChange(i, e.target.value)}
           onKeyDown={(e) => handleKeyDown(i, e)}
           onPaste={handlePaste}
-          className="w-12 h-14 text-center text-xl font-bold bg-zinc-800/50 border border-zinc-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+          className="w-10 h-12 sm:w-12 sm:h-14 text-center text-lg sm:text-xl font-bold bg-zinc-800/50 border border-zinc-700 rounded-lg sm:rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
         />
       ))}
     </div>
@@ -616,16 +621,16 @@ function AuthModal({ isLogin, setIsLogin, onClose }) {
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={onClose}>
-      <div className="relative bg-zinc-900 border border-zinc-800 rounded-3xl p-8 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">✕</button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" onClick={onClose}>
+      <div className="relative bg-zinc-900 border border-zinc-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl my-8" onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-white transition-colors p-2 touch-manipulation">✕</button>
 
         {/* ── Register OTP ── */}
         {step === "register-otp" && (
           <div>
             <div className="text-center mb-6">{emailIcon}
-              <h2 className="text-2xl font-bold text-white mb-2">Check your email</h2>
-              <p className="text-gray-400 text-sm">We sent a 6-digit code to<br /><span className="text-purple-400 font-medium">{pendingEmail}</span></p>
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Check your email</h2>
+              <p className="text-gray-400 text-xs sm:text-sm">We sent a 6-digit code to<br /><span className="text-purple-400 font-medium">{pendingEmail}</span></p>
             </div>
             <ErrorBox msg={error} />
             <OtpGrid otp={otp} setOtp={setOtp} refs={otpRefs} />
@@ -647,8 +652,8 @@ function AuthModal({ isLogin, setIsLogin, onClose }) {
               <div className="w-14 h-14 rounded-2xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center mx-auto mb-4">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">Forgot Password?</h2>
-              <p className="text-gray-400 text-sm">Enter your email and we&apos;ll send a reset code.</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Forgot Password?</h2>
+              <p className="text-gray-400 text-xs sm:text-sm">Enter your email and we&apos;ll send a reset code.</p>
             </div>
             <ErrorBox msg={error} />
             <form onSubmit={handleForgotEmail} className="space-y-4">
@@ -671,8 +676,8 @@ function AuthModal({ isLogin, setIsLogin, onClose }) {
         {step === "forgot-otp" && (
           <div>
             <div className="text-center mb-6">{emailIcon}
-              <h2 className="text-2xl font-bold text-white mb-2">Enter Reset Code</h2>
-              <p className="text-gray-400 text-sm">We sent a 6-digit code to<br /><span className="text-purple-400 font-medium">{pendingEmail}</span></p>
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Enter Reset Code</h2>
+              <p className="text-gray-400 text-xs sm:text-sm">We sent a 6-digit code to<br /><span className="text-purple-400 font-medium">{pendingEmail}</span></p>
             </div>
             <ErrorBox msg={error} />
             <OtpGrid otp={otp} setOtp={setOtp} refs={otpRefs} />
@@ -694,8 +699,8 @@ function AuthModal({ isLogin, setIsLogin, onClose }) {
               <div className="w-14 h-14 rounded-2xl bg-green-500/15 border border-green-500/30 flex items-center justify-center mx-auto mb-4">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">Set New Password</h2>
-              <p className="text-gray-400 text-sm">Choose a strong password for your account.</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Set New Password</h2>
+              <p className="text-gray-400 text-xs sm:text-sm">Choose a strong password for your account.</p>
             </div>
             <ErrorBox msg={error} />
             <form onSubmit={handleResetPassword} className="space-y-4">
@@ -721,8 +726,8 @@ function AuthModal({ isLogin, setIsLogin, onClose }) {
             <div className="w-16 h-16 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center mx-auto mb-4">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Password Reset!</h2>
-            <p className="text-gray-400 text-sm mb-6">Your password has been updated successfully.</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Password Reset!</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-6">Your password has been updated successfully.</p>
             <button onClick={() => { setStep(null); setIsLogin(true); setResetDone(false); resetOtp(); setNewPassword(""); setConfirmPassword(""); setError(""); }}
               className="w-full py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 rounded-xl text-white font-semibold transition-all shadow-lg shadow-purple-500/30">
               Back to Login
@@ -734,8 +739,8 @@ function AuthModal({ isLogin, setIsLogin, onClose }) {
         {!step && (
           <div>
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-white mb-2">{isLogin ? "Welcome Back" : "Create Account"}</h2>
-              <p className="text-gray-400 text-sm">{isLogin ? "Login to your dashboard" : "Start your free trial today"}</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">{isLogin ? "Welcome Back" : "Create Account"}</h2>
+              <p className="text-gray-400 text-xs sm:text-sm">{isLogin ? "Login to your dashboard" : "Start your free trial today"}</p>
             </div>
             <div className="flex gap-2 p-1 bg-zinc-800/50 rounded-xl mb-6">
               <button type="button" onClick={() => { setIsLogin(true); setError(""); }}
