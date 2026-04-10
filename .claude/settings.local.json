@@ -4,7 +4,9 @@
       "WebFetch(domain:openrouter.ai)",
       "Bash(npm run:*)",
       "Bash(npx next:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "WebFetch(domain:prnt.sc)",
+      "WebFetch(domain:img.lightshot.app)"
     ]
   }
 }

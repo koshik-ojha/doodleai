@@ -41,7 +41,7 @@ export async function GET(request) {
   return new Response(js, {
     headers: {
       "Content-Type": "application/javascript; charset=utf-8",
-      "Cache-Control": "public, max-age=300",
+      "Cache-Control": "no-cache, no-store",
       "Access-Control-Allow-Origin": "*",
     },
   });
@@ -124,7 +124,7 @@ function widgetScript(botId, apiUrl) {
     /* ── Panel ── */
     var panel = mk('div',
       'position:fixed;z-index:2147483646;pointer-events:auto;width:380px;max-width:calc(100vw - 32px);' +
-      'height:560px;background:#fff;border-radius:24px;' +
+      'height:600px;max-height:calc(100vh - 120px);background:#fff;border-radius:24px;' +
       'box-shadow:0 25px 60px rgba(0,0,0,0.18);display:none;flex-direction:column;overflow:hidden;' +
       hEdge + ';' + pVEdge);
     root.appendChild(panel);
@@ -210,8 +210,8 @@ function widgetScript(botId, apiUrl) {
       heading.textContent = 'How can we help you?';
       inner.appendChild(heading);
 
-      /* Quick reply buttons */
-      var questions = qrs.length > 0 ? qrs : faqs;
+      /* Quick reply buttons (max 4 so Contact Us section always visible) */
+      var questions = (qrs.length > 0 ? qrs : faqs).slice(0, 4);
       if (questions.length > 0) {
         var qSec = mk('div', 'margin-bottom:8px;');
         var qLbl = mk('div', 'display:flex;align-items:center;gap:6px;color:#6b7280;font-size:12px;line-height:1.5;margin-bottom:8px;');
