@@ -212,9 +212,10 @@ export default function IntegrationPage() {
       .catch(console.error);
   }, [selectedBotId]);
 
+  const origin = typeof window !== "undefined" ? window.location.origin : (process.env.NEXT_PUBLIC_FRONTEND_URL || "");
   const embedCode = embedToken
     ? `<!-- DoodleAI Chat Widget -->
-<script src="${FRONTEND_URL}/api/widget-script?token=${embedToken}" defer></script>`
+<script src="${origin}/api/widget-script?token=${embedToken}" defer></script>`
     : selectedBotId
     ? "<!-- DoodleAI Chat Widget -->\n<!-- Loading embed code... -->"
     : "Select a chatbot to generate embed code.";
