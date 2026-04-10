@@ -186,7 +186,7 @@ function widgetScript(botId, apiUrl) {
     function showQuick() {
       view = 'quick';
       backBtn.style.display = 'none';
-      inputRow.style.display = '';
+      inputRow.style.display = 'flex';
       inputArea.style.display = '';
       chatBody.innerHTML = '';
 
@@ -264,7 +264,7 @@ function widgetScript(botId, apiUrl) {
     function showChat() {
       view = 'chat';
       backBtn.style.display = 'block';
-      inputRow.style.display = '';
+      inputRow.style.display = 'flex';
       inputArea.style.display = '';
       chatBody.innerHTML = '';
       var msgsDiv = mk('div', 'padding:16px;display:flex;flex-direction:column;gap:16px;');
