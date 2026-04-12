@@ -7,6 +7,7 @@ import {
   Sparkles, Users, TrendingUp, Code, Rocket, Star, ChevronDown, LogIn, UserPlus
 } from "lucide-react";
 import BotWidget, { SvgIcon as BotIcon } from "@components/BotWidget";
+import ChatWidget from "@components/ChatWidget";
 import Logo from "@images/logo.svg";
 import Link from "next/link";
 import Image from "next/image";
@@ -241,6 +242,156 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Use Cases Section */}
+      <section className="relative z-10 py-12 sm:py-16 md:py-20 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10 sm:mb-12 md:mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-sm sm:text-base mb-4">
+              <Globe size={18} className="sm:w-5 sm:h-5" />
+              <span>Perfect For Every Industry</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4">
+              <span className="bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+                Built for Your Business
+              </span>
+            </h2>
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto px-4">
+              From startups to enterprises, Doodle AI adapts to your unique needs
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            {[
+              {
+                industry: "E-Commerce",
+                icon: "🛒",
+                description: "Guide shoppers, answer product questions, and increase conversions 24/7",
+                benefits: ["Product recommendations", "Order tracking", "Cart recovery"]
+              },
+              {
+                industry: "SaaS",
+                icon: "💻",
+                description: "Reduce support tickets, onboard users faster, and boost retention",
+                benefits: ["Feature guidance", "Technical support", "User onboarding"]
+              },
+              {
+                industry: "Healthcare",
+                icon: "🏥",
+                description: "Schedule appointments, answer FAQs, and improve patient experience",
+                benefits: ["Appointment booking", "24/7 availability", "HIPAA compliant"]
+              },
+              {
+                industry: "Education",
+                icon: "🎓",
+                description: "Support students, answer admissions questions, streamline enrollment",
+                benefits: ["Course information", "Admissions help", "Campus support"]
+              },
+            ].map((useCase, i) => (
+              <div key={i} className="bg-gradient-to-br from-zinc-800/50 to-zinc-900/50 backdrop-blur-sm border border-zinc-700/50 rounded-2xl p-6 sm:p-8 hover:border-purple-500/50 transition-all group">
+                <div className="text-5xl mb-4">{useCase.icon}</div>
+                <h3 className="text-xl sm:text-2xl font-semibold mb-3 text-white group-hover:text-purple-400 transition-colors">
+                  {useCase.industry}
+                </h3>
+                <p className="text-sm sm:text-base text-gray-400 mb-4 leading-relaxed">
+                  {useCase.description}
+                </p>
+                <ul className="space-y-2">
+                  {useCase.benefits.map((benefit, j) => (
+                    <li key={j} className="flex items-start gap-2 text-xs sm:text-sm text-gray-400">
+                      <CheckCircle size={16} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                      <span>{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="relative z-10 py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-zinc-900/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10 sm:mb-12 md:mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-sm sm:text-base mb-4">
+              <Users size={18} className="sm:w-5 sm:h-5" />
+              <span>Trusted by Thousands</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4">
+              <span className="bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+                What Our Customers Say
+              </span>
+            </h2>
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto px-4">
+              Join thousands of businesses transforming their customer experience
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            {[
+              {
+                name: "Sarah Johnson",
+                role: "CEO, TechStart",
+                content: "Doodle AI increased our response time by 80% and customer satisfaction scores are through the roof. Best investment we've made this year.",
+                rating: 5,
+                avatar: "SJ"
+              },
+              {
+                name: "Michael Chen",
+                role: "Marketing Director, GrowthCo",
+                content: "The AI is incredibly smart and learns from our knowledge base. It's like having a 24/7 support team without the overhead costs.",
+                rating: 5,
+                avatar: "MC"
+              },
+              {
+                name: "Emily Rodriguez",
+                role: "Founder, ShopLocal",
+                content: "Setup took less than 10 minutes and we started capturing leads immediately. The analytics dashboard is phenomenal for tracking performance.",
+                rating: 5,
+                avatar: "ER"
+              },
+            ].map((testimonial, i) => (
+              <div key={i} className="bg-gradient-to-br from-zinc-800/50 to-zinc-900/50 backdrop-blur-sm border border-zinc-700/50 rounded-2xl p-6 sm:p-8 hover:border-purple-500/50 transition-all">
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, j) => (
+                    <Star key={j} size={16} className="fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-gray-300 text-base sm:text-lg mb-6 leading-relaxed">
+                  "{testimonial.content}"
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-purple-500 flex items-center justify-center text-white font-bold">
+                    {testimonial.avatar}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-white">{testimonial.name}</div>
+                    <div className="text-sm text-gray-400">{testimonial.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Trust Stats */}
+          <div className="mt-12 sm:mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center">
+            {[
+              { value: "4.9/5", label: "Average Rating" },
+              { value: "10,000+", label: "Happy Customers" },
+              { value: "500K+", label: "Conversations Handled" },
+              { value: "99.9%", label: "Uptime SLA" },
+            ].map((stat, i) => (
+              <div key={i}>
+                <div className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-2">
+                  {stat.value}
+                </div>
+                <div className="text-sm sm:text-base text-gray-400">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How It Works */}
       <section className="relative z-10 py-12 sm:py-16 md:py-20 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
@@ -291,6 +442,65 @@ export default function HomePage() {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Integration / Works Everywhere Section */}
+      <section className="relative z-10 py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-zinc-900/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10 sm:mb-12 md:mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-sm sm:text-base mb-4">
+              <Code size={18} className="sm:w-5 sm:h-5" />
+              <span>Universal Integration</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4">
+              <span className="bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+                Works Everywhere
+              </span>
+            </h2>
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto px-4">
+              One simple embed code. Unlimited possibilities. Deploy on any platform in seconds.
+            </p>
+          </div>
+
+          {/* Platform Icons */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 sm:gap-8 mb-12 sm:mb-16">
+            {[
+              { name: "WordPress", icon: "W" },
+              { name: "Shopify", icon: "S" },
+              { name: "Webflow", icon: "Wf" },
+              { name: "Wix", icon: "Wix" },
+              { name: "React", icon: "⚛️" },
+              { name: "HTML", icon: "</>" },
+            ].map((platform, i) => (
+              <div key={i} className="flex flex-col items-center gap-3 group">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700/50 flex items-center justify-center text-2xl sm:text-3xl font-bold text-gray-400 group-hover:border-purple-500/50 group-hover:text-purple-400 transition-all">
+                  {platform.icon}
+                </div>
+                <span className="text-xs sm:text-sm text-gray-400 font-medium">{platform.name}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Code Preview */}
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 sm:p-8 overflow-hidden">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm sm:text-base font-semibold text-gray-400">embed.html</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+              </div>
+              <pre className="text-xs sm:text-sm text-purple-400 overflow-x-auto">
+                <code>{`<script src="https://doodleai.com/widget.js"></script>\n<script>\n  DoodleAI.init({\n    botId: 'your-bot-id',\n    position: 'bottom-right'\n  });\n</script>`}</code>
+              </pre>
+            </div>
+            <p className="text-center text-gray-400 text-sm sm:text-base mt-6">
+              That's it! Just 5 lines of code to transform your website.
+            </p>
           </div>
         </div>
       </section>
@@ -502,6 +712,96 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Trust & Security Badges */}
+      <section className="relative z-10 py-12 sm:py-16 px-4 sm:px-6 bg-zinc-900/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-8 sm:mb-10">
+            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+              Enterprise-Grade Security & Compliance
+            </h3>
+            <p className="text-gray-400">Your data is safe with industry-leading security standards</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8 items-center justify-items-center">
+            {[
+              { name: "SSL Encrypted", icon: "🔒" },
+              { name: "GDPR Compliant", icon: "✓" },
+              { name: "SOC 2 Certified", icon: "🛡️" },
+              { name: "ISO 27001", icon: "⭐" },
+              { name: "99.9% Uptime", icon: "⚡" },
+            ].map((badge, i) => (
+              <div key={i} className="flex flex-col items-center gap-3 p-4 bg-zinc-800/50 rounded-xl border border-zinc-700/50 hover:border-purple-500/50 transition-all w-full">
+                <div className="text-3xl sm:text-4xl">{badge.icon}</div>
+                <div className="text-xs sm:text-sm font-medium text-gray-300 text-center">{badge.name}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="relative z-10 py-12 sm:py-16 md:py-20 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10 sm:mb-12 md:mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-sm sm:text-base mb-4">
+              <MessageSquare size={18} className="sm:w-5 sm:h-5" />
+              <span>FAQ</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4">
+              <span className="bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+                Frequently Asked Questions
+              </span>
+            </h2>
+          </div>
+
+          <div className="space-y-4 sm:space-y-6">
+            {[
+              {
+                question: "How long does it take to set up?",
+                answer: "You can have your first chatbot up and running in less than 10 minutes. Simply sign up, customize your bot, and copy our embed code to your website."
+              },
+              {
+                question: "Do I need coding knowledge?",
+                answer: "Not at all! Our platform is designed to be user-friendly with a visual interface. Just copy and paste a simple embed code into your website."
+              },
+              {
+                question: "What AI model do you use?",
+                answer: "We use advanced AI models that understand context and provide accurate responses. The AI learns from your knowledge base and gets smarter over time."
+              },
+              {
+                question: "Can I customize the chatbot's appearance?",
+                answer: "Yes! You have full control over colors, positioning, welcome messages, and branding. Make it match your website perfectly."
+              },
+              {
+                question: "Is there a free trial?",
+                answer: "Absolutely! Start with a free trial to test all features. No credit card required. You can upgrade anytime as your needs grow."
+              },
+              {
+                question: "What kind of support do you offer?",
+                answer: "We offer email support on all plans, priority support on Growth plan, and 24/7 dedicated support on Professional and Enterprise plans."
+              },
+            ].map((faq, i) => (
+              <details key={i} className="group bg-gradient-to-br from-zinc-800/50 to-zinc-900/50 backdrop-blur-sm border border-zinc-700/50 rounded-xl sm:rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all">
+                <summary className="px-6 sm:px-8 py-5 sm:py-6 cursor-pointer flex items-center justify-between font-semibold text-base sm:text-lg text-white list-none">
+                  <span>{faq.question}</span>
+                  <ChevronDown size={20} className="flex-shrink-0 transition-transform group-open:rotate-180" />
+                </summary>
+                <div className="px-6 sm:px-8 pb-5 sm:pb-6 text-sm sm:text-base text-gray-400 leading-relaxed">
+                  {faq.answer}
+                </div>
+              </details>
+            ))}
+          </div>
+
+          <div className="mt-10 sm:mt-12 text-center">
+            <p className="text-gray-400 mb-4">Still have questions?</p>
+            <button className="px-6 sm:px-8 py-3 sm:py-4 bg-zinc-800/50 hover:bg-zinc-700 text-white border border-zinc-700 rounded-xl font-semibold transition-all">
+              Contact Support
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="relative z-10 py-12 sm:py-16 md:py-20 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
@@ -548,6 +848,38 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="relative z-10 py-12 sm:py-16 px-4 sm:px-6 bg-gradient-to-br from-purple-900/20 via-zinc-900/50 to-zinc-900/20 border-y border-purple-500/10">
+        <div className="max-w-4xl mx-auto text-center">
+          <Sparkles size={40} className="text-purple-400 mx-auto mb-4" />
+          <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
+            Stay Updated with AI Insights
+          </h3>
+          <p className="text-base sm:text-lg text-gray-400 mb-6 sm:mb-8 max-w-2xl mx-auto">
+            Get the latest tips on chatbot optimization, AI trends, and exclusive feature updates delivered to your inbox weekly.
+          </p>
+          
+          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-4 sm:px-6 py-3 sm:py-4 bg-zinc-800/50 border border-zinc-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              required
+            />
+            <button
+              type="submit"
+              className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white rounded-xl font-semibold transition-all shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 whitespace-nowrap"
+            >
+              Subscribe
+            </button>
+          </form>
+          
+          <p className="text-xs sm:text-sm text-gray-500 mt-4">
+            Join 10,000+ subscribers. Unsubscribe anytime. No spam, ever.
+          </p>
         </div>
       </section>
 
@@ -609,6 +941,9 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Live Demo Chat Widget */}
+              
 
       {/* Auth Modal */}
       {showAuthModal && (

@@ -165,7 +165,25 @@ export default function IntegrationPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const csvRef = useRef(null);
+
+  // Check if user is admin and redirect
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      try {
+        const userData = JSON.parse(user);
+        if (userData.role === "admin") {
+          setIsAdmin(true);
+          router.push("/dashboard");
+          return;
+        }
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
+  }, [router]);
 
   // Load chatbots on mount, auto-select from URL ?botId=
   useEffect(() => {
@@ -346,6 +364,18 @@ export default function IntegrationPage() {
 
   return (
     <DashboardLayout>
+      {isAdmin ? (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="max-w-md w-full bg-red-500/10 border border-red-500/20 rounded-xl p-8 text-center">
+            <AlertCircle size={48} className="text-red-400 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-white mb-2">Access Denied</h2>
+            <p className="text-gray-400 mb-4">
+              This page is not available for admin accounts. Redirecting to dashboard...
+            </p>
+          </div>
+        </div>
+      ) : (
+      <>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between flex-wrap gap-3">
@@ -882,6 +912,8 @@ export default function IntegrationPage() {
         onConfirm={() => deleteFaq(deleteConfirmIdx)}
         onCancel={() => setDeleteConfirmIdx(null)}
       />
+      </>
+      )}
     </DashboardLayout>
   );
 }

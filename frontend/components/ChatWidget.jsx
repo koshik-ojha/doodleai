@@ -101,16 +101,20 @@ export default function ChatWidget({
   }
 
   return (
-    <div className={`fixed ${positionClass} w-[380px] h-[600px] bg-white rounded-3xl shadow-2xl z-50 flex flex-col overflow-hidden`}>
+    <div className={`
+      fixed z-50 flex flex-col overflow-hidden bg-white shadow-2xl
+      inset-0 w-full h-full rounded-none
+      md:${positionClass} md:w-[380px] md:h-[600px] md:rounded-3xl md:inset-auto
+    `}>
       {/* Header */}
-      <div style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}cc)` }} className="p-4 flex items-center justify-between">
+      <div style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}cc)` }} className="p-4 flex items-center justify-between safe-top">
         <div className="flex items-center gap-3">
           <div className="relative">
             <BotIcon size={44} className="rounded-full" />
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
           </div>
           <div>
-            <h3 className="text-white font-semibold">{botName}</h3>
+            <h3 className="text-white font-semibold text-base md:text-base">{botName}</h3>
             <div className="flex items-center gap-1">
               <div className="w-2 h-2 bg-green-400 rounded-full" />
               <p className="text-white/80 text-xs">Online</p>
@@ -121,7 +125,7 @@ export default function ChatWidget({
           onClick={() => setIsOpen(false)}
           className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
         >
-          <X size={16} className="text-white" />
+          <X size={18} className="text-white" />
         </button>
       </div>
 
@@ -187,7 +191,7 @@ export default function ChatWidget({
                     <span className="text-gray-600 text-sm font-semibold">U</span>
                   </div>
                 )}
-                <div className={`flex flex-col max-w-[72%]`}>
+                <div className={`flex flex-col max-w-[80%] md:max-w-[72%]`}>
                   <div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                     msg.role === "user"
                       ? "text-white rounded-tr-none"
@@ -219,7 +223,7 @@ export default function ChatWidget({
 
       {/* Input */}
       {view !== "form" && (
-        <div className="p-4 bg-white border-t border-gray-100">
+        <div className="p-4 bg-white border-t border-gray-100 safe-bottom">
           {view === "chat" && (
             <button
               onClick={() => setView("quick")}

@@ -80,6 +80,16 @@ function widgetScript(botId, apiUrl) {
     '@keyframes daiPing  { 0%,100%{transform:scale(1);opacity:0.25} 50%{transform:scale(1.15);opacity:0.1} }',
     '@keyframes daiSpin  { to{transform:rotate(360deg)} }',
     '@keyframes daiFadeUp{ from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }',
+    /* Mobile full screen styles */
+    '@media (max-width: 767px) {',
+    '  #doodleai-widget-panel { position:fixed !important; top:0 !important; left:0 !important; right:0 !important; bottom:0 !important; width:100% !important; height:100% !important; max-width:100% !important; max-height:100% !important; border-radius:0 !important; }',
+    '  #doodleai-widget-panel .msg-bubble { max-width:80% !important; }',
+    '  #doodleai-widget-header { padding-top:calc(16px + env(safe-area-inset-top)) !important; }',
+    '  #doodleai-widget-input { padding-bottom:calc(16px + env(safe-area-inset-bottom)) !important; }',
+    '  #doodleai-widget-footer { padding-bottom:calc(6px + env(safe-area-inset-bottom)) !important; }',
+    '  #doodleai-close-btn svg { width: 18px !important; height: 18px !important; }',
+    '  #doodleai-widget-footer a{ min-height:unset !important; }',
+    '}',
   ].join('\\n');
   document.head.appendChild(_style);
 
@@ -106,7 +116,7 @@ function widgetScript(botId, apiUrl) {
     var pVEdge   = isBottom ? 'bottom:104px': 'top:104px';
 
     /* Root (pointer-events:none so it never blocks page clicks) */
-    var root = mk('div', 'position:fixed;z-index:2147483646;pointer-events:none;top:0;left:0;width:0;height:0;');
+    var root = mk('div', 'position:fixed;z-index:999999999999;pointer-events:none;top:0;left:0;width:0;height:0;');
     root.id = 'doodleai-widget-root';
     document.body.appendChild(root);
 
@@ -123,16 +133,18 @@ function widgetScript(botId, apiUrl) {
 
     /* ── Panel ── */
     var panel = mk('div',
-      'position:fixed;z-index:2147483646;pointer-events:auto;width:380px;max-width:calc(100vw - 32px);' +
+      'position:fixed;z-index:999999999999;pointer-events:auto;width:380px;max-width:calc(100vw - 32px);' +
       'height:600px;max-height:calc(100vh - 120px);background:#fff;border-radius:24px;' +
       'box-shadow:0 25px 60px rgba(0,0,0,0.18);display:none;flex-direction:column;overflow:hidden;' +
       hEdge + ';' + pVEdge);
+    panel.id = 'doodleai-widget-panel';
     root.appendChild(panel);
 
     /* Header */
     var hdr = mk('div',
       'background:linear-gradient(135deg,' + color + ',' + color + 'cc);' +
       'padding:16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;');
+    hdr.id = 'doodleai-widget-header';
     var hdrL = mk('div', 'display:flex;align-items:center;gap:12px;');
     var avWrap = mk('div', 'position:relative;flex-shrink:0;');
     avWrap.innerHTML = botSvg(44) +
@@ -149,6 +161,7 @@ function widgetScript(botId, apiUrl) {
     var closeBtn = mk('button',
       'width:32px;height:32px;background:rgba(255,255,255,0.2);border:none;cursor:pointer;' +
       'border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;');
+    closeBtn.id = 'doodleai-close-btn';
     closeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
     hdr.appendChild(hdrL);
     hdr.appendChild(closeBtn);
@@ -161,6 +174,7 @@ function widgetScript(botId, apiUrl) {
 
     /* Input area */
     var inputArea = mk('div', 'padding:16px;background:#fff;border-top:1px solid #f3f4f6;flex-shrink:0;');
+    inputArea.id = 'doodleai-widget-input';
     var backBtn = mk('button', 'background:none;border:none;cursor:pointer;color:#9ca3af;font-size:12px;line-height:1.5;margin-bottom:8px;display:none;padding:0;');
     backBtn.textContent = '\u2190 Back to menu';
     backBtn.onmouseover = function () { backBtn.style.color = '#6b7280'; };
@@ -186,6 +200,7 @@ function widgetScript(botId, apiUrl) {
     var footer = mk('div',
       'padding:6px 16px;background:#fff;border-top:1px solid #f3f4f6;' +
       'display:flex;align-items:center;justify-content:center;gap:4px;flex-shrink:0;');
+    footer.id = 'doodleai-widget-footer';
     footer.innerHTML =
       '<span style="font-size:10px;color:#9ca3af;line-height:1.5;">Powered by</span>' +
       '<a href="https://doodleai-murex.vercel.app" target="_blank" style="font-size:10px;font-weight:600;color:#7c3aed;line-height:1.5;text-decoration:none;">DoodleAI</a>';
@@ -467,6 +482,7 @@ function widgetScript(botId, apiUrl) {
 
       /* Bubble + timestamp */
       var col = mk('div', 'display:flex;flex-direction:column;max-width:72%;');
+      col.className = 'msg-bubble';
       var bubble = mk('div', isUser
         ? 'border-radius:16px 4px 16px 16px;padding:12px 16px;font-size:13px;line-height:1.5;color:#fff;word-break:break-word;background:' + color + ';'
         : 'border-radius:4px 16px 16px 16px;padding:12px 16px;font-size:13px;line-height:1.5;color:#1f2937;word-break:break-word;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.08);');
@@ -572,7 +588,7 @@ function widgetScript(botId, apiUrl) {
   function qBtn(label, color, onClick) {
     var rgba = hex2rgba(color, 0.1);
     var btn = mk('button',
-      'width:100%;text-align:left;border-radius:8px;padding:12px 16px;font-size:13px;line-height:1.5;' +
+      'width:100%;text-align:left;border-radius:8px;padding:12px 16px;font-size:13px!important;line-height:1.5;' +
       'cursor:pointer;display:flex;align-items:center;justify-content:space-between;' +
       'border:none;margin-bottom:8px;background:' + rgba + ';color:' + color + ';');
     btn.innerHTML =

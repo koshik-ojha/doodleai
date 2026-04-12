@@ -1,4 +1,5 @@
 import "./globals.css";
+import ClientLayout from "@components/ClientLayout";
 
 export const metadata = {
   title: "AI Chatbot",
@@ -36,7 +37,9 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body>
-        {children}
+        <ClientLayout>
+          {children}
+        </ClientLayout>
       </body>
     </html>
   );

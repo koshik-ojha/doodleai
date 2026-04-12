@@ -65,7 +65,7 @@ export default function DashboardLayout({ children }) {
     { name: "Form Submissions", icon: FileText, href: "/dashboard/submissions" },
     { name: "Analytics", icon: BarChart3, href: "/dashboard/analytics" },
     ...(isAdmin ? [{ name: "Users", icon: Users, href: "/dashboard/admin" }] : []),
-    { name: "Integration", icon: Code, href: "/dashboard/integration" },
+    ...(!isAdmin ? [{ name: "Integration", icon: Code, href: "/dashboard/integration" }] : []),
     { name: "Settings", icon: Settings, href: "/dashboard/settings" },
   ];
 
