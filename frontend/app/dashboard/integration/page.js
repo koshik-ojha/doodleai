@@ -213,17 +213,34 @@ export default function IntegrationPage() {
       .catch(console.error);
   }, [selectedBotId]);
 
+  const [embedFramework, setEmbedFramework] = useState("html");
+
   const origin = typeof window !== "undefined" ? window.location.origin : (process.env.NEXT_PUBLIC_FRONTEND_URL || "");
-  const embedCode = embedToken
-    ? `<!-- DoodleAI Chat Widget -->
-<script src="${origin}/api/widget-script?token=${embedToken}" defer></script>`
-    : selectedBotId
-    ? "<!-- DoodleAI Chat Widget -->\n<!-- Loading embed code... -->"
-    : "Select a chatbot to generate embed code.";
+  const scriptSrc = embedToken ? `${origin}/api/widget-script?token=${embedToken}` : null;
+
+  const embedSnippets = {
+    html: scriptSrc
+      ? `<!-- DoodleAI Chat Widget -->\n<script src="${scriptSrc}" defer></script>`
+      : selectedBotId ? "<!-- Loading embed code... -->" : "Select a chatbot to generate embed code.",
+
+    nextjs: scriptSrc
+      ? `// Add to your app/layout.js (or pages/_app.js)\nimport Script from 'next/script'\n\nexport default function RootLayout({ children }) {\n  return (\n    <html>\n      <body>\n        {children}\n        <Script\n          src="${scriptSrc}"\n          strategy="afterInteractive"\n        />\n      </body>\n    </html>\n  )\n}`
+      : selectedBotId ? "// Loading embed code..." : "// Select a chatbot to generate embed code.",
+
+    react: scriptSrc
+      ? `// Add to your App.jsx (or any top-level component)\nimport { useEffect } from 'react'\n\nexport default function App() {\n  useEffect(() => {\n    const script = document.createElement('script')\n    script.src = '${scriptSrc}'\n    script.defer = true\n    document.body.appendChild(script)\n    return () => document.body.removeChild(script)\n  }, [])\n\n  return (\n    // ... your app\n  )\n}`
+      : selectedBotId ? "// Loading embed code..." : "// Select a chatbot to generate embed code.",
+
+    wordpress: scriptSrc
+      ? `<?php\n// Add to your theme's functions.php\nfunction doodleai_chat_widget() {\n    wp_enqueue_script(\n        'doodleai-widget',\n        '${scriptSrc}',\n        [],\n        null,\n        true  // load in footer\n    );\n}\nadd_action( 'wp_enqueue_scripts', 'doodleai_chat_widget' );`
+      : selectedBotId ? "<?php\n// Loading embed code..." : "<?php\n// Select a chatbot to generate embed code.",
+  };
+
+  const activeSnippet = embedSnippets[embedFramework];
 
   const handleCopy = () => {
     if (!selectedBotId) return;
-    navigator.clipboard.writeText(embedCode);
+    navigator.clipboard.writeText(activeSnippet);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -717,12 +734,35 @@ export default function IntegrationPage() {
                         <Code size={20} /> Embed Code
                       </h2>
                       <p className="text-gray-400 text-sm mt-1">
-                        Paste this snippet before the closing <code className="text-purple-400">&lt;/body&gt;</code> tag on your website.
+                        Choose your framework and add the snippet to your project.
                       </p>
                     </div>
+
+                    {/* Framework tabs */}
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { id: "html", label: "HTML" },
+                        { id: "nextjs", label: "Next.js" },
+                        { id: "react", label: "React" },
+                        { id: "wordpress", label: "WordPress" },
+                      ].map((fw) => (
+                        <button
+                          key={fw.id}
+                          onClick={() => setEmbedFramework(fw.id)}
+                          className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                            embedFramework === fw.id
+                              ? "bg-purple-600 text-white"
+                              : "bg-purple-500/10 text-gray-400 hover:text-white hover:bg-purple-500/20"
+                          }`}
+                        >
+                          {fw.label}
+                        </button>
+                      ))}
+                    </div>
+
                     <div className="relative">
                       <pre className="bg-black border border-purple-500/10 rounded-xl p-4 overflow-x-auto text-xs text-gray-400 leading-relaxed whitespace-pre-wrap break-all pe-16">
-                        {embedCode}
+                        {activeSnippet}
                       </pre>
                       <button
                         onClick={handleCopy}
@@ -734,16 +774,59 @@ export default function IntegrationPage() {
 
                     <div className="space-y-4 pt-2">
                       <h3 className="text-white font-medium">Installation Steps</h3>
-                      {[
+                      {embedFramework === "html" && [
                         "Copy the embed code above",
-                        "Paste it anywhere inside <head> or before </body> on your website",
-                        "Save & deploy — the widget appears automatically on allowed domains",
+                        "Paste it before the closing </body> tag on your website",
+                        "Save & deploy — the widget appears automatically",
                       ].map((step, i) => (
                         <div key={i} className="flex gap-3 items-start">
                           <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">{i + 1}</div>
                           <p className="text-gray-400 text-sm pt-1">{step}</p>
                         </div>
                       ))}
+                      {embedFramework === "nextjs" && [
+                        "Copy the code above",
+                        "Open your app/layout.js (or pages/_app.js for Pages Router)",
+                        "Import Script from 'next/script' and add it inside the body as shown",
+                        "The strategy=\"afterInteractive\" loads the widget after the page is interactive",
+                      ].map((step, i) => (
+                        <div key={i} className="flex gap-3 items-start">
+                          <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">{i + 1}</div>
+                          <p className="text-gray-400 text-sm pt-1">{step}</p>
+                        </div>
+                      ))}
+                      {embedFramework === "react" && [
+                        "Copy the useEffect code above",
+                        "Add it to your top-level App.jsx component",
+                        "The script loads once on mount and is cleaned up on unmount",
+                      ].map((step, i) => (
+                        <div key={i} className="flex gap-3 items-start">
+                          <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">{i + 1}</div>
+                          <p className="text-gray-400 text-sm pt-1">{step}</p>
+                        </div>
+                      ))}
+                      {embedFramework === "wordpress" && (
+                        <>
+                          {[
+                            "Copy the PHP code above",
+                            "Go to Appearance → Theme File Editor in your WordPress admin",
+                            "Open functions.php and paste the code at the bottom",
+                            "Click Update File — the widget will appear on every page",
+                          ].map((step, i) => (
+                            <div key={i} className="flex gap-3 items-start">
+                              <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">{i + 1}</div>
+                              <p className="text-gray-400 text-sm pt-1">{step}</p>
+                            </div>
+                          ))}
+                          <div className="mt-2 p-3 bg-purple-500/5 border border-purple-500/15 rounded-xl">
+                            <p className="text-gray-400 text-xs">
+                              <span className="text-purple-400 font-medium">Alternative:</span> Install the free{" "}
+                              <span className="text-white">"Insert Headers and Footers"</span> plugin, then paste the HTML{" "}
+                              <code className="text-purple-300">&lt;script&gt;</code> tag from the HTML tab into the Footer Scripts field.
+                            </p>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}

@@ -15,8 +15,9 @@ export default function HomePage() {
   const router = useRouter();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
+  const [isYearly, setIsYearly] = useState(false);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 text-white overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 text-white overflow-x-hidden">
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 -left-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -25,8 +26,8 @@ export default function HomePage() {
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-10 border-b border-zinc-800/50 backdrop-blur-xl bg-zinc-900/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-800/50 backdrop-blur-xl bg-zinc-900/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 xl:px-0 py-4 sm:py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2">
               <Image src={Logo} alt="Doodle AI" className="h-9 sm:h-10 md:h-12 w-auto" />
@@ -55,7 +56,7 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 pt-12 sm:pt-16 md:pt-20 pb-16 sm:pb-24 md:pb-32 px-4 sm:px-6">
+      <section className="relative z-10 pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-24 md:pb-32 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
             {/* Left Content */}
@@ -290,6 +291,213 @@ export default function HomePage() {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="relative z-10 py-12 sm:py-16 md:py-20 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
+              <span className="bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
+                Simple, Transparent Pricing
+              </span>
+            </h2>
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto px-4">
+              Choose the perfect plan for your business needs
+            </p>
+            
+            {/* Monthly/Yearly Toggle */}
+            <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6 sm:mt-8">
+              <span className={`text-base sm:text-lg font-medium transition-colors ${!isYearly ? 'text-purple-400' : 'text-gray-500'}`}>
+                Monthly
+              </span>
+              <button
+                onClick={() => setIsYearly(!isYearly)}
+                className={`relative w-16 sm:w-20 h-8 sm:h-10 rounded-full transition-all ${
+                  isYearly ? 'bg-purple-600' : 'bg-zinc-700'
+                }`}
+              >
+                <div
+                  className={`absolute top-1 w-6 sm:w-8 h-6 sm:h-8 bg-white rounded-full shadow-lg transition-transform ${
+                    isYearly ? 'translate-x-9 sm:translate-x-11' : 'translate-x-1'
+                  }`}
+                ></div>
+              </button>
+              <span className={`text-base sm:text-lg font-medium transition-colors ${isYearly ? 'text-purple-400' : 'text-gray-500'}`}>
+                Yearly
+                <span className="ml-2 text-xs sm:text-sm text-purple-400 bg-purple-500/10 px-2 py-1 rounded-full">
+                  Save 8%
+                </span>
+              </span>
+            </div>
+          </div>
+
+          {/* Pricing Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            {/* 1 Chatbot Plan */}
+            <div className="relative bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 hover:border-purple-500/50 transition-all hover:scale-105">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent rounded-2xl sm:rounded-3xl"></div>
+              <div className="relative">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Starter</h3>
+                <div className="flex items-baseline gap-2 mb-6">
+                  <span className="text-4xl sm:text-5xl font-bold text-white">
+                    ₹{isYearly ? '5,500' : '500'}
+                  </span>
+                  <span className="text-gray-400">/{isYearly ? 'year' : 'month'}</span>
+                </div>
+                <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">1 Chatbot</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">AI-Powered Responses</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">Basic Analytics</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">Email Support</span>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
+                  className="w-full px-6 py-3 bg-zinc-800/50 hover:bg-zinc-700 text-white border border-zinc-700 rounded-xl font-semibold transition-all"
+                >
+                  Get Started
+                </button>
+              </div>
+            </div>
+
+            {/* 3 Chatbot Plan - Popular */}
+            <div className="relative bg-gradient-to-br from-purple-900/50 via-zinc-800 to-zinc-900 border-2 border-purple-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 hover:scale-105 transition-all shadow-xl shadow-purple-500/20">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-purple-600 to-purple-500 rounded-full text-white text-xs sm:text-sm font-bold">
+                MOST POPULAR
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent rounded-2xl sm:rounded-3xl"></div>
+              <div className="relative">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Growth</h3>
+                <div className="flex items-baseline gap-2 mb-6">
+                  <span className="text-4xl sm:text-5xl font-bold text-white">
+                    ₹{isYearly ? '12,000' : '1,200'}
+                  </span>
+                  <span className="text-gray-400">/{isYearly ? 'year' : 'month'}</span>
+                </div>
+                <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">3 Chatbots</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">Advanced AI Features</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">Advanced Analytics</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">Priority Support</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">Custom Branding</span>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white rounded-xl font-semibold transition-all shadow-lg shadow-purple-500/30"
+                >
+                  Get Started
+                </button>
+              </div>
+            </div>
+
+            {/* 5 Chatbot Plan */}
+            <div className="relative bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 hover:border-purple-500/50 transition-all hover:scale-105">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent rounded-2xl sm:rounded-3xl"></div>
+              <div className="relative">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Professional</h3>
+                <div className="flex items-baseline gap-2 mb-6">
+                  <span className="text-4xl sm:text-5xl font-bold text-white">
+                    ₹{isYearly ? '20,000' : '2,000'}
+                  </span>
+                  <span className="text-gray-400">/{isYearly ? 'year' : 'month'}</span>
+                </div>
+                <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">5 Chatbots</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">Premium AI Features</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">Full Analytics Suite</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">24/7 Priority Support</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">White Label Option</span>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
+                  className="w-full px-6 py-3 bg-zinc-800/50 hover:bg-zinc-700 text-white border border-zinc-700 rounded-xl font-semibold transition-all"
+                >
+                  Get Started
+                </button>
+              </div>
+            </div>
+
+            {/* Enterprise Plan */}
+            <div className="relative bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 hover:border-purple-500/50 transition-all hover:scale-105">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent rounded-2xl sm:rounded-3xl"></div>
+              <div className="relative">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Enterprise</h3>
+                <div className="flex items-baseline gap-2 mb-6">
+                  <span className="text-3xl sm:text-4xl font-bold text-white">
+                    Custom
+                  </span>
+                </div>
+                <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">5+ Chatbots</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">Custom AI Training</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">Dedicated Account Manager</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">SLA Guarantee</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle size={20} className="text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm sm:text-base text-gray-300">Custom Integration</span>
+                  </div>
+                </div>
+                <button className="w-full px-6 py-3 bg-zinc-800/50 hover:bg-zinc-700 text-white border border-zinc-700 rounded-xl font-semibold transition-all">
+                  Contact Us
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
