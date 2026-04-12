@@ -8,8 +8,9 @@ export const useChatStore = create((set) => ({
   loading: false,
 
   fetchChats: async () => {
-    const { data } = await api.get("/chats");
-    set({ chats: data });
+    const { data } = await api.get("/chats?limit=100");
+    const list = Array.isArray(data) ? data : (data.chats || []);
+    set({ chats: list });
   },
 
   createChat: async () => {

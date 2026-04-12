@@ -5,10 +5,10 @@ import { FileText, Send, HelpCircle } from "lucide-react";
 const FORM_ITEMS = ["Fill out contact form", "Request a quote", "Schedule a consultation"];
 
 export default function QuickReplies({ onSelect, primaryColor = "#7c3aed", faqs = [], quickReplies = [] }) {
-  // Prefer explicit quick reply buttons; fall back to FAQ questions
-  const questions = quickReplies.length > 0
-    ? quickReplies.map((qr) => (typeof qr === "string" ? qr : qr.question))
-    : faqs.map((f) => f.question);
+  // Prefer manually configured FAQs; fall back to auto-generated quick replies
+  const questions = faqs.length > 0
+    ? faqs.map((f) => f.question)
+    : quickReplies.map((qr) => (typeof qr === "string" ? qr : qr.question));
 
   return (
     <div className="space-y-4 p-4">

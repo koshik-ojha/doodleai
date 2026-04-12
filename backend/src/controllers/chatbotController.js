@@ -47,14 +47,10 @@ export const getChatbots = async (req, res) => {
     const limit = Math.min(50, parseInt(req.query.limit) || 12);
     const skip = (page - 1) * limit;
 
-    const [chatbots, total] = await Promise.all([
-      Chatbot.find(query)
-        .populate(isAdmin ? { path: "userId", select: "name email" } : "")
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
-      Chatbot.countDocuments(query),
-    ]);
+    let q = Chatbot.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit);
+    if (isAdmin) q = q.populate("userId", "name email");
+
+    const [chatbots, total] = await Promise.all([q, Chatbot.countDocuments(query)]);
 
     res.json({ chatbots, total, page, hasMore: skip + chatbots.length < total });
   } catch {
@@ -73,7 +69,9 @@ export const createChatbot = async (req, res) => {
 
 export const getChatbot = async (req, res) => {
   try {
-    const chatbot = await Chatbot.findOne({ _id: req.params.id, userId: req.user.id });
+    const isAdmin = req.user.role === "admin";
+    const filter = isAdmin ? { _id: req.params.id } : { _id: req.params.id, userId: req.user.id };
+    const chatbot = await Chatbot.findOne(filter);
     if (!chatbot) return res.status(404).json({ error: "Not found" });
     res.json(chatbot);
   } catch {
@@ -83,14 +81,13 @@ export const getChatbot = async (req, res) => {
 
 export const updateChatbot = async (req, res) => {
   try {
-    const chatbot = await Chatbot.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user.id },
-      req.body,
-      { new: true }
-    );
+    const isAdmin = req.user.role === "admin";
+    const filter = isAdmin ? { _id: req.params.id } : { _id: req.params.id, userId: req.user.id };
+    const chatbot = await Chatbot.findOneAndUpdate(filter, { $set: req.body }, { new: true, runValidators: false });
     if (!chatbot) return res.status(404).json({ error: "Not found" });
     res.json(chatbot);
-  } catch {
+  } catch (err) {
+    console.error("updateChatbot error:", err.message);
     res.status(500).json({ error: "Failed to update chatbot" });
   }
 };
@@ -144,7 +141,7 @@ export const clearCrawledData = async (req, res) => {
   try {
     const chatbot = await Chatbot.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.id },
-      { knowledgeBase: "", crawledSources: [] },
+      { $set: { knowledgeBase: "", crawledSources: [] } },
       { new: true }
     );
     if (!chatbot) return res.status(404).json({ error: "Not found" });

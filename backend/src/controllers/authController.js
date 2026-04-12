@@ -129,7 +129,7 @@ export const resetPassword = async (req, res) => {
     if (record.otp !== String(otp).trim()) return res.status(400).json({ error: "Invalid OTP. Please check and try again." });
 
     const hashed = await bcrypt.hash(newPassword, 10);
-    await User.findOneAndUpdate({ email }, { password: hashed });
+    await User.findOneAndUpdate({ email }, { $set: { password: hashed } });
     await Otp.deleteMany({ email, type: "reset" });
 
     res.json({ success: true });

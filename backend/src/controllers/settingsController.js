@@ -24,7 +24,7 @@ export const updateSettings = async (req, res) => {
 
     const settings = await Settings.findOneAndUpdate(
       { userId: req.user.id },
-      updates,
+      { $set: updates },
       { new: true, upsert: true }
     );
     res.json(settings);

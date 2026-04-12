@@ -34,7 +34,7 @@ export const suspendUser = async (req, res) => {
   try {
     const user = await User.findOneAndUpdate(
       { _id: req.params.id, role: { $ne: "admin" } },
-      { isSuspended: true },
+      { $set: { isSuspended: true } },
       { new: true }
     ).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -48,7 +48,7 @@ export const reactivateUser = async (req, res) => {
   try {
     const user = await User.findOneAndUpdate(
       { _id: req.params.id, role: { $ne: "admin" } },
-      { isSuspended: false },
+      { $set: { isSuspended: false } },
       { new: true }
     ).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -57,3 +57,4 @@ export const reactivateUser = async (req, res) => {
     res.status(500).json({ error: "Failed to reactivate user" });
   }
 };
+

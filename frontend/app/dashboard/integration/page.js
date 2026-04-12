@@ -172,14 +172,15 @@ export default function IntegrationPage() {
     const token = localStorage.getItem("token");
     if (!token) { router.push("/"); return; }
 
-    api.get("/chatbots").then(({ data }) => {
-      setChatbots(data);
+    api.get("/chatbots?limit=100").then(({ data }) => {
+      const list = Array.isArray(data) ? data : (data.chatbots || []);
+      setChatbots(list);
       const params = new URLSearchParams(window.location.search);
       const urlBotId = params.get("botId");
-      if (urlBotId && data.find((b) => b._id === urlBotId)) {
+      if (urlBotId && list.find((b) => b._id === urlBotId)) {
         setSelectedBotId(urlBotId);
-      } else if (data.length > 0) {
-        setSelectedBotId(data[0]._id);
+      } else if (list.length > 0) {
+        setSelectedBotId(list[0]._id);
       }
     }).catch(console.error).finally(() => setLoading(false));
   }, []);

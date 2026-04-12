@@ -63,7 +63,7 @@ export const renameChat = async (req, res) => {
     const { title } = req.body;
     const chat = await Chat.findOneAndUpdate(
       { _id: chatId, userId: req.user.id },
-      { title },
+      { $set: { title } },
       { new: true }
     );
     res.json(chat);

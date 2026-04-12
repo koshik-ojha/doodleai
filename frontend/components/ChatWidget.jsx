@@ -143,10 +143,10 @@ export default function ChatWidget({
                 if (text === "Fill out contact form") { setFormType("contact"); setView("form"); return; }
                 if (text === "Request a quote") { setFormType("quote"); setView("form"); return; }
                 if (text === "Schedule a consultation") { setFormType("consultation"); setView("form"); return; }
-                // Check if this quick reply has a predefined answer
-                const match = quickReplies.find(
-                  (qr) => (typeof qr === "string" ? qr : qr.question) === text
-                );
+                // Check FAQs first, then quick replies for a predefined answer
+                const match =
+                  faqs.find((f) => f.question === text) ||
+                  quickReplies.find((qr) => (typeof qr === "string" ? qr : qr.question) === text);
                 if (match && typeof match === "object" && match.answer) {
                   // Show instantly without AI call
                   setView("chat");

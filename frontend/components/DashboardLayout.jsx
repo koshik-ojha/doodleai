@@ -102,14 +102,11 @@ export default function DashboardLayout({ children }) {
 
       {/* Sidebar */}
       <aside className={`
-        ${isMobile 
-          ? 'fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 ease-in-out' 
-          : 'relative w-64'
+        flex flex-col bg-[#010009] border-r border-gray-800/30 transition-all duration-300
+        ${isMobile
+          ? `fixed inset-y-0 left-0 z-50 w-72 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`
+          : `relative ${sidebarOpen ? 'w-64' : 'w-20'}`
         }
-        ${isMobile && !sidebarOpen ? '-translate-x-full' : 'translate-x-0'}
-        ${!isMobile && !sidebarOpen ? 'w-20' : ''}
-        flex flex-col bg-[#010009] border-r border-gray-800/30
-        transition-all duration-300
       `}>
         {/* Logo & Toggle */}
         <div className="p-4 flex items-center justify-between">
@@ -117,7 +114,7 @@ export default function DashboardLayout({ children }) {
             <>
               <div className="flex items-center gap-2">
                 <Link href="/dashboard" className="flex items-center">
-                  <Image src={Logo} alt="Logo" className="h-7 w-auto" />
+                  <Image src={Logo} alt="Logo" />
                 </Link>
               </div>
               <button 

@@ -15,7 +15,6 @@ export default function HomePage() {
   const router = useRouter();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 text-white overflow-hidden">
       {/* Animated background elements */}
@@ -405,10 +404,10 @@ export default function HomePage() {
 
       {/* Auth Modal */}
       {showAuthModal && (
-        <AuthModal 
-          isLogin={isLogin} 
+        <AuthModal
+          isLogin={isLogin}
           setIsLogin={setIsLogin}
-          onClose={() => setShowAuthModal(false)} 
+          onClose={() => setShowAuthModal(false)}
         />
       )}
 

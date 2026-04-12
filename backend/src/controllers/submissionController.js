@@ -66,7 +66,7 @@ export const updateSubmissionStatus = async (req, res) => {
     const { status } = req.body;
     const isAdmin = req.user.role === "admin";
     const filter = isAdmin ? { _id: id } : { _id: id, userId: req.user.id };
-    const submission = await Submission.findOneAndUpdate(filter, { status }, { new: true });
+    const submission = await Submission.findOneAndUpdate(filter, { $set: { status } }, { new: true });
     if (!submission) return res.status(404).json({ error: "Submission not found" });
     res.json(submission);
   } catch (error) {

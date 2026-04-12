@@ -64,6 +64,7 @@ export default function AdminUsersPage() {
   }, [hasMore, loadingMore, loading, page, fetchPage]);
 
   const handleSuspend = async (userId) => {
+
     setActionLoading(userId + "-suspend");
     try {
       await api.patch(`/admin/users/${userId}/suspend`);
