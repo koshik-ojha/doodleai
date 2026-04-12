@@ -17,7 +17,8 @@ export const updateSettings = async (req, res) => {
     const allowed = [
       "botName", "welcomeMessage", "responseDelay", "language",
       "position", "primaryColor", "autoOpen",
-      "emailNotifications", "chatAlerts", "weeklyReports", "sessionTimeout"
+      "emailNotifications", "chatAlerts", "weeklyReports", "sessionTimeout",
+      "telegramBotToken", "telegramChatId"
     ];
     const updates = {};
     allowed.forEach((key) => { if (req.body[key] !== undefined) updates[key] = req.body[key]; });

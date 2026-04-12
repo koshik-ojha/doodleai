@@ -6,7 +6,7 @@ import DashboardLayout from "@components/DashboardLayout";
 import {
   Code, Copy, Check, Eye, EyeOff, Save, Plus, Trash2,
   ChevronDown, ChevronRight, Bot, Upload, FileText, Settings2,
-  Globe, Loader2, AlertCircle, Download,
+  Globe, Loader2, AlertCircle, Download, Send,
 } from "lucide-react";
 import ChatWidget from "@components/ChatWidget";
 import { Input, Select, Textarea, Toggle } from "@components/ui";
@@ -159,6 +159,15 @@ export default function IntegrationPage() {
   const [crawledSources, setCrawledSources] = useState([]);
   const [embedToken, setEmbedToken] = useState(null);
 
+  // Telegram state
+  const [telegram, setTelegram] = useState({ botToken: "", chatId: "" });
+  const [showBotToken, setShowBotToken] = useState(false);
+  const [telegramSaving, setTelegramSaving] = useState(false);
+  const [telegramSaved, setTelegramSaved] = useState(false);
+  const [telegramError, setTelegramError] = useState("");
+  const [detectingChatId, setDetectingChatId] = useState(false);
+  const [detectMsg, setDetectMsg] = useState("");
+
   // UI state
   const [copied, setCopied] = useState(false);
   const [showWidget, setShowWidget] = useState(false);
@@ -190,8 +199,11 @@ export default function IntegrationPage() {
     const token = localStorage.getItem("token");
     if (!token) { router.push("/"); return; }
 
-    api.get("/chatbots?limit=100").then(({ data }) => {
-      const list = Array.isArray(data) ? data : (data.chatbots || []);
+    Promise.all([
+      api.get("/chatbots?limit=100"),
+      api.get("/settings"),
+    ]).then(([{ data: botsData }, { data: s }]) => {
+      const list = Array.isArray(botsData) ? botsData : (botsData.chatbots || []);
       setChatbots(list);
       const params = new URLSearchParams(window.location.search);
       const urlBotId = params.get("botId");
@@ -200,6 +212,7 @@ export default function IntegrationPage() {
       } else if (list.length > 0) {
         setSelectedBotId(list[0]._id);
       }
+      setTelegram({ botToken: s.telegramBotToken || "", chatId: s.telegramChatId || "" });
     }).catch(console.error).finally(() => setLoading(false));
   }, []);
 
@@ -290,6 +303,87 @@ export default function IntegrationPage() {
       console.error(e);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDetectChatId = async () => {
+    if (!telegram.botToken.trim()) {
+      setTelegramError("Enter your Bot Token first.");
+      return;
+    }
+    setDetectingChatId(true);
+    setDetectMsg("");
+    setTelegramError("");
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${telegram.botToken.trim()}/getUpdates?limit=10`);
+      const data = await res.json();
+      if (!data.ok) {
+        setTelegramError("Invalid Bot Token. Please double-check and try again.");
+        setDetectingChatId(false);
+        return;
+      }
+      if (!data.result || data.result.length === 0) {
+        setDetectMsg("No messages found. Open Telegram, send any message to your bot (e.g. 'hi'), then click Auto-detect again.");
+        setDetectingChatId(false);
+        return;
+      }
+      // Search all updates for any chat id — handles message, edited_message, callback_query, etc.
+      let foundId = null;
+      for (const update of data.result) {
+        const id =
+          update.message?.chat?.id ??
+          update.edited_message?.chat?.id ??
+          update.channel_post?.chat?.id ??
+          update.callback_query?.message?.chat?.id ??
+          update.message?.from?.id ??
+          null;
+        if (id != null) { foundId = id; break; }
+      }
+      if (foundId == null) {
+        setDetectMsg("Could not read Chat ID. Send a message to your bot and try again.");
+        setDetectingChatId(false);
+        return;
+      }
+      const chatId = String(foundId);
+      setTelegram((prev) => ({ ...prev, chatId }));
+      setTelegramError("");
+      setDetectMsg(`Chat ID detected: ${chatId}`);
+      setTimeout(() => setDetectMsg(""), 6000);
+    } catch {
+      setTelegramError("Network error. Check your internet connection and try again.");
+    } finally {
+      setDetectingChatId(false);
+    }
+  };
+
+  const handleSaveTelegram = async () => {
+    if (!telegram.botToken.trim() || !telegram.chatId.trim()) {
+      setTelegramError("Both Bot Token and Chat ID are required.");
+      return;
+    }
+    setTelegramError("");
+    setTelegramSaving(true);
+    try {
+      await api.put("/settings", { telegramBotToken: telegram.botToken.trim(), telegramChatId: telegram.chatId.trim() });
+      setTelegramSaved(true);
+      setTimeout(() => setTelegramSaved(false), 3000);
+    } catch {
+      setTelegramError("Failed to save. Please try again.");
+    } finally {
+      setTelegramSaving(false);
+    }
+  };
+
+  const handleDisconnectTelegram = async () => {
+    setTelegramSaving(true);
+    try {
+      await api.put("/settings", { telegramBotToken: "", telegramChatId: "" });
+      setTelegram({ botToken: "", chatId: "" });
+      setTelegramSaved(false);
+    } catch {
+      setTelegramError("Failed to disconnect.");
+    } finally {
+      setTelegramSaving(false);
     }
   };
 
@@ -483,7 +577,7 @@ export default function IntegrationPage() {
 
                     <Toggle label="Auto-open on load" description="Show widget expanded when page loads" checked={config.autoOpen} onChange={(v) => update("autoOpen", v)} />
 
-                    <div>
+                    {/* <div>
                       <label className="block text-sm text-gray-400 font-medium mb-1.5">
                         WhatsApp Number
                         <span className="ml-2 text-xs text-gray-600 font-normal">Form submissions will be sent to this number</span>
@@ -493,7 +587,7 @@ export default function IntegrationPage() {
                         value={config.whatsappNumber || ""}
                         onChange={(e) => update("whatsappNumber", e.target.value)}
                       />
-                    </div>
+                    </div> */}
 
                     {/* Allowed Domains */}
                     <div>
@@ -546,6 +640,113 @@ export default function IntegrationPage() {
                       ) : (
                         <p className="text-xs text-gray-600">No restrictions — widget loads on any domain.</p>
                       )}
+                    </div>
+
+                    {/* Telegram Notifications */}
+                    <div className="border-t border-purple-500/10 pt-5">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-lg bg-[#229ED9]/10 border border-[#229ED9]/20 flex items-center justify-center">
+                            <Send size={15} className="text-[#229ED9]" />
+                          </div>
+                          <div>
+                            <p className="text-white text-sm font-semibold">Telegram Lead Notifications</p>
+                            <p className="text-gray-500 text-xs">Get new leads instantly in your Telegram</p>
+                          </div>
+                        </div>
+                        {telegram.botToken && telegram.chatId && (
+                          <span className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full flex items-center gap-1">
+                            <Check size={11} /> Connected
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Steps */}
+                      <div className="bg-black/20 border border-purple-500/10 rounded-xl p-4 mb-4 space-y-3">
+                        <p className="text-gray-300 text-xs font-semibold uppercase tracking-wide">How to set up (2 min)</p>
+                        {[
+                          { n: "1", text: 'Open Telegram → search "@BotFather" → tap Start' },
+                          { n: "2", text: 'Send /newbot → enter a name → enter a username ending in "bot"' },
+                          { n: "3", text: "BotFather gives you a Bot Token — paste it in the field below" },
+                          { n: "4", text: 'Send any message to your new bot (e.g. "hi"), then click "Auto-detect Chat ID" — we will fill it automatically' },
+                        ].map(({ n, text }) => (
+                          <div key={n} className="flex gap-2.5 items-start">
+                            <span className="w-5 h-5 rounded-full bg-purple-600/20 border border-purple-500/30 text-purple-400 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{n}</span>
+                            <p className="text-gray-400 text-xs leading-relaxed">{text}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Inputs */}
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm text-gray-400 font-medium mb-1.5">Bot Token</label>
+                          <div className="relative">
+                            <input
+                              type={showBotToken ? "text" : "password"}
+                              value={telegram.botToken}
+                              onChange={(e) => setTelegram({ ...telegram, botToken: e.target.value })}
+                              placeholder="e.g. 7123456789:AAFxxxxxxxxxxxxxxxx"
+                              className="w-full bg-black/20 border border-purple-500/15 text-gray-200 placeholder-gray-600 rounded-xl px-4 pr-10 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
+                            />
+                            <button type="button" onClick={() => setShowBotToken(!showBotToken)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors">
+                              {showBotToken ? <EyeOff size={15} /> : <Eye size={15} />}
+                            </button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm text-gray-400 font-medium mb-1.5">
+                            Chat ID
+                            <span className="ml-2 text-xs text-gray-600 font-normal">Send any message to your bot first, then click Auto-detect</span>
+                          </label>
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={telegram.chatId}
+                              onChange={(e) => setTelegram({ ...telegram, chatId: e.target.value })}
+                              placeholder="Click Auto-detect or enter manually"
+                              className="flex-1 bg-black/20 border border-purple-500/15 text-gray-200 placeholder-gray-600 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
+                            />
+                            <button
+                              onClick={handleDetectChatId}
+                              disabled={detectingChatId || !telegram.botToken.trim()}
+                              className="flex items-center gap-1.5 px-4 py-2.5 bg-[#229ED9]/20 hover:bg-[#229ED9]/30 border border-[#229ED9]/30 disabled:opacity-50 text-[#229ED9] text-sm font-medium rounded-xl transition-all whitespace-nowrap"
+                            >
+                              {detectingChatId ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                              {detectingChatId ? "Detecting..." : "Auto-detect"}
+                            </button>
+                          </div>
+                          {detectMsg && (
+                            <p className="text-xs text-emerald-400 flex items-center gap-1.5 mt-1.5">
+                              <Check size={12} /> {detectMsg}
+                            </p>
+                          )}
+                        </div>
+
+                        {telegramError && (
+                          <p className="text-xs text-red-400 flex items-center gap-1.5">
+                            <AlertCircle size={12} /> {telegramError}
+                          </p>
+                        )}
+
+                        <div className="flex items-center gap-3 pt-1">
+                          <button
+                            onClick={handleSaveTelegram}
+                            disabled={telegramSaving}
+                            className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 disabled:opacity-60 rounded-xl px-5 py-2.5 text-white text-sm font-medium transition-all hover:shadow-lg hover:shadow-purple-500/20"
+                          >
+                            {telegramSaved ? <><Check size={15} /> Saved!</> : telegramSaving ? <><Loader2 size={15} className="animate-spin" /> Saving...</> : <><Send size={15} /> Save & Connect</>}
+                          </button>
+                          {telegram.botToken && telegram.chatId && (
+                            <button onClick={handleDisconnectTelegram} disabled={telegramSaving}
+                              className="text-xs text-red-400 hover:text-red-300 transition-colors disabled:opacity-50">
+                              Disconnect
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -901,7 +1102,7 @@ export default function IntegrationPage() {
               </div>
             </div>
           </>
-        )}        
+        )}
       </div>
 
       <ConfirmModal

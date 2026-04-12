@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  MessageSquare, Zap, BarChart3, Globe, ArrowRight, CheckCircle, 
-  Sparkles, Users, TrendingUp, Code, Rocket, Star, ChevronDown, LogIn, UserPlus
+import {
+  MessageSquare, Zap, BarChart3, Globe, ArrowRight, CheckCircle,
+  Sparkles, Users, TrendingUp, Code, Rocket, Star, ChevronDown, LogIn, UserPlus,
+  Bell, Send, Smartphone
 } from "lucide-react";
 import BotWidget, { SvgIcon as BotIcon } from "@components/BotWidget";
 import ChatWidget from "@components/ChatWidget";
@@ -34,9 +35,9 @@ export default function HomePage() {
               <Image src={Logo} alt="Doodle AI" className="h-9 sm:h-10 md:h-12 w-auto" />
             </Link>
           </div>
-          
+
           <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
-            <button 
+            <button
               onClick={() => { setIsLogin(true); setShowAuthModal(true); }}
               className="w-8 h-8 sm:w-auto sm:h-auto sm:px-5 sm:py-2.5 border border-purple-500 text-purple-400 hover:bg-purple-500/10 rounded-lg transition-all flex items-center justify-center gap-2 touch-manipulation"
               title="Login"
@@ -44,7 +45,7 @@ export default function HomePage() {
               <LogIn size={20} className="sm:w-5 sm:h-5" />
               <span className="hidden md:inline text-sm font-medium">Login</span>
             </button>
-            <button 
+            <button
               onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
               className="w-8 h-8 sm:w-auto sm:h-auto sm:px-5 md:px-6 sm:py-2.5 border border-purple-500 text-purple-400 hover:bg-purple-500/10 rounded-lg transition-all flex items-center justify-center gap-2 touch-manipulation"
               title="Get Started"
@@ -66,7 +67,7 @@ export default function HomePage() {
                 <Sparkles size={18} className="sm:w-5 sm:h-5" />
                 <span>Powered by Advanced AI</span>
               </div>
-              
+
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 <span className="bg-gradient-to-r from-white via-white to-zinc-400 bg-clip-text text-transparent">
                   Transform Your
@@ -76,21 +77,21 @@ export default function HomePage() {
                   Customer Support
                 </span>
               </h1>
-              
+
               <p className="text-lg sm:text-xl md:text-2xl text-gray-400 leading-relaxed max-w-xl">
-                Deploy intelligent Doodle AIs in minutes. Engage visitors, capture leads, 
+                Deploy intelligent Doodle AIs in minutes. Engage visitors, capture leads,
                 and provide 24/7 support with our powerful chatbot platform.
               </p>
-              
+
               <div className="flex flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
-                <button 
+                <button
                   onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
                   className="group px-5 sm:px-9 py-3 sm:py-4 !text-sm sm:text-lg bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 rounded-xl text-white font-semibold transition-all shadow-xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 flex items-center justify-center gap-2 touch-manipulation"
                 >
                   Start Free Trial
                   <ArrowRight size={20} className="sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
                 </button>
-                <button 
+                <button
                   onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}
                   className="px-5 sm:px-9 py-3 sm:py-4 !text-sm sm:text-lg bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700 rounded-xl text-white font-semibold transition-all flex items-center justify-center gap-2 touch-manipulation"
                 >
@@ -129,7 +130,7 @@ export default function HomePage() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-3">
                     <BotIcon size={36} className="flex-shrink-0" />
                     <div className="bg-purple-500/10 border border-purple-500/20 rounded-2xl rounded-tl-none px-4 py-3 max-w-[80%]">
@@ -138,7 +139,7 @@ export default function HomePage() {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-3 justify-end">
                     <div className="bg-zinc-700/50 rounded-2xl rounded-tr-none px-4 py-3 max-w-[80%]">
                       <p className="text-sm text-gray-200">
@@ -146,7 +147,7 @@ export default function HomePage() {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-3">
                     <BotIcon size={36} className="flex-shrink-0" />
                     <div className="bg-purple-500/10 border border-purple-500/20 rounded-2xl rounded-tl-none px-4 py-3 max-w-[80%]">
@@ -156,7 +157,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Floating elements */}
                 <div className="absolute -top-4 -right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg animate-bounce">
                   AI Powered
@@ -227,8 +228,8 @@ export default function HomePage() {
                 color: "cyan"
               },
             ].map((feature, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className="group bg-zinc-800/30 backdrop-blur-sm border border-zinc-700/50 hover:border-purple-500/50 rounded-xl sm:rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1"
               >
                 <div className={`w-14 h-14 rounded-xl bg-${feature.color}-500/10 border border-${feature.color}-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
@@ -236,6 +237,143 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-xl sm:text-2xl font-semibold mb-2 text-white">{feature.title}</h3>
                 <p className="text-base sm:text-lg text-gray-400 leading-relaxed">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Telegram Integration Highlight Section */}
+      <section className="relative z-10 py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-gradient-to-br from-blue-950/30 via-zinc-900/50 to-purple-950/30 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
+            {/* Left Content */}
+            <div className="space-y-6 sm:space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300 text-sm sm:text-base backdrop-blur-xl">
+                <Sparkles size={18} className="sm:w-5 sm:h-5" />
+                <span>New Feature</span>
+              </div>
+
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                <span className="bg-gradient-to-r from-white via-blue-200 to-white bg-clip-text text-transparent">
+                  Get Leads Instantly on
+                <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent ms-2">
+                  Telegram
+                </span>
+                </span>
+              </h2>
+
+              <p className="text-lg sm:text-xl md:text-2xl text-gray-300 leading-relaxed">
+                Never miss a lead again! Receive instant notifications on Telegram whenever a visitor submits information through your chatbot. Stay connected, respond faster, and close more deals.
+              </p>
+
+              <div className="space-y-4">
+                {[
+                  { icon: Bell, title: "Real-Time Alerts", desc: "Get notified the moment a lead comes in" },
+                  { icon: Smartphone, title: "Mobile-First", desc: "Access leads anywhere, anytime on your phone" },
+                  { icon: Zap, title: "Lightning Fast", desc: "Respond to prospects while they're still engaged" },
+                ].map((feature, i) => (
+                  <div key={i} className="flex items-start gap-4 bg-zinc-800/40 backdrop-blur-sm border border-zinc-700/50 rounded-xl p-4 hover:border-blue-500/50 transition-all">
+                    <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center flex-shrink-0">
+                      <feature.icon size={24} className="text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-white mb-1">{feature.title}</h3>
+                      <p className="text-gray-400 text-sm">{feature.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4 pt-4">
+                <button
+                  onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
+                  className="group px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 rounded-xl text-white font-semibold transition-all shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 flex items-center gap-2"
+                >
+                  Try It Free Now
+                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+                <div className="flex items-center gap-2 text-gray-400 text-sm">
+                  <CheckCircle size={18} className="text-green-400" />
+                  <span>No credit card required</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Visual - Telegram Notification Preview */}
+            <div className="relative">
+              <div className="relative bg-gradient-to-br from-blue-900/40 via-zinc-900/80 to-zinc-800/80 backdrop-blur-xl rounded-3xl border border-blue-500/30 p-6 sm:p-8 shadow-2xl shadow-blue-500/20">
+                {/* Telegram Chat Header */}
+                <div className="flex items-center gap-3 pb-4 border-b border-zinc-700/50">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                    <Send size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-white">Doodle AI Bot</div>
+                    <div className="text-xs text-gray-400">Lead Notifications</div>
+                  </div>
+                </div>
+
+                {/* Notification Messages */}
+                <div className="space-y-4 mt-6">
+                  <div className="bg-blue-600/20 border border-blue-500/30 rounded-2xl rounded-tl-sm px-4 py-3 backdrop-blur-sm">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Bell size={16} className="text-blue-400" />
+                      <span className="text-xs font-semibold text-blue-400">New Lead Received!</span>
+                    </div>
+                    <div className="text-sm text-gray-200 space-y-1">
+                      <p><span className="font-semibold">Name:</span> Sarah Johnson</p>
+                      <p><span className="font-semibold">Email:</span> sarah@techstart.com</p>
+                      <p><span className="font-semibold">Phone:</span> +1 234-567-8900</p>
+                      <p><span className="font-semibold">Company:</span> TechStart Inc.</p>
+                      <p className="pt-2 text-gray-300">💬 "Interested in Enterprise plan for 50 agents"</p>
+                    </div>
+                    <div className="text-xs text-gray-400 mt-2">Just now</div>
+                  </div>
+
+                  <div className="bg-zinc-800/40 border border-zinc-700/50 rounded-2xl rounded-tl-sm px-4 py-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Bell size={16} className="text-purple-400" />
+                      <span className="text-xs font-semibold text-purple-400">New Lead Received!</span>
+                    </div>
+                    <div className="text-sm text-gray-300 space-y-1">
+                      <p><span className="font-semibold">Name:</span> Michael Chen</p>
+                      <p><span className="font-semibold">Email:</span> m.chen@growth.io</p>
+                      <p className="pt-1 text-gray-400">💬 "Need pricing for startup plan"</p>
+                    </div>
+                    <div className="text-xs text-gray-400 mt-2">2 minutes ago</div>
+                  </div>
+                </div>
+
+                {/* Floating Badge */}
+                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
+                  ✓ Connected
+                </div>
+              </div>
+
+              {/* Background decoration */}
+              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl"></div>
+              <div className="absolute -top-6 -right-6 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl"></div>
+            </div>
+          </div>
+
+          {/* Bottom Stats */}
+          <div className="grid grid-cols-3 gap-4 sm:gap-6 mt-12 sm:mt-16 pt-8 border-t border-zinc-800/50">
+            {[
+              { value: "<1s", label: "Notification Speed" },
+              { value: "100%", label: "Delivery Rate" },
+              { value: "24/7", label: "Always On" },
+            ].map((stat, i) => (
+              <div key={i} className="text-center">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">
+                  {stat.value}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-400">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -517,7 +655,7 @@ export default function HomePage() {
             <p className="text-lg sm:text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto px-4">
               Choose the perfect plan for your business needs
             </p>
-            
+
             {/* Monthly/Yearly Toggle */}
             <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6 sm:mt-8">
               <span className={`text-base sm:text-lg font-medium transition-colors ${!isYearly ? 'text-purple-400' : 'text-gray-500'}`}>
@@ -575,7 +713,7 @@ export default function HomePage() {
                     <span className="text-sm sm:text-base text-gray-300">Email Support</span>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
                   className="w-full px-6 py-3 bg-zinc-800/50 hover:bg-zinc-700 text-white border border-zinc-700 rounded-xl font-semibold transition-all"
                 >
@@ -620,7 +758,7 @@ export default function HomePage() {
                     <span className="text-sm sm:text-base text-gray-300">Custom Branding</span>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
                   className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white rounded-xl font-semibold transition-all shadow-lg shadow-purple-500/30"
                 >
@@ -662,7 +800,7 @@ export default function HomePage() {
                     <span className="text-sm sm:text-base text-gray-300">White Label Option</span>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
                   className="w-full px-6 py-3 bg-zinc-800/50 hover:bg-zinc-700 text-white border border-zinc-700 rounded-xl font-semibold transition-all"
                 >
@@ -721,7 +859,7 @@ export default function HomePage() {
             </h3>
             <p className="text-gray-400">Your data is safe with industry-leading security standards</p>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8 items-center justify-items-center">
             {[
               { name: "SSL Encrypted", icon: "🔒" },
@@ -809,7 +947,7 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-blue-500/5 to-purple-500/5"></div>
             <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-            
+
             <div className="relative text-center space-y-4 sm:space-y-6">
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold">
                 <span className="bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
@@ -820,7 +958,7 @@ export default function HomePage() {
                 Join thousands of businesses using Doodle AIs to engage customers and grow faster.
               </p>
               <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 pt-4">
-                <button 
+                <button
                   onClick={() => { setIsLogin(false); setShowAuthModal(true); }}
                   className="px-7 sm:px-9 py-3.5 sm:py-4 text-base sm:text-lg bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white rounded-xl font-semibold transition-all shadow-xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 flex items-center justify-center gap-2 w-full sm:w-auto touch-manipulation"
                 >
@@ -831,7 +969,7 @@ export default function HomePage() {
                   Schedule a Demo
                 </button>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 sm:gap-6 pt-6 sm:pt-8 text-sm sm:text-base text-gray-400">
                 <div className="flex items-center gap-2">
                   <CheckCircle size={20} className="text-purple-400" />
@@ -861,7 +999,7 @@ export default function HomePage() {
           <p className="text-base sm:text-lg text-gray-400 mb-6 sm:mb-8 max-w-2xl mx-auto">
             Get the latest tips on chatbot optimization, AI trends, and exclusive feature updates delivered to your inbox weekly.
           </p>
-          
+
           <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
             <input
               type="email"
@@ -876,7 +1014,7 @@ export default function HomePage() {
               Subscribe
             </button>
           </form>
-          
+
           <p className="text-xs sm:text-sm text-gray-500 mt-4">
             Join 10,000+ subscribers. Unsubscribe anytime. No spam, ever.
           </p>
@@ -897,7 +1035,7 @@ export default function HomePage() {
                 The most powerful Doodle AI platform for modern businesses.
               </p>
             </div>
-            
+
             {[
               {
                 title: "Product",
@@ -926,7 +1064,7 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-          
+
           <div className="pt-6 sm:pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-xs sm:text-sm">
               © 2026 Doodle AI. All rights reserved.
@@ -943,7 +1081,7 @@ export default function HomePage() {
       </footer>
 
       {/* Live Demo Chat Widget */}
-              
+
 
       {/* Auth Modal */}
       {showAuthModal && (

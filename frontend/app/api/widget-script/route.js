@@ -180,7 +180,7 @@ function widgetScript(botId, apiUrl) {
     backBtn.onmouseover = function () { backBtn.style.color = '#6b7280'; };
     backBtn.onmouseout  = function () { backBtn.style.color = '#9ca3af'; };
     var inputRow = mk('div', 'display:flex;gap:8px;align-items:center;');
-    var inp = mk('input', 'flex:1;border:1.5px solid #e5e7eb;background:#f9fafb;color:#111827;border-radius:9999px;padding:10px 16px;font-size:13px;line-height:1.5;');
+    var inp = mk('input', 'flex:1;border:1.5px solid #e5e7eb;background:#f9fafb;color:#111827;border-radius:9999px;padding:10px 16px;font-size:13px!important;line-height:1.5;font-widht:400!important');
     inp.id = 'doodleai-chat-inp';
     inp.type = 'text';
     inp.placeholder = 'Type a message...';
@@ -426,7 +426,7 @@ function widgetScript(botId, apiUrl) {
     function fInp(type, placeholder, name, required) {
       var el = mk('input',
         'width:100%;border:1.5px solid #e5e7eb;background:#f9fafb;color:#111827;' +
-        'border-radius:8px;padding:9px 12px;font-size:13px;');
+        'border-radius:6px;padding:6px 12px;font-size:13px!important;font-weight:400!important;');
       el.type = type; el.placeholder = placeholder; el.name = name; el.required = required;
       el.onfocus = function () { el.style.borderColor = color; el.style.outline = 'none'; };
       el.onblur  = function () { el.style.borderColor = '#e5e7eb'; };
@@ -435,7 +435,7 @@ function widgetScript(botId, apiUrl) {
     function fTa(placeholder, name, required, rows) {
       var el = mk('textarea',
         'width:100%;border:1.5px solid #e5e7eb;background:#f9fafb;color:#111827;' +
-        'border-radius:8px;padding:9px 12px;font-size:13px;resize:none;font-family:inherit;');
+        'border-radius:6px;padding:6px 12px;font-size:13px!important;font-weight:400!important;');
       el.placeholder = placeholder; el.name = name; el.required = required; el.rows = rows || 3;
       el.onfocus = function () { el.style.borderColor = color; el.style.outline = 'none'; };
       el.onblur  = function () { el.style.borderColor = '#e5e7eb'; };

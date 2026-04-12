@@ -15,6 +15,9 @@ const settingsSchema = new mongoose.Schema({
   emailNotifications: { type: Boolean, default: true },
   chatAlerts: { type: Boolean, default: true },
   weeklyReports: { type: Boolean, default: false },
+  // Telegram Integration
+  telegramBotToken: { type: String, default: "" },
+  telegramChatId: { type: String, default: "" },
   // Security
   sessionTimeout: { type: String, default: "30" },
 }, { timestamps: true });

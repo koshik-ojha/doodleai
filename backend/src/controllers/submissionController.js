@@ -1,5 +1,30 @@
 import Submission from "../models/Submission.js";
 import Chatbot from "../models/Chatbot.js";
+import Settings from "../models/Settings.js";
+
+const sendTelegramNotification = async (chatId, botToken, submission, botName) => {
+  const token = botToken || process.env.TELEGRAM_BOT_TOKEN;
+  if (!token || !chatId) return;
+  const text =
+    `<b>New Lead Received!</b>\n\n` +
+    `<b>Name:</b> ${submission.name}\n` +
+    `<b>Email:</b> ${submission.email}\n` +
+    `<b>Phone:</b> ${submission.phone || "N/A"}\n` +
+    `<b>Company:</b> ${submission.company || "N/A"}\n` +
+    `<b>Type:</b> ${submission.formType}\n` +
+    (submission.message ? `<b>Message:</b> ${submission.message}\n` : "") +
+    (submission.budget ? `<b>Budget:</b> ${submission.budget}\n` : "") +
+    `<b>Bot:</b> ${botName || "N/A"}`;
+  try {
+    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
+    });
+  } catch {
+    // Telegram failure should never block the submission
+  }
+};
 
 export const getSubmissions = async (req, res) => {
   try {
@@ -54,6 +79,15 @@ export const createSubmission = async (req, res) => {
       userId,
       botName,
     });
+
+    // Send Telegram notification if user has configured a Chat ID
+    if (userId) {
+      const userSettings = await Settings.findOne({ userId }).catch(() => null);
+      if (userSettings?.telegramChatId) {
+        sendTelegramNotification(userSettings.telegramChatId, userSettings.telegramBotToken, submission, botName);
+      }
+    }
+
     res.status(201).json(submission);
   } catch (error) {
     res.status(500).json({ error: "Failed to create submission" });
