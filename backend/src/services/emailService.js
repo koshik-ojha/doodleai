@@ -1,15 +1,7 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-function getTransporter() {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: process.env.SMTP_SECURE === "true",
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
 }
 
 function otpBlock(otp) {
@@ -45,8 +37,8 @@ export async function sendOtpEmail(email, otp, name) {
       Expires in <strong style="color:#9ca3af;">10 minutes</strong>. Do not share it.
     </p>`;
 
-  await getTransporter().sendMail({
-    from: `"Doodle AI" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+  await getResend().emails.send({
+    from: process.env.RESEND_FROM,
     to: email,
     subject: "Your Doodle AI Verification Code",
     html: emailWrapper("Email Verification", body),
@@ -64,8 +56,8 @@ export async function sendPasswordResetEmail(email, otp) {
       Expires in <strong style="color:#9ca3af;">10 minutes</strong>. Do not share it.
     </p>`;
 
-  await getTransporter().sendMail({
-    from: `"Doodle AI" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+  await getResend().emails.send({
+    from: process.env.RESEND_FROM,
     to: email,
     subject: "Reset Your Doodle AI Password",
     html: emailWrapper("Password Reset", body),
