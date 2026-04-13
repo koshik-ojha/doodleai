@@ -37,7 +37,7 @@ function TrendBadge({ value }) {
   return (
     <span
       className={`inline-flex items-center gap-0.5 text-[11px] font-semibold ${
-        up ? "text-emerald-400" : "text-red-400"
+        up ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
       }`}
     >
       {up ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
@@ -48,13 +48,13 @@ function TrendBadge({ value }) {
 
 function heatmapColor(intensity) {
   return [
-    "bg-zinc-800/30",
-    "bg-purple-500/15",
-    "bg-purple-500/35",
-    "bg-purple-500/55",
-    "bg-purple-600/75",
-    "bg-purple-600",
-  ][Math.min(intensity, 5)] ?? "bg-zinc-800/30";
+    "bg-gray-200 dark:bg-zinc-800/30",
+    "bg-purple-200 dark:bg-purple-500/15",
+    "bg-purple-300 dark:bg-purple-500/35",
+    "bg-purple-400 dark:bg-purple-500/55",
+    "bg-purple-500 dark:bg-purple-600/75",
+    "bg-purple-600 dark:bg-purple-600",
+  ][Math.min(intensity, 5)] ?? "bg-gray-200 dark:bg-zinc-800/30";
 }
 
 // Build intensity map from real hourlyActivity { dayIdx: { hour: count } }
@@ -159,8 +159,8 @@ export default function AnalyticsPage() {
         {/* ── Header ── */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-white">Analytics</h1>
-            <p className="text-gray-400 mt-1 text-sm">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Analytics</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm">
               Track chatbot performance · data updates on refresh
             </p>
           </div>
@@ -171,7 +171,7 @@ export default function AnalyticsPage() {
               onChange={(e) => setRange(e.target.value)}
               options={RANGE_OPTIONS}
               variant="dark"
-              className="!bg-[#1a1a2e] !border-purple-500/20 !rounded-xl hover:!border-purple-500/40"
+              className="!bg-white dark:!bg-[#1a1a2e] !border-gray-300 dark:!border-purple-500/20 !rounded-xl hover:!border-purple-500/40"
             />
 
             <button
@@ -199,53 +199,53 @@ export default function AnalyticsPage() {
           <div className="lg:col-span-2 grid grid-cols-2 gap-3">
             {loading
               ? [1, 2, 3, 4].map((i) => (
-                  <div key={i} className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-5 animate-pulse h-36" />
+                  <div key={i} className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-5 animate-pulse h-36" />
                 ))
               : metrics.map((m, i) => {
                   const Icon = m.icon;
                   return (
                     <div
                       key={i}
-                      className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-5 hover:border-purple-500/25 hover:bg-[#1a1a2e]/70 transition-all group"
+                      className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-5 hover:border-gray-300 dark:hover:border-purple-500/25 hover:bg-gray-50 dark:hover:bg-[#1a1a2e]/70 transition-all group"
                     >
                       <div className="flex items-start justify-between mb-4">
-                        <div className="w-9 h-9 rounded-xl bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-500/20 transition-all">
-                          <Icon size={16} className="text-purple-400" />
+                        <div className="w-9 h-9 rounded-xl bg-purple-100 dark:bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-200 dark:group-hover:bg-purple-500/20 transition-all">
+                          <Icon size={16} className="text-purple-600 dark:text-purple-400" />
                         </div>
                         <TrendBadge value={m.trend} />
                       </div>
-                      <p className="text-2xl font-bold text-white">{m.value}</p>
-                      <p className="text-gray-400 text-[11px] font-medium mt-0.5">{m.label}</p>
-                      <p className="text-gray-600 text-[10px] mt-1">{m.sub}</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">{m.value}</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-[11px] font-medium mt-0.5">{m.label}</p>
+                      <p className="text-gray-500 dark:text-gray-600 text-[10px] mt-1">{m.sub}</p>
                     </div>
                   );
                 })}
           </div>
 
           {/* Session heatmap */}
-          <div className="lg:col-span-3 bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-5 hover:border-purple-500/20 transition-colors">
+          <div className="lg:col-span-3 bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-5 hover:border-gray-300 dark:hover:border-purple-500/20 transition-colors">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-sm font-semibold text-white">Session Heatmap</h2>
-                <p className="text-gray-500 text-xs mt-0.5">
+                <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Session Heatmap</h2>
+                <p className="text-gray-600 dark:text-gray-500 text-xs mt-0.5">
                   Real message activity by day &amp; hour
                 </p>
               </div>
-              <div className="flex items-center gap-3 text-[10px] text-gray-500">
+              <div className="flex items-center gap-3 text-[10px] text-gray-600 dark:text-gray-500">
                 <span className="flex items-center gap-1">
-                  <span className="w-3 h-3 rounded-sm bg-zinc-800/50 inline-block" /> None
+                  <span className="w-3 h-3 rounded-sm bg-gray-200 dark:bg-zinc-800/50 inline-block" /> None
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="w-3 h-3 rounded-sm bg-purple-500/35 inline-block" /> Mid
+                  <span className="w-3 h-3 rounded-sm bg-purple-300 dark:bg-purple-500/35 inline-block" /> Mid
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="w-3 h-3 rounded-sm bg-purple-600 inline-block" /> Peak
+                  <span className="w-3 h-3 rounded-sm bg-purple-500 dark:bg-purple-600 inline-block" /> Peak
                 </span>
               </div>
             </div>
 
             {loading ? (
-              <div className="h-44 animate-pulse bg-purple-500/5 rounded-xl" />
+              <div className="h-44 animate-pulse bg-gray-100 dark:bg-purple-500/5 rounded-xl" />
             ) : (
               <div className="overflow-x-auto">
                 <div className="min-w-[360px]">
@@ -253,7 +253,7 @@ export default function AnalyticsPage() {
                   <div className="flex mb-1.5 ml-12">
                     {HEATMAP_DAYS.map((d) => (
                       <div key={d} className="flex-1 text-center">
-                        <span className="text-[10px] text-gray-500 font-medium">{d}</span>
+                        <span className="text-[10px] text-gray-500 dark:text-gray-500 font-medium">{d}</span>
                       </div>
                     ))}
                   </div>
@@ -261,7 +261,7 @@ export default function AnalyticsPage() {
                   {HEATMAP_HOURS.map((hour, hIdx) => (
                     <div key={hour} className="flex items-center mb-1">
                       <div className="w-12 text-right pr-2">
-                        <span className="text-[10px] text-gray-600">
+                        <span className="text-[10px] text-gray-500 dark:text-gray-600">
                           {String(hour).padStart(2, "0")}:00
                         </span>
                       </div>
@@ -285,16 +285,16 @@ export default function AnalyticsPage() {
         </div>
 
         {/* ── Daily Activity Bar Chart ── */}
-        <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-5 hover:border-purple-500/20 transition-colors">
+        <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-5 hover:border-gray-300 dark:hover:border-purple-500/20 transition-colors">
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h2 className="text-sm font-semibold text-white">Daily Activity</h2>
-              <p className="text-gray-500 text-xs mt-0.5">New conversations started per day</p>
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Daily Activity</h2>
+              <p className="text-gray-600 dark:text-gray-500 text-xs mt-0.5">New conversations started per day</p>
             </div>
             {data && (
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-600 dark:text-gray-500">
                 Total:{" "}
-                <span className="text-white font-semibold">
+                <span className="text-gray-900 dark:text-white font-semibold">
                   {data.totalChats.toLocaleString()}
                 </span>{" "}
                 chats
@@ -303,9 +303,9 @@ export default function AnalyticsPage() {
           </div>
 
           {loading ? (
-            <div className="h-56 animate-pulse bg-purple-500/5 rounded-xl" />
+            <div className="h-56 animate-pulse bg-gray-100 dark:bg-purple-500/5 rounded-xl" />
           ) : barData.length === 0 ? (
-            <div className="h-56 flex items-center justify-center text-gray-600 text-sm">
+            <div className="h-56 flex items-center justify-center text-gray-500 dark:text-gray-600 text-sm">
               No activity in this period
             </div>
           ) : (
@@ -313,7 +313,7 @@ export default function AnalyticsPage() {
               {/* Y-axis */}
               <div className="absolute left-0 top-0 bottom-6 w-10 flex flex-col justify-between pointer-events-none">
                 {yTicks.map((v, i) => (
-                  <span key={i} className="text-[10px] text-gray-600 text-right pr-2 leading-none">
+                  <span key={i} className="text-[10px] text-gray-500 dark:text-gray-600 text-right pr-2 leading-none">
                     {v}
                   </span>
                 ))}
@@ -322,7 +322,7 @@ export default function AnalyticsPage() {
               {/* Grid lines */}
               <div className="absolute left-10 right-0 top-0 bottom-6 flex flex-col justify-between pointer-events-none">
                 {yTicks.map((_, i) => (
-                  <div key={i} className="border-t border-purple-500/10 w-full" />
+                  <div key={i} className="border-t border-gray-200 dark:border-purple-500/10 w-full" />
                 ))}
               </div>
 
@@ -337,7 +337,7 @@ export default function AnalyticsPage() {
                       key={idx}
                       className="flex-1 flex flex-col items-center justify-end h-full group/bar"
                     >
-                      <span className="text-[10px] font-medium text-gray-500 mb-1 opacity-0 group-hover/bar:opacity-100 transition-opacity">
+                      <span className="text-[10px] font-medium text-gray-500 dark:text-gray-500 mb-1 opacity-0 group-hover/bar:opacity-100 transition-opacity">
                         {item.conversations}
                       </span>
                       <div
@@ -345,8 +345,8 @@ export default function AnalyticsPage() {
                           isPeak
                             ? "bg-purple-500 hover:bg-purple-400 shadow-md shadow-purple-500/20"
                             : hasData
-                            ? "bg-zinc-700 hover:bg-zinc-600"
-                            : "bg-zinc-800/40"
+                            ? "bg-gray-400 dark:bg-zinc-700 hover:bg-gray-500 dark:hover:bg-zinc-600"
+                            : "bg-gray-200 dark:bg-zinc-800/40"
                         }`}
                         style={{ height: `${hasData ? Math.max(pct, 2) : 1}%` }}
                         title={`${item.day}: ${item.conversations} chats`}
@@ -360,7 +360,7 @@ export default function AnalyticsPage() {
               <div className="absolute left-10 right-0 bottom-0 h-6 flex items-center">
                 {barData.map((item, idx) => (
                   <div key={idx} className="flex-1 text-center">
-                    <span className="text-[10px] text-gray-600 font-medium">
+                    <span className="text-[10px] text-gray-500 dark:text-gray-600 font-medium">
                       {item.day.length > 6 ? item.day.substring(0, 3) : item.day}
                     </span>
                   </div>
@@ -371,17 +371,17 @@ export default function AnalyticsPage() {
         </div>
 
         {/* ── Most Active Conversations ── */}
-        <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-5 hover:border-purple-500/20 transition-colors">
-          <h2 className="text-sm font-semibold text-white mb-4">Most Active Conversations</h2>
+        <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-5 hover:border-gray-300 dark:hover:border-purple-500/20 transition-colors">
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Most Active Conversations</h2>
 
           {loading ? (
             <div className="space-y-3">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="h-9 bg-purple-500/5 rounded-lg animate-pulse" />
+                <div key={i} className="h-9 bg-gray-100 dark:bg-purple-500/5 rounded-lg animate-pulse" />
               ))}
             </div>
           ) : !data?.topChats?.length ? (
-            <div className="py-10 text-center text-gray-600 text-sm">
+            <div className="py-10 text-center text-gray-500 dark:text-gray-600 text-sm">
               No conversations in this period
             </div>
           ) : (
@@ -391,19 +391,19 @@ export default function AnalyticsPage() {
                 const pct = Math.max((item.count / topCount) * 100, 4);
                 return (
                   <div key={i} className="flex items-center gap-3 group">
-                    <span className="text-gray-700 text-xs font-bold w-4 text-right flex-shrink-0">
+                    <span className="text-gray-500 dark:text-gray-700 text-xs font-bold w-4 text-right flex-shrink-0">
                       {i + 1}
                     </span>
                     <div className="flex-1 space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <p className="text-gray-300 text-xs truncate group-hover:text-white transition-colors">
+                        <p className="text-gray-700 dark:text-gray-300 text-xs truncate group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                           {item.question}
                         </p>
-                        <span className="text-gray-500 text-[10px] ml-3 flex-shrink-0">
+                        <span className="text-gray-600 dark:text-gray-500 text-[10px] ml-3 flex-shrink-0">
                           {item.count} msg{item.count !== 1 ? "s" : ""}
                         </span>
                       </div>
-                      <div className="h-1 bg-zinc-800 rounded-full overflow-hidden">
+                      <div className="h-1 bg-gray-200 dark:bg-zinc-800 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-purple-600 to-purple-400 rounded-full transition-all duration-700"
                           style={{ width: `${pct}%` }}
@@ -421,3 +421,4 @@ export default function AnalyticsPage() {
     </DashboardLayout>
   );
 }
+

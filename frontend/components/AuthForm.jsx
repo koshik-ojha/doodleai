@@ -37,12 +37,12 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 from-gray-50 via-blue-50 to-purple-50">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl animate-pulse delay-500"></div>
+        <div className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-500/10 dark:bg-blue-500/10 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-500/10 dark:bg-purple-500/10 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/5 dark:bg-cyan-500/5 bg-cyan-500/15 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
 
       {/* Auth form container */}
@@ -54,10 +54,10 @@ export default function AuthForm() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-zinc-400 dark:from-white dark:to-zinc-400 from-gray-900 to-gray-600 bg-clip-text text-transparent">
             AI ChatBot
           </h2>
-          <p className="text-zinc-500 mt-2 text-sm">
+          <p className="text-zinc-500 dark:text-zinc-500 text-gray-600 mt-2 text-sm">
             {isLogin ? "Welcome back! Please login to continue." : "Create your account to get started."}
           </p>
         </div>
@@ -65,13 +65,13 @@ export default function AuthForm() {
         {/* Form card with glassmorphism effect */}
         <form 
           onSubmit={submit} 
-          className="relative bg-zinc-900/80 backdrop-blur-xl p-8 py-12 rounded-3xl border border-zinc-800/50 shadow-2xl shadow-black/50 space-y-6 animate-slide-up"
+          className="relative bg-zinc-900/80 dark:bg-zinc-900/80 bg-white/80 backdrop-blur-xl p-8 py-12 rounded-3xl border border-zinc-800/50 dark:border-zinc-800/50 border-gray-200 shadow-2xl shadow-black/50 dark:shadow-black/50 shadow-purple-500/10 space-y-6 animate-slide-up"
         >
           {/* Gradient border effect */}
           {/* <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 blur transition-opacity z-0"></div> */}
 
           {/* Tab switcher */}
-          <div className="flex gap-2 p-1.5 bg-zinc-800/50 rounded-2xl mb-6">
+          <div className="flex gap-2 p-1.5 bg-zinc-800/50 dark:bg-zinc-800/50 bg-gray-100 rounded-2xl mb-6">
             <button
               type="button"
               onClick={() => {
@@ -84,7 +84,7 @@ export default function AuthForm() {
               className={`flex-1 py-2.5 px-4 rounded-xl font-medium text-sm transition-all duration-200 ${
                 isLogin 
                   ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/25' 
-                  : 'text-zinc-400 hover:text-white'
+                  : 'text-zinc-400 dark:text-zinc-400 text-gray-600 hover:text-white dark:hover:text-white hover:text-gray-900'
               }`}
             >
               Login
@@ -101,7 +101,7 @@ export default function AuthForm() {
               className={`flex-1 py-2.5 px-4 rounded-xl font-medium text-sm transition-all duration-200 ${
                 !isLogin 
                   ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-500/25' 
-                  : 'text-zinc-400 hover:text-white'
+                  : 'text-zinc-400 dark:text-zinc-400 text-gray-600 hover:text-white dark:hover:text-white hover:text-gray-900'
               }`}
             >
               Sign Up
@@ -226,3 +226,4 @@ export default function AuthForm() {
     </div>
   );
 }
+

@@ -131,3 +131,4 @@ const BotWidget = () => (
 
 export { SvgIcon };
 export default BotWidget;
+

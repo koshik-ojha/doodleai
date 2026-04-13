@@ -102,7 +102,7 @@ export default function ChatWidget({
 
   return (
     <div className={`
-      fixed z-50 flex flex-col overflow-hidden bg-white shadow-2xl
+      fixed z-50 flex flex-col overflow-hidden bg-white dark:bg-white bg-white shadow-2xl
       inset-0 w-full h-full rounded-none
       md:${positionClass} md:w-[380px] md:h-[600px] md:rounded-3xl md:inset-auto
     `}>
@@ -130,13 +130,13 @@ export default function ChatWidget({
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto bg-gray-50">
+      <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-50 bg-gray-50">
         {view === "quick" && (
           <div className="p-4">
             <div className="flex gap-3 mb-4">
               <BotIcon size={40} className="flex-shrink-0" />
-              <div className="bg-white rounded-2xl rounded-tl-none px-4 py-3 shadow-sm max-w-[80%]">
-                <p className="text-gray-800 text-sm">{welcomeMessage}</p>
+              <div className="bg-white dark:bg-white bg-white rounded-2xl rounded-tl-none px-4 py-3 shadow-sm max-w-[80%]">
+                <p className="text-gray-800 dark:text-gray-800 text-gray-800 text-sm">{welcomeMessage}</p>
               </div>
             </div>
             <QuickReplies
@@ -187,15 +187,15 @@ export default function ChatWidget({
                   <BotIcon size={36} className="flex-shrink-0" />
                 )}
                 {msg.role === "user" && (
-                  <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                    <span className="text-gray-600 text-sm font-semibold">U</span>
+                  <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-200 bg-gray-200 flex items-center justify-center flex-shrink-0">
+                    <span className="text-gray-600 dark:text-gray-600 text-gray-600 text-sm font-semibold">U</span>
                   </div>
                 )}
                 <div className={`flex flex-col max-w-[80%] md:max-w-[72%]`}>
                   <div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                     msg.role === "user"
-                      ? "text-white rounded-tr-none"
-                      : "bg-white text-gray-800 shadow-sm rounded-tl-none"
+                      ? "text-white dark:text-white text-white rounded-tr-none"
+                      : "bg-white dark:bg-white bg-white text-gray-800 dark:text-gray-800 text-gray-800 shadow-sm rounded-tl-none"
                   }`} style={msg.role === "user" ? { backgroundColor: primaryColor } : {}}>
                     {msg.content}
                   </div>
@@ -255,3 +255,4 @@ export default function ChatWidget({
     </div>
   );
 }
+

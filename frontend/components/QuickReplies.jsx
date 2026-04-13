@@ -67,3 +67,4 @@ function QuickButton({ label, primaryColor, onSelect }) {
     </button>
   );
 }
+

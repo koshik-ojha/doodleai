@@ -94,13 +94,13 @@ export default function AdminUsersPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">Users</h1>
-            <p className="text-gray-400 mt-1">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Users</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
               {loading ? "Loading..." : `${total} registered user${total !== 1 ? "s" : ""}`}
             </p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center">
-            <Users size={20} className="text-violet-400" />
+          <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center">
+            <Users size={20} className="text-violet-600 dark:text-violet-400" />
           </div>
         </div>
 
@@ -108,21 +108,21 @@ export default function AdminUsersPage() {
         {loading ? (
           <div className="space-y-3">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-14 bg-[#1a1a2e]/50 border border-purple-500/10 rounded-xl animate-pulse" />
+              <div key={i} className="h-14 bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-xl animate-pulse" />
             ))}
           </div>
         ) : users.length === 0 ? (
-          <div className="text-center py-16 border border-purple-500/10 rounded-2xl bg-[#1a1a2e]/30">
-            <Users size={28} className="text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-500">No users found</p>
+          <div className="text-center py-16 border border-gray-200 dark:border-purple-500/10 rounded-2xl bg-gray-50 dark:bg-[#1a1a2e]/30">
+            <Users size={28} className="text-gray-500 dark:text-gray-600 mx-auto mb-3" />
+            <p className="text-gray-600 dark:text-gray-500">No users found</p>
           </div>
         ) : (
-          <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl overflow-hidden">
+          <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl overflow-hidden">
             {/* Table head */}
             <table className="w-full border-collapse">
               {/* Header */}
               <thead>
-                <tr className="text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-purple-500/10">
+                <tr className="text-xs font-semibold text-gray-600 dark:text-gray-500 uppercase tracking-wider border-b border-gray-200 dark:border-purple-500/10">
                   <th className="text-left px-5 py-3">Name</th>
                   <th className="text-left px-5 py-3">Email</th>
                   <th className="text-left px-5 py-3">Joined</th>
@@ -131,11 +131,11 @@ export default function AdminUsersPage() {
               </thead>
 
               {/* Body */}
-              <tbody className="divide-y divide-purple-500/10">
+              <tbody className="divide-y divide-gray-200 dark:divide-purple-500/10">
                 {users.map((u) => (
                   <tr
                     key={u._id}
-                    className="hover:bg-purple-500/5 transition-colors"
+                    className="hover:bg-gray-50 dark:hover:bg-purple-500/5 transition-colors"
                   >
                     {/* Name */}
                     <td className="px-5 py-3.5">
@@ -144,11 +144,11 @@ export default function AdminUsersPage() {
                           {u.name?.[0]?.toUpperCase() || "?"}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-white text-sm font-medium truncate">
+                          <p className="text-gray-900 dark:text-white text-sm font-medium truncate">
                             {u.name}
                           </p>
                           {u.company && (
-                            <p className="text-gray-600 text-xs truncate">
+                            <p className="text-gray-500 dark:text-gray-600 text-xs truncate">
                               {u.company}
                             </p>
                           )}
@@ -157,12 +157,12 @@ export default function AdminUsersPage() {
                     </td>
 
                     {/* Email */}
-                    <td className="px-5 py-3.5 text-gray-400 text-sm truncate max-w-[200px]">
+                    <td className="px-5 py-3.5 text-gray-600 dark:text-gray-400 text-sm truncate max-w-[200px]">
                       {u.email}
                     </td>
 
                     {/* Joined */}
-                    <td className="px-5 py-3.5 text-gray-500 text-xs whitespace-nowrap">
+                    <td className="px-5 py-3.5 text-gray-600 dark:text-gray-500 text-xs whitespace-nowrap">
                       {new Date(u.createdAt).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
@@ -225,3 +225,4 @@ export default function AdminUsersPage() {
     </DashboardLayout>
   );
 }
+

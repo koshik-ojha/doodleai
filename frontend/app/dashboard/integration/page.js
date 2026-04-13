@@ -53,11 +53,11 @@ function CrawlSection({ botId, crawledSources = [], onCrawlDone, onClearAll }) {
       {crawledSources.length > 0 && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-gray-400 font-medium">Fetched sources</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">Fetched sources</p>
             <button
               onClick={handleClear}
               disabled={clearing}
-              className="flex items-center gap-1 text-xs text-red-400 hover:text-red-300 transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors disabled:opacity-50"
             >
               {clearing ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} />}
               Clear all
@@ -65,11 +65,11 @@ function CrawlSection({ botId, crawledSources = [], onCrawlDone, onClearAll }) {
           </div>
           <div className="space-y-1.5">
             {crawledSources.map((src, i) => (
-              <div key={i} className="flex items-center gap-3 bg-purple-500/5 border border-purple-500/15 rounded-lg px-3 py-2">
-                <Globe size={13} className="text-purple-400 flex-shrink-0" />
+              <div key={i} className="flex items-center gap-3 bg-purple-100 dark:bg-purple-500/5 border border-purple-300 dark:border-purple-500/15 rounded-lg px-3 py-2">
+                <Globe size={13} className="text-purple-600 dark:text-purple-400 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-200 truncate font-medium">{src.siteName || src.url}</p>
-                  <p className="text-xs text-gray-500 truncate">{src.url} · {src.pages} page{src.pages !== 1 ? "s" : ""}</p>
+                  <p className="text-xs text-gray-900 dark:text-gray-200 truncate font-medium">{src.siteName || src.url}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-500 truncate">{src.url} · {src.pages} page{src.pages !== 1 ? "s" : ""}</p>
                 </div>
                 <Check size={13} className="text-green-400 flex-shrink-0" />
               </div>
@@ -81,14 +81,14 @@ function CrawlSection({ botId, crawledSources = [], onCrawlDone, onClearAll }) {
       {/* URL input */}
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <Globe size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+          <Globe size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-500" />
           <input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !busy && handleFetch()}
             placeholder="https://example.com"
             disabled={busy}
-            className="w-full bg-black/20 border border-purple-500/15 text-gray-200 placeholder-gray-600 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40 disabled:opacity-50"
+            className="w-full bg-white dark:bg-black/20 border border-gray-300 dark:border-purple-500/15 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-600 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40 disabled:opacity-50"
           />
         </div>
         <button
@@ -103,19 +103,19 @@ function CrawlSection({ botId, crawledSources = [], onCrawlDone, onClearAll }) {
       </div>
 
       {busy && (
-        <p className="text-xs text-purple-400 flex items-center gap-1.5">
+        <p className="text-xs text-purple-600 dark:text-purple-400 flex items-center gap-1.5">
           <Loader2 size={12} className="animate-spin" />
           Crawling pages… this may take 10–30 seconds
         </p>
       )}
       {status === "done" && lastInfo && (
-        <div className="flex items-center gap-2 text-xs text-green-400 bg-green-400/10 border border-green-400/20 rounded-lg px-3 py-2">
+        <div className="flex items-center gap-2 text-xs text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-400/10 border border-green-300 dark:border-green-400/20 rounded-lg px-3 py-2">
           <Check size={13} />
           Fetched {lastInfo.pages} page{lastInfo.pages !== 1 ? "s" : ""} from <span className="font-medium ml-1">{lastInfo.siteName}</span> — saved automatically.
         </div>
       )}
       {status === "error" && (
-        <div className="flex items-center gap-2 text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
+        <div className="flex items-center gap-2 text-xs text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-400/10 border border-red-300 dark:border-red-400/20 rounded-lg px-3 py-2">
           <AlertCircle size={13} />
           {error}
         </div>
@@ -460,10 +460,10 @@ export default function IntegrationPage() {
     <DashboardLayout>
       {isAdmin ? (
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="max-w-md w-full bg-red-500/10 border border-red-500/20 rounded-xl p-8 text-center">
-            <AlertCircle size={48} className="text-red-400 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-white mb-2">Access Denied</h2>
-            <p className="text-gray-400 mb-4">
+          <div className="max-w-md w-full bg-red-50 dark:bg-red-500/10 border border-red-300 dark:border-red-500/20 rounded-xl p-8 text-center">
+            <AlertCircle size={48} className="text-red-600 dark:text-red-400 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Access Denied</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
               This page is not available for admin accounts. Redirecting to dashboard...
             </p>
           </div>
@@ -474,8 +474,8 @@ export default function IntegrationPage() {
         {/* Header */}
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-white">Website Integration</h1>
-            <p className="text-gray-400 mt-1">Configure and embed your chatbot</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Website Integration</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">Configure and embed your chatbot</p>
           </div>
           <div className="flex gap-3 items-center flex-wrap">
             {/* Bot selector */}
@@ -483,7 +483,7 @@ export default function IntegrationPage() {
               <Select
                 value={selectedBotId || ""}
                 onChange={(e) => setSelectedBotId(e.target.value)}
-                className="!bg-[#1a1a2e]/80 border border-purple-500/20 hover:border-purple-500/40 rounded-xl"
+                className="!bg-white dark:!bg-[#1a1a2e]/80 border border-gray-300 dark:border-purple-500/20 hover:border-purple-500/40 rounded-xl"
                 options={
                   chatbots.length === 0
                     ? [{ value: "", label: "No chatbots" }]
@@ -493,7 +493,7 @@ export default function IntegrationPage() {
             </div>
             <button
               onClick={() => router.push("/dashboard/chatbots")}
-              className="flex items-center gap-2 bg-[#1a1a2e]/80 border border-purple-500/20 hover:border-purple-500/40 rounded-xl px-4 py-2.5 text-gray-300 text-sm font-medium transition-all"
+              className="flex items-center gap-2 bg-white dark:bg-[#1a1a2e]/80 border border-gray-300 dark:border-purple-500/20 hover:border-purple-500/40 rounded-xl px-4 py-2.5 text-gray-700 dark:text-gray-300 text-sm font-medium transition-all"
             >
               <Bot size={16} /> Manage Bots
             </button>
@@ -509,9 +509,9 @@ export default function IntegrationPage() {
         </div>
 
         {!selectedBotId && !loading ? (
-          <div className="text-center py-16 border border-purple-500/10 rounded-2xl bg-[#1a1a2e]/30">
+          <div className="text-center py-16 border border-gray-200 dark:border-purple-500/10 rounded-2xl bg-gray-50 dark:bg-[#1a1a2e]/30">
             <Bot size={40} className="text-purple-400/40 mx-auto mb-4" />
-            <p className="text-gray-400 mb-4">No chatbot selected. Create one first.</p>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">No chatbot selected. Create one first.</p>
             <button
               onClick={() => router.push("/dashboard/chatbots")}
               className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 rounded-xl px-5 py-2.5 text-white text-sm font-medium transition-all"
@@ -524,7 +524,7 @@ export default function IntegrationPage() {
             <div className="grid grid-cols-2 gap-6">
               <div className="">
                 {/* Tabs */}
-                <div className="flex gap-1 mb-2 bg-[#1a1a2e]/50 border border-purple-500/10 rounded-xl p-1">
+                <div className="flex gap-1 mb-2 bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-xl p-1">
                   {tabs.map((tab) => (
                     <button
                       key={tab.id}
@@ -532,7 +532,7 @@ export default function IntegrationPage() {
                       className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
                         activeTab === tab.id
                           ? "bg-purple-600 text-white shadow-lg shadow-purple-500/20"
-                          : "text-gray-400 hover:text-gray-200"
+                          : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
                       }`}
                     >
                       <tab.icon size={15} />
@@ -543,8 +543,8 @@ export default function IntegrationPage() {
 
                 {/* Tab Content */}
                 {activeTab === "config" && (
-                  <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-6 space-y-5 hover:border-purple-500/20 transition-colors min-h-[725px]">
-                    <h2 className="text-xl font-semibold text-white">Widget Configuration</h2>
+                  <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-6 space-y-5 hover:border-gray-300 dark:hover:border-purple-500/20 transition-colors min-h-[725px]">
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Widget Configuration</h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <Input label="Display Name (internal)" value={config.name} onChange={(e) => update("name", e.target.value)} placeholder="e.g. Store Bot" />
@@ -566,11 +566,11 @@ export default function IntegrationPage() {
                         ]}
                       />
                       <div>
-                        <label className="block text-sm text-gray-400 font-medium mb-1.5">Primary Color</label>
+                        <label className="block text-sm text-gray-600 dark:text-gray-400 font-medium mb-1.5">Primary Color</label>
                         <div className="flex items-center gap-3">
                           <input type="color" value={config.primaryColor} onChange={(e) => update("primaryColor", e.target.value)}
-                            className="w-12 h-10 rounded-lg border border-gray-700/30 cursor-pointer bg-transparent" />
-                          <span className="text-gray-400 text-sm font-mono">{config.primaryColor}</span>
+                            className="w-12 h-10 rounded-lg border border-gray-300 dark:border-gray-700/30 cursor-pointer bg-transparent" />
+                          <span className="text-gray-600 dark:text-gray-400 text-sm font-mono">{config.primaryColor}</span>
                         </div>
                       </div>
                     </div>
@@ -591,9 +591,9 @@ export default function IntegrationPage() {
 
                     {/* Allowed Domains */}
                     <div>
-                      <label className="block text-sm text-gray-400 font-medium mb-1">
+                      <label className="block text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">
                         Allowed Domains
-                        <span className="ml-2 text-xs text-gray-600 font-normal">Widget only appears on these domains. Leave empty to allow all.</span>
+                        <span className="ml-2 text-xs text-gray-500 dark:text-gray-600 font-normal">Widget only appears on these domains. Leave empty to allow all.</span>
                       </label>
                       <div className="flex gap-2 mb-2">
                         <input
@@ -610,7 +610,7 @@ export default function IntegrationPage() {
                             }
                           }}
                           placeholder="e.g. www.example.com"
-                          className="flex-1 bg-black/20 border border-purple-500/15 text-gray-200 placeholder-gray-600 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
+                          className="flex-1 bg-white dark:bg-black/20 border border-gray-300 dark:border-purple-500/15 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-600 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
                         />
                         <button
                           onClick={() => {
@@ -629,41 +629,41 @@ export default function IntegrationPage() {
                       {config.allowedDomains.length > 0 ? (
                         <div className="flex flex-wrap gap-2">
                           {config.allowedDomains.map((d, i) => (
-                            <span key={i} className="flex items-center gap-1.5 bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs rounded-lg px-3 py-1.5">
+                            <span key={i} className="flex items-center gap-1.5 bg-purple-100 dark:bg-purple-500/10 border border-purple-300 dark:border-purple-500/20 text-purple-700 dark:text-purple-300 text-xs rounded-lg px-3 py-1.5">
                               {d}
-                              <button onClick={() => update("allowedDomains", config.allowedDomains.filter((_, idx) => idx !== i))} className="text-purple-400 hover:text-red-400 transition-colors ml-0.5">
+                              <button onClick={() => update("allowedDomains", config.allowedDomains.filter((_, idx) => idx !== i))} className="text-purple-600 dark:text-purple-400 hover:text-red-600 dark:hover:text-red-400 transition-colors ml-0.5">
                                 <Trash2 size={11} />
                               </button>
                             </span>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-xs text-gray-600">No restrictions — widget loads on any domain.</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-600">No restrictions — widget loads on any domain.</p>
                       )}
                     </div>
 
                     {/* Telegram Notifications */}
-                    <div className="border-t border-purple-500/10 pt-5">
+                    <div className="border-t border-gray-200 dark:border-purple-500/10 pt-5">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2.5">
                           <div className="w-8 h-8 rounded-lg bg-[#229ED9]/10 border border-[#229ED9]/20 flex items-center justify-center">
                             <Send size={15} className="text-[#229ED9]" />
                           </div>
                           <div>
-                            <p className="text-white text-sm font-semibold">Telegram Lead Notifications</p>
-                            <p className="text-gray-500 text-xs">Get new leads instantly in your Telegram</p>
+                            <p className="text-gray-900 dark:text-white text-sm font-semibold">Telegram Lead Notifications</p>
+                            <p className="text-gray-600 dark:text-gray-500 text-xs">Get new leads instantly in your Telegram</p>
                           </div>
                         </div>
                         {telegram.botToken && telegram.chatId && (
-                          <span className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full flex items-center gap-1">
+                          <span className="text-xs bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/20 px-2.5 py-1 rounded-full flex items-center gap-1">
                             <Check size={11} /> Connected
                           </span>
                         )}
                       </div>
 
                       {/* Steps */}
-                      <div className="bg-black/20 border border-purple-500/10 rounded-xl p-4 mb-4 space-y-3">
-                        <p className="text-gray-300 text-xs font-semibold uppercase tracking-wide">How to set up (2 min)</p>
+                      <div className="bg-gray-100 dark:bg-black/20 border border-gray-200 dark:border-purple-500/10 rounded-xl p-4 mb-4 space-y-3">
+                        <p className="text-gray-700 dark:text-gray-300 text-xs font-semibold uppercase tracking-wide">How to set up (2 min)</p>
                         {[
                           { n: "1", text: 'Open Telegram → search "@BotFather" → tap Start' },
                           { n: "2", text: 'Send /newbot → enter a name → enter a username ending in "bot"' },
@@ -671,8 +671,8 @@ export default function IntegrationPage() {
                           { n: "4", text: 'Send any message to your new bot (e.g. "hi"), then click "Auto-detect Chat ID" — we will fill it automatically' },
                         ].map(({ n, text }) => (
                           <div key={n} className="flex gap-2.5 items-start">
-                            <span className="w-5 h-5 rounded-full bg-purple-600/20 border border-purple-500/30 text-purple-400 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{n}</span>
-                            <p className="text-gray-400 text-xs leading-relaxed">{text}</p>
+                            <span className="w-5 h-5 rounded-full bg-purple-200 dark:bg-purple-600/20 border border-purple-400 dark:border-purple-500/30 text-purple-700 dark:text-purple-400 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{n}</span>
+                            <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">{text}</p>
                           </div>
                         ))}
                       </div>
@@ -680,26 +680,26 @@ export default function IntegrationPage() {
                       {/* Inputs */}
                       <div className="space-y-3">
                         <div>
-                          <label className="block text-sm text-gray-400 font-medium mb-1.5">Bot Token</label>
+                          <label className="block text-sm text-gray-600 dark:text-gray-400 font-medium mb-1.5">Bot Token</label>
                           <div className="relative">
                             <input
                               type={showBotToken ? "text" : "password"}
                               value={telegram.botToken}
                               onChange={(e) => setTelegram({ ...telegram, botToken: e.target.value })}
                               placeholder="e.g. 7123456789:AAFxxxxxxxxxxxxxxxx"
-                              className="w-full bg-black/20 border border-purple-500/15 text-gray-200 placeholder-gray-600 rounded-xl px-4 pr-10 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
+                              className="w-full bg-white dark:bg-black/20 border border-gray-300 dark:border-purple-500/15 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-600 rounded-xl px-4 pr-10 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
                             />
                             <button type="button" onClick={() => setShowBotToken(!showBotToken)}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors">
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
                               {showBotToken ? <EyeOff size={15} /> : <Eye size={15} />}
                             </button>
                           </div>
                         </div>
 
                         <div>
-                          <label className="block text-sm text-gray-400 font-medium mb-1.5">
+                          <label className="block text-sm text-gray-600 dark:text-gray-400 font-medium mb-1.5">
                             Chat ID
-                            <span className="ml-2 text-xs text-gray-600 font-normal">Send any message to your bot first, then click Auto-detect</span>
+                            <span className="ml-2 text-xs text-gray-500 dark:text-gray-600 font-normal">Send any message to your bot first, then click Auto-detect</span>
                           </label>
                           <div className="flex gap-2">
                             <input
@@ -707,7 +707,7 @@ export default function IntegrationPage() {
                               value={telegram.chatId}
                               onChange={(e) => setTelegram({ ...telegram, chatId: e.target.value })}
                               placeholder="Click Auto-detect or enter manually"
-                              className="flex-1 bg-black/20 border border-purple-500/15 text-gray-200 placeholder-gray-600 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
+                              className="flex-1 bg-white dark:bg-black/20 border border-gray-300 dark:border-purple-500/15 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-600 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
                             />
                             <button
                               onClick={handleDetectChatId}
@@ -719,14 +719,14 @@ export default function IntegrationPage() {
                             </button>
                           </div>
                           {detectMsg && (
-                            <p className="text-xs text-emerald-400 flex items-center gap-1.5 mt-1.5">
+                            <p className="text-xs text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5 mt-1.5">
                               <Check size={12} /> {detectMsg}
                             </p>
                           )}
                         </div>
 
                         {telegramError && (
-                          <p className="text-xs text-red-400 flex items-center gap-1.5">
+                          <p className="text-xs text-red-700 dark:text-red-400 flex items-center gap-1.5">
                             <AlertCircle size={12} /> {telegramError}
                           </p>
                         )}
@@ -741,7 +741,7 @@ export default function IntegrationPage() {
                           </button>
                           {telegram.botToken && telegram.chatId && (
                             <button onClick={handleDisconnectTelegram} disabled={telegramSaving}
-                              className="text-xs text-red-400 hover:text-red-300 transition-colors disabled:opacity-50">
+                              className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors disabled:opacity-50">
                               Disconnect
                             </button>
                           )}
@@ -754,12 +754,12 @@ export default function IntegrationPage() {
                 {activeTab === "knowledge" && (
                   <div className="space-y-4">
                     {/* Fetch from Website */}
-                    <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-6 hover:border-purple-500/20 transition-colors">
+                    <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-6 hover:border-gray-300 dark:hover:border-purple-500/20 transition-colors">
                       <div className="mb-4">
-                        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                           Auto-fetch from Website
                         </h2>
-                        <p className="text-gray-500 text-sm mt-1">
+                        <p className="text-gray-600 dark:text-gray-500 text-sm mt-1">
                           Enter your website URL and we'll crawl up to 20 pages and extract the content automatically.
                         </p>
                       </div>
@@ -772,24 +772,24 @@ export default function IntegrationPage() {
                     </div>
 
                     {/* FAQ Builder */}
-                    <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-6 hover:border-purple-500/20 transition-colors">
+                    <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-6 hover:border-gray-300 dark:hover:border-purple-500/20 transition-colors">
                       <div className="flex items-center justify-between mb-4">
                         <div>
-                          <h2 className="text-xl font-semibold text-white">FAQ Entries</h2>
-                          <p className="text-gray-500 text-sm mt-1">{faqs.length} question{faqs.length !== 1 ? "s" : ""} added</p>
+                          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">FAQ Entries</h2>
+                          <p className="text-gray-600 dark:text-gray-500 text-sm mt-1">{faqs.length} question{faqs.length !== 1 ? "s" : ""} added</p>
                         </div>
                         <div className="flex gap-2">
                           <input ref={csvRef} type="file" accept=".csv" onChange={handleCsvImport} className="hidden" />
                           <button
                             onClick={handleDownloadSample}
                             title="Download sample CSV"
-                            className="flex items-center gap-1.5 px-3 py-2 bg-[#1a1a2e]/80 border border-purple-500/20 hover:border-purple-500/40 rounded-lg text-gray-400 hover:text-gray-200 !text-sm transition-all"
+                            className="flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-[#1a1a2e]/80 border border-gray-300 dark:border-purple-500/20 hover:border-purple-500/40 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 !text-sm transition-all"
                           >
                             <Download size={13} /> Sample
                           </button>
                           <button
                             onClick={() => csvRef.current?.click()}
-                            className="flex items-center gap-1.5 px-3 py-2 bg-[#1a1a2e]/80 border border-purple-500/20 hover:border-purple-500/40 rounded-lg text-gray-400 hover:text-gray-200 !text-sm transition-all"
+                            className="flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-[#1a1a2e]/80 border border-gray-300 dark:border-purple-500/20 hover:border-purple-500/40 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 !text-sm transition-all"
                           >
                             <Upload size={13} /> Import CSV
                           </button>
@@ -804,20 +804,20 @@ export default function IntegrationPage() {
 
                       {/* Add new FAQ inline form */}
                       {showAddFaq && (
-                        <div className="mb-4 p-4 bg-purple-500/5 border border-purple-500/20 rounded-xl space-y-3">
+                        <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-500/5 border border-purple-300 dark:border-purple-500/20 rounded-xl space-y-3">
                           <input
                             autoFocus
                             value={newFaq.question}
                             onChange={(e) => setNewFaq((p) => ({ ...p, question: e.target.value }))}
                             placeholder="Question (e.g. What are your business hours?)"
-                            className="w-full bg-black/30 border border-purple-500/15 text-white placeholder-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
+                            className="w-full bg-white dark:bg-black/30 border border-gray-300 dark:border-purple-500/15 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
                           />
                           <textarea
                             value={newFaq.answer}
                             onChange={(e) => setNewFaq((p) => ({ ...p, answer: e.target.value }))}
                             placeholder="Answer"
                             rows={3}
-                            className="w-full bg-black/30 border border-purple-500/15 text-white placeholder-gray-600 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/40"
+                            className="w-full bg-white dark:bg-black/30 border border-gray-300 dark:border-purple-500/15 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-600 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/40"
                           />
                           <div className="flex gap-2">
                             <button onClick={addFaq} disabled={!newFaq.question.trim() || !newFaq.answer.trim()}
@@ -825,7 +825,7 @@ export default function IntegrationPage() {
                               Add
                             </button>
                             <button onClick={() => { setShowAddFaq(false); setNewFaq({ question: "", answer: "" }); }}
-                              className="px-4 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs rounded-lg transition-all">
+                              className="px-4 py-1.5 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-lg transition-all">
                               Cancel
                             </button>
                           </div>
@@ -834,27 +834,27 @@ export default function IntegrationPage() {
 
                       {/* FAQ list */}
                       {faqs.length === 0 ? (
-                        <div className="text-center py-8 text-gray-600 text-sm border border-dashed border-purple-500/10 rounded-xl">
+                        <div className="text-center py-8 text-gray-500 dark:text-gray-600 text-sm border border-dashed border-gray-300 dark:border-purple-500/10 rounded-xl">
                           No FAQ entries yet. Add questions and answers above, or import from CSV.
                         </div>
                       ) : (
                         <div className="space-y-2">
                           {faqs.map((faq, idx) => (
-                            <div key={idx} className="border border-purple-500/10 rounded-xl overflow-hidden">
+                            <div key={idx} className="border border-gray-200 dark:border-purple-500/10 rounded-xl overflow-hidden">
                               {/* Accordion header */}
                               <div
-                                className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-purple-500/5 transition-colors"
+                                className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-purple-500/5 transition-colors"
                                 onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
                               >
                                 {expandedFaq === idx ? (
-                                  <ChevronDown size={15} className="text-purple-400 flex-shrink-0" />
+                                  <ChevronDown size={15} className="text-purple-600 dark:text-purple-400 flex-shrink-0" />
                                 ) : (
-                                  <ChevronRight size={15} className="text-gray-600 flex-shrink-0" />
+                                  <ChevronRight size={15} className="text-gray-500 dark:text-gray-600 flex-shrink-0" />
                                 )}
-                                <span className="flex-1 text-sm text-gray-200 truncate">{faq.question}</span>
+                                <span className="flex-1 text-sm text-gray-900 dark:text-gray-200 truncate">{faq.question}</span>
                                 <button
                                   onClick={(e) => { e.stopPropagation(); setDeleteConfirmIdx(idx); }}
-                                  className="p-1 text-gray-600 hover:text-red-400 transition-colors flex-shrink-0"
+                                  className="p-1 text-gray-500 dark:text-gray-600 hover:text-red-600 dark:hover:text-red-400 transition-colors flex-shrink-0"
                                 >
                                   <Trash2 size={13} />
                                 </button>
@@ -862,17 +862,17 @@ export default function IntegrationPage() {
 
                               {/* Expanded: editable answer */}
                               {expandedFaq === idx && (
-                                <div className="px-4 pb-4 bg-black/10 space-y-2">
+                                <div className="px-4 pb-4 bg-gray-50 dark:bg-black/10 space-y-2">
                                   <input
                                     value={faq.question}
                                     onChange={(e) => updateFaq(idx, "question", e.target.value)}
-                                    className="w-full bg-black/20 border border-purple-500/15 text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
+                                    className="w-full bg-white dark:bg-black/20 border border-gray-300 dark:border-purple-500/15 text-gray-900 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
                                   />
                                   <textarea
                                     value={faq.answer}
                                     onChange={(e) => updateFaq(idx, "answer", e.target.value)}
                                     rows={3}
-                                    className="w-full bg-black/20 border border-purple-500/15 text-gray-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/40"
+                                    className="w-full bg-white dark:bg-black/20 border border-gray-300 dark:border-purple-500/15 text-gray-900 dark:text-gray-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/40"
                                   />
                                 </div>
                               )}
@@ -882,34 +882,34 @@ export default function IntegrationPage() {
                       )}
 
                       {/* CSV format hint */}
-                      <p className="text-gray-600 text-xs mt-4">
-                        CSV format: two columns — <code className="text-purple-400">Question, Answer</code> (first row treated as header and skipped)
+                      <p className="text-gray-500 dark:text-gray-600 text-xs mt-4">
+                        CSV format: two columns — <code className="text-purple-600 dark:text-purple-400">Question, Answer</code> (first row treated as header and skipped)
                       </p>
                     </div>
 
                     {/* Quick Reply Buttons */}
-                    <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-6 hover:border-purple-500/20 transition-colors">
+                    <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-6 hover:border-gray-300 dark:hover:border-purple-500/20 transition-colors">
                       <div className="mb-4">
-                        <h2 className="text-xl font-semibold text-white">Quick Reply Buttons</h2>
-                        <p className="text-gray-500 text-sm mt-1">
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Quick Reply Buttons</h2>
+                        <p className="text-gray-600 dark:text-gray-500 text-sm mt-1">
                           Clickable buttons shown when the widget opens. Each button has a question (label) and a pre-written answer shown instantly — no AI call needed.
                         </p>
                       </div>
 
                       {/* Add form */}
-                      <div className="space-y-2 mb-4 p-4 bg-purple-500/5 border border-purple-500/15 rounded-xl">
+                      <div className="space-y-2 mb-4 p-4 bg-purple-50 dark:bg-purple-500/5 border border-purple-300 dark:border-purple-500/15 rounded-xl">
                         <input
                           value={newQuickReply.question || ""}
                           onChange={(e) => setNewQuickReply((p) => ({ ...p, question: e.target.value }))}
                           placeholder="Question (button label) — e.g. What are your business hours?"
-                          className="w-full bg-black/30 border border-purple-500/15 text-white placeholder-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
+                          className="w-full bg-white dark:bg-black/30 border border-gray-300 dark:border-purple-500/15 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/40"
                         />
                         <textarea
                           value={newQuickReply.answer || ""}
                           onChange={(e) => setNewQuickReply((p) => ({ ...p, answer: e.target.value }))}
                           placeholder="Answer shown instantly when button is clicked — e.g. We are open Mon–Fri, 9am to 6pm."
                           rows={3}
-                          className="w-full bg-black/30 border border-purple-500/15 text-white placeholder-gray-600 rounded-lg px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/40"
+                          className="w-full bg-white dark:bg-black/30 border border-gray-300 dark:border-purple-500/15 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-600 rounded-lg px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/40"
                         />
                         <button
                           onClick={() => {
@@ -926,23 +926,23 @@ export default function IntegrationPage() {
 
                       {/* List */}
                       {quickReplies.length === 0 ? (
-                        <div className="text-center py-6 text-gray-600 text-sm border border-dashed border-purple-500/10 rounded-xl">
+                        <div className="text-center py-6 text-gray-500 dark:text-gray-600 text-sm border border-dashed border-gray-300 dark:border-purple-500/10 rounded-xl">
                           No quick reply buttons yet. Add a question and answer above.
                         </div>
                       ) : (
                         <div className="space-y-2">
                           {quickReplies.map((qr, idx) => (
-                            <div key={idx} className="border border-purple-500/10 rounded-xl overflow-hidden">
-                              <div className="flex items-center gap-3 px-4 py-2.5 bg-black/10">
+                            <div key={idx} className="border border-gray-200 dark:border-purple-500/10 rounded-xl overflow-hidden">
+                              <div className="flex items-center gap-3 px-4 py-2.5 bg-gray-50 dark:bg-black/10">
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm text-gray-200 font-medium truncate">{qr.question}</p>
+                                  <p className="text-sm text-gray-900 dark:text-gray-200 font-medium truncate">{qr.question}</p>
                                   {qr.answer && (
-                                    <p className="text-xs text-gray-500 truncate mt-0.5">{qr.answer}</p>
+                                    <p className="text-xs text-gray-600 dark:text-gray-500 truncate mt-0.5">{qr.answer}</p>
                                   )}
                                 </div>
                                 <button
                                   onClick={() => setQuickReplies((p) => p.filter((_, i) => i !== idx))}
-                                  className="text-gray-600 hover:text-red-400 transition-colors flex-shrink-0"
+                                  className="text-gray-500 dark:text-gray-600 hover:text-red-600 dark:hover:text-red-400 transition-colors flex-shrink-0"
                                 >
                                   <Trash2 size={13} />
                                 </button>
@@ -951,7 +951,7 @@ export default function IntegrationPage() {
                           ))}
                         </div>
                       )}
-                      <p className="text-gray-600 text-xs mt-3">
+                      <p className="text-gray-500 dark:text-gray-600 text-xs mt-3">
                         If an answer is provided, it's shown instantly. If left empty, the question is sent to the AI.
                       </p>
                     </div>
@@ -959,12 +959,12 @@ export default function IntegrationPage() {
                 )}
 
                 {activeTab === "embed" && (
-                  <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-6 space-y-5 hover:border-purple-500/20 transition-colors min-h-[725px]">
+                  <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-6 space-y-5 hover:border-gray-300 dark:hover:border-purple-500/20 transition-colors min-h-[725px]">
                     <div>
-                      <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                         <Code size={20} /> Embed Code
                       </h2>
-                      <p className="text-gray-400 text-sm mt-1">
+                      <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
                         Choose your framework and add the snippet to your project.
                       </p>
                     </div>
@@ -983,7 +983,7 @@ export default function IntegrationPage() {
                           className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
                             embedFramework === fw.id
                               ? "bg-purple-600 text-white"
-                              : "bg-purple-500/10 text-gray-400 hover:text-white hover:bg-purple-500/20"
+                              : "bg-purple-100 dark:bg-purple-500/10 text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-purple-200 dark:hover:bg-purple-500/20"
                           }`}
                         >
                           {fw.label}
@@ -992,7 +992,7 @@ export default function IntegrationPage() {
                     </div>
 
                     <div className="relative">
-                      <pre className="bg-black border border-purple-500/10 rounded-xl p-4 overflow-x-auto text-xs text-gray-400 leading-relaxed whitespace-pre-wrap break-all pe-16">
+                      <pre className="bg-gray-900 dark:bg-black border border-gray-700 dark:border-purple-500/10 rounded-xl p-4 overflow-x-auto text-xs text-gray-300 dark:text-gray-400 leading-relaxed whitespace-pre-wrap break-all pe-16">
                         {activeSnippet}
                       </pre>
                       <button
@@ -1004,7 +1004,7 @@ export default function IntegrationPage() {
                     </div>
 
                     <div className="space-y-4 pt-2">
-                      <h3 className="text-white font-medium">Installation Steps</h3>
+                      <h3 className="text-gray-900 dark:text-white font-medium">Installation Steps</h3>
                       {embedFramework === "html" && [
                         "Copy the embed code above",
                         "Paste it before the closing </body> tag on your website",
@@ -1012,7 +1012,7 @@ export default function IntegrationPage() {
                       ].map((step, i) => (
                         <div key={i} className="flex gap-3 items-start">
                           <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">{i + 1}</div>
-                          <p className="text-gray-400 text-sm pt-1">{step}</p>
+                          <p className="text-gray-600 dark:text-gray-400 text-sm pt-1">{step}</p>
                         </div>
                       ))}
                       {embedFramework === "nextjs" && [
@@ -1023,7 +1023,7 @@ export default function IntegrationPage() {
                       ].map((step, i) => (
                         <div key={i} className="flex gap-3 items-start">
                           <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">{i + 1}</div>
-                          <p className="text-gray-400 text-sm pt-1">{step}</p>
+                          <p className="text-gray-600 dark:text-gray-400 text-sm pt-1">{step}</p>
                         </div>
                       ))}
                       {embedFramework === "react" && [
@@ -1033,7 +1033,7 @@ export default function IntegrationPage() {
                       ].map((step, i) => (
                         <div key={i} className="flex gap-3 items-start">
                           <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">{i + 1}</div>
-                          <p className="text-gray-400 text-sm pt-1">{step}</p>
+                          <p className="text-gray-600 dark:text-gray-400 text-sm pt-1">{step}</p>
                         </div>
                       ))}
                       {embedFramework === "wordpress" && (
@@ -1046,14 +1046,14 @@ export default function IntegrationPage() {
                           ].map((step, i) => (
                             <div key={i} className="flex gap-3 items-start">
                               <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">{i + 1}</div>
-                              <p className="text-gray-400 text-sm pt-1">{step}</p>
+                              <p className="text-gray-600 dark:text-gray-400 text-sm pt-1">{step}</p>
                             </div>
                           ))}
-                          <div className="mt-2 p-3 bg-purple-500/5 border border-purple-500/15 rounded-xl">
-                            <p className="text-gray-400 text-xs">
-                              <span className="text-purple-400 font-medium">Alternative:</span> Install the free{" "}
-                              <span className="text-white">"Insert Headers and Footers"</span> plugin, then paste the HTML{" "}
-                              <code className="text-purple-300">&lt;script&gt;</code> tag from the HTML tab into the Footer Scripts field.
+                          <div className="mt-2 p-3 bg-purple-50 dark:bg-purple-500/5 border border-purple-300 dark:border-purple-500/15 rounded-xl">
+                            <p className="text-gray-600 dark:text-gray-400 text-xs">
+                              <span className="text-purple-600 dark:text-purple-400 font-medium">Alternative:</span> Install the free{" "}
+                              <span className="text-gray-900 dark:text-white">"Insert Headers and Footers"</span> plugin, then paste the HTML{" "}
+                              <code className="text-purple-600 dark:text-purple-300">&lt;script&gt;</code> tag from the HTML tab into the Footer Scripts field.
                             </p>
                           </div>
                         </>
@@ -1064,11 +1064,11 @@ export default function IntegrationPage() {
               </div>
               <div className="">
                 {/* Live Preview — always visible */}
-                <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-6 hover:border-purple-500/20 transition-colors h-full min-h-[780px]">
+                <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-6 hover:border-gray-300 dark:hover:border-purple-500/20 transition-colors h-full min-h-[780px]">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h2 className="text-xl font-semibold text-white">Live Preview</h2>
-                      <p className="text-gray-400 text-sm mt-1">See exactly how your widget will look</p>
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Live Preview</h2>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">See exactly how your widget will look</p>
                     </div>
                     <button
                       onClick={() => setShowWidget(!showWidget)}
@@ -1078,8 +1078,8 @@ export default function IntegrationPage() {
                       {showWidget ? "Hide Widget" : "Preview Widget"}
                     </button>
                   </div>
-                  <div className="bg-[#0a0a0a] rounded-xl h-[calc(100%-70px)] relative border border-purple-500/10 overflow-hidden flex items-center justify-center">
-                    <div className="text-center text-gray-600 pointer-events-none select-none">
+                  <div className="bg-gray-100 dark:bg-gray-900 rounded-xl h-[calc(100%-70px)] relative border border-gray-300 dark:border-gray-700 overflow-hidden flex items-center justify-center">
+                    <div className="text-center text-gray-500 dark:text-gray-600 pointer-events-none select-none">
                       <Code size={48} className="mx-auto mb-3 opacity-20" />
                       <p className="text-sm opacity-60">Your website content here</p>
                       <p className="text-xs mt-1 opacity-40">Click "Preview Widget" to test the chatbot</p>
@@ -1118,3 +1118,4 @@ export default function IntegrationPage() {
     </DashboardLayout>
   );
 }
+

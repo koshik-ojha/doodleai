@@ -99,18 +99,18 @@ export default function SubmissionsPage() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "new": return "bg-blue-500/10 text-blue-400";
-      case "reviewed": return "bg-yellow-500/10 text-yellow-400";
-      case "contacted": return "bg-green-500/10 text-green-400";
-      default: return "bg-zinc-500/10 text-zinc-400";
+      case "new": return "bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400";
+      case "reviewed": return "bg-yellow-100 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400";
+      case "contacted": return "bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400";
+      default: return "bg-gray-100 dark:bg-zinc-500/10 text-gray-700 dark:text-zinc-400";
     }
   };
 
   const getFormTypeBadge = (type) => {
     switch (type) {
-      case "quote": return { label: "Quote Request", cls: "bg-purple-500/10 text-purple-400" };
-      case "consultation": return { label: "Consultation", cls: "bg-emerald-500/10 text-emerald-400" };
-      default: return { label: "Contact Form", cls: "bg-blue-500/10 text-blue-400" };
+      case "quote": return { label: "Quote Request", cls: "bg-purple-100 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400" };
+      case "consultation": return { label: "Consultation", cls: "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" };
+      default: return { label: "Contact Form", cls: "bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400" };
     }
   };
 
@@ -139,25 +139,25 @@ export default function SubmissionsPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Form Submissions</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Form Submissions</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             {isAdmin ? "All form submissions across all users" : "Review and manage user form submissions"}
           </p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-6 hover:bg-[#1a1a2e]/70 hover:border-purple-500/20 transition-all">
-            <p className="text-gray-400 text-xs font-semibold tracking-wider">TOTAL SUBMISSIONS</p>
-            <p className="text-4xl font-bold text-white mt-3">{loading ? "..." : stats.total ?? submissions.length}</p>
+          <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-6 hover:bg-gray-50 dark:hover:bg-[#1a1a2e]/70 hover:border-gray-300 dark:hover:border-purple-500/20 transition-all">
+            <p className="text-gray-600 dark:text-gray-400 text-xs font-semibold tracking-wider">TOTAL SUBMISSIONS</p>
+            <p className="text-4xl font-bold text-gray-900 dark:text-white mt-3">{loading ? "..." : stats.total ?? submissions.length}</p>
           </div>
-          <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-6 hover:bg-[#1a1a2e]/70 hover:border-purple-500/20 transition-all">
-            <p className="text-gray-400 text-xs font-semibold tracking-wider">NEW</p>
-            <p className="text-4xl font-bold text-purple-400 mt-3">{loading ? "..." : newCount}</p>
+          <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-6 hover:bg-gray-50 dark:hover:bg-[#1a1a2e]/70 hover:border-gray-300 dark:hover:border-purple-500/20 transition-all">
+            <p className="text-gray-600 dark:text-gray-400 text-xs font-semibold tracking-wider">NEW</p>
+            <p className="text-4xl font-bold text-purple-600 dark:text-purple-400 mt-3">{loading ? "..." : newCount}</p>
           </div>
-          <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-6 hover:bg-[#1a1a2e]/70 hover:border-purple-500/20 transition-all">
-            <p className="text-gray-400 text-xs font-semibold tracking-wider">CONTACTED</p>
-            <p className="text-4xl font-bold text-green-400 mt-3">{loading ? "..." : contactedCount}</p>
+          <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-6 hover:bg-gray-50 dark:hover:bg-[#1a1a2e]/70 hover:border-gray-300 dark:hover:border-purple-500/20 transition-all">
+            <p className="text-gray-600 dark:text-gray-400 text-xs font-semibold tracking-wider">CONTACTED</p>
+            <p className="text-4xl font-bold text-green-600 dark:text-green-400 mt-3">{loading ? "..." : contactedCount}</p>
           </div>
         </div>
 
@@ -171,15 +171,15 @@ export default function SubmissionsPage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-52 bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl animate-pulse" />
+              <div key={i} className="h-52 bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl animate-pulse" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
-            <div className="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center mx-auto mb-3">
-              <FileText size={24} className="text-purple-400" />
+            <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-500/10 flex items-center justify-center mx-auto mb-3">
+              <FileText size={24} className="text-purple-600 dark:text-purple-400" />
             </div>
-            <p className="text-gray-400">No submissions found</p>
+            <p className="text-gray-600 dark:text-gray-400">No submissions found</p>
           </div>
         ) : isAdmin ? (
           // ── Admin: grouped by user ──
@@ -190,9 +190,9 @@ export default function SubmissionsPage() {
                   <div className="w-7 h-7 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-400 text-xs font-bold flex-shrink-0">
                     {user?.name?.[0]?.toUpperCase() || "?"}
                   </div>
-                  <span className="text-white font-semibold text-sm">{user?.name || "Unknown"}</span>
-                  <span className="text-gray-500 text-xs">({user?.email || "—"})</span>
-                  <span className="ml-auto text-gray-600 text-xs">{subs.length} submission{subs.length !== 1 ? "s" : ""}</span>
+                  <span className="text-gray-900 dark:text-white font-semibold text-sm">{user?.name || "Unknown"}</span>
+                  <span className="text-gray-600 dark:text-gray-500 text-xs">({user?.email || "—"})</span>
+                  <span className="ml-auto text-gray-500 dark:text-gray-600 text-xs">{subs.length} submission{subs.length !== 1 ? "s" : ""}</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {subs.map((sub) => (
@@ -237,20 +237,20 @@ export default function SubmissionsPage() {
         )}
 
         {!hasMore && submissions.length > 0 && (
-          <p className="text-center text-gray-700 text-xs py-2">All submissions loaded</p>
+          <p className="text-center text-gray-500 dark:text-gray-700 text-xs py-2">All submissions loaded</p>
         )}
       </div>
 
       {/* Detail modal */}
       {selectedSubmission && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a1a2e]/95 border border-purple-500/20 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-[#1a1a2e]/95 border border-gray-200 dark:border-purple-500/20 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-white">{selectedSubmission.name}</h2>
-                <p className="text-gray-400 mt-1">{selectedSubmission.subject}</p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedSubmission.name}</h2>
+                <p className="text-gray-600 dark:text-gray-400 mt-1">{selectedSubmission.subject}</p>
               </div>
-              <button onClick={() => setSelectedSubmission(null)} className="p-2 hover:bg-gray-800/50 rounded-lg text-gray-400 hover:text-white transition-colors">✕</button>
+              <button onClick={() => setSelectedSubmission(null)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">✕</button>
             </div>
 
             <div className="space-y-4">
@@ -272,34 +272,34 @@ export default function SubmissionsPage() {
                 { label: "Submitted At", value: formatDate(selectedSubmission.createdAt) },
               ].map(({ label, value }) => (
                 <div key={label}>
-                  <p className="text-gray-400 text-sm">{label}</p>
-                  <p className="text-white mt-1">{value}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">{label}</p>
+                  <p className="text-gray-900 dark:text-white mt-1">{value}</p>
                 </div>
               ))}
 
               {selectedSubmission.formType === "contact" && selectedSubmission.subject && (
                 <div>
-                  <p className="text-gray-400 text-sm">Subject</p>
-                  <p className="text-white mt-1">{selectedSubmission.subject}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Subject</p>
+                  <p className="text-gray-900 dark:text-white mt-1">{selectedSubmission.subject}</p>
                 </div>
               )}
               {selectedSubmission.formType === "quote" && selectedSubmission.budget && (
                 <div>
-                  <p className="text-gray-400 text-sm">Budget Range</p>
-                  <p className="text-white mt-1">{selectedSubmission.budget}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Budget Range</p>
+                  <p className="text-gray-900 dark:text-white mt-1">{selectedSubmission.budget}</p>
                 </div>
               )}
               {selectedSubmission.formType === "consultation" && (
                 <>
-                  {selectedSubmission.topic && <div><p className="text-gray-400 text-sm">Topic</p><p className="text-white mt-1">{selectedSubmission.topic}</p></div>}
-                  {selectedSubmission.preferredDate && <div><p className="text-gray-400 text-sm">Preferred Date</p><p className="text-white mt-1">{selectedSubmission.preferredDate}</p></div>}
-                  {selectedSubmission.preferredTime && <div><p className="text-gray-400 text-sm">Preferred Time</p><p className="text-white mt-1">{selectedSubmission.preferredTime}</p></div>}
+                  {selectedSubmission.topic && <div><p className="text-gray-600 dark:text-gray-400 text-sm">Topic</p><p className="text-gray-900 dark:text-white mt-1">{selectedSubmission.topic}</p></div>}
+                  {selectedSubmission.preferredDate && <div><p className="text-gray-600 dark:text-gray-400 text-sm">Preferred Date</p><p className="text-gray-900 dark:text-white mt-1">{selectedSubmission.preferredDate}</p></div>}
+                  {selectedSubmission.preferredTime && <div><p className="text-gray-600 dark:text-gray-400 text-sm">Preferred Time</p><p className="text-gray-900 dark:text-white mt-1">{selectedSubmission.preferredTime}</p></div>}
                 </>
               )}
               {selectedSubmission.message && (
                 <div>
-                  <p className="text-gray-400 text-sm">{selectedSubmission.formType === "quote" ? "Project Description" : "Message"}</p>
-                  <p className="text-white mt-2 bg-gray-800/30 border border-gray-700/30 rounded-lg p-4 whitespace-pre-wrap">{selectedSubmission.message}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">{selectedSubmission.formType === "quote" ? "Project Description" : "Message"}</p>
+                  <p className="text-gray-900 dark:text-white mt-2 bg-gray-100 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700/30 rounded-lg p-4 whitespace-pre-wrap">{selectedSubmission.message}</p>
                 </div>
               )}
 
@@ -314,7 +314,7 @@ export default function SubmissionsPage() {
                 <button
                   disabled={updating === selectedSubmission._id || selectedSubmission.status === "reviewed"}
                   onClick={() => handleStatusUpdate(selectedSubmission._id, "reviewed")}
-                  className="flex-1 bg-gray-800/50 hover:bg-gray-800 disabled:opacity-50 border border-gray-700/50 rounded-lg py-2 text-white font-medium transition-all"
+                  className="flex-1 bg-gray-200 dark:bg-gray-800/50 hover:bg-gray-300 dark:hover:bg-gray-800 disabled:opacity-50 border border-gray-300 dark:border-gray-700/50 rounded-lg py-2 text-gray-900 dark:text-white font-medium transition-all"
                 >
                   Mark as Reviewed
                 </button>
@@ -338,10 +338,10 @@ export default function SubmissionsPage() {
 
 function SubCard({ sub, getFormTypeBadge, getStatusColor, formatDate, onView, onDelete }) {
   return (
-    <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-5 hover:bg-[#1a1a2e]/70 hover:border-purple-500/20 transition-all">
+    <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-5 hover:bg-gray-50 dark:hover:bg-[#1a1a2e]/70 hover:border-gray-300 dark:hover:border-purple-500/20 transition-all">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
-          <h3 className="text-base font-semibold text-white truncate">{sub.name}</h3>
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate">{sub.name}</h3>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getFormTypeBadge(sub.formType).cls}`}>
               {getFormTypeBadge(sub.formType).label}
@@ -354,36 +354,36 @@ function SubCard({ sub, getFormTypeBadge, getStatusColor, formatDate, onView, on
       </div>
 
       <div className="space-y-1.5 mb-4">
-        <div className="flex items-center gap-2 text-xs text-gray-400">
+        <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
           <Mail size={11} className="flex-shrink-0" />
           <span className="truncate">{sub.email}</span>
         </div>
         {sub.phone && (
-          <div className="flex items-center gap-2 text-xs text-gray-400">
+          <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
             <Phone size={11} className="flex-shrink-0" />
             <span>{sub.phone}</span>
           </div>
         )}
         {sub.company && (
-          <div className="flex items-center gap-2 text-xs text-gray-400">
+          <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
             <Building size={11} className="flex-shrink-0" />
             <span>{sub.company}</span>
           </div>
         )}
         {sub.botName && (
-          <div className="flex items-center gap-2 text-xs text-gray-400">
+          <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
             <Bot size={11} className="flex-shrink-0" />
             <span className="truncate">{sub.botName}</span>
           </div>
         )}
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-500">
           <Calendar size={11} className="flex-shrink-0" />
           <span>{formatDate(sub.createdAt)}</span>
         </div>
       </div>
 
-      <div className="bg-gray-800/30 border border-gray-700/30 rounded-lg p-3 mb-4">
-        <p className="text-gray-300 text-xs line-clamp-2">{sub.message}</p>
+      <div className="bg-gray-100 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700/30 rounded-lg p-3 mb-4">
+        <p className="text-gray-700 dark:text-gray-300 text-xs line-clamp-2">{sub.message}</p>
       </div>
 
       <div className="flex gap-2">
@@ -395,7 +395,7 @@ function SubCard({ sub, getFormTypeBadge, getStatusColor, formatDate, onView, on
         </button>
         <button
           onClick={onDelete}
-          className="p-2 hover:bg-red-500/10 rounded-lg text-red-400 transition-colors"
+          className="p-2 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg text-red-600 dark:text-red-400 transition-colors"
         >
           <Trash2 size={14} />
         </button>
@@ -403,3 +403,4 @@ function SubCard({ sub, getFormTypeBadge, getStatusColor, formatDate, onView, on
     </div>
   );
 }
+

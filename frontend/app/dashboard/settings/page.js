@@ -103,8 +103,8 @@ export default function SettingsPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Settings</h1>
-          <p className="text-gray-400 mt-1">Manage your account and chatbot preferences</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your account and chatbot preferences</p>
         </div>
 
         {toast && (
@@ -119,13 +119,13 @@ export default function SettingsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-2 space-y-1">
+            <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-2 space-y-1">
               {tabs.map((tab) => (
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                     activeTab === tab.id
                       ? "bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-lg shadow-purple-500/20"
-                      : "text-gray-400 hover:bg-purple-500/10 hover:text-white"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-purple-100 dark:hover:bg-purple-500/10 hover:text-gray-900 dark:hover:text-white"
                   }`}>
                   <tab.icon size={20} />
                   <span className="font-medium">{tab.label}</span>
@@ -136,16 +136,16 @@ export default function SettingsPage() {
 
           {/* Content */}
           <div className="lg:col-span-3">
-            <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-2xl p-6 hover:border-purple-500/20 transition-colors">
+            <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-6 hover:border-gray-300 dark:hover:border-purple-500/20 transition-colors">
               {loading ? (
                 <div className="space-y-4">
-                  {[1,2,3].map((i) => <div key={i} className="h-12 bg-purple-500/10 rounded-lg animate-pulse" />)}
+                  {[1,2,3].map((i) => <div key={i} className="h-12 bg-gray-100 dark:bg-purple-500/10 rounded-lg animate-pulse" />)}
                 </div>
               ) : (
                 <>
                   {activeTab === "profile" && (
                     <div className="space-y-5">
-                      <h2 className="text-xl font-semibold text-white">Profile Settings</h2>
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Profile Settings</h2>
                       <Input label="Full Name" value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} placeholder="John Doe" />
                       <Input label="Email Address" type="email" value={profile.email} onChange={(e) => setProfile({ ...profile, email: e.target.value })} placeholder="john@example.com" />
                       <Input label="Company" value={profile.company} onChange={(e) => setProfile({ ...profile, company: e.target.value })} placeholder="Your Company" />
@@ -155,7 +155,7 @@ export default function SettingsPage() {
 
                   {activeTab === "notifications" && (
                     <div className="space-y-4">
-                      <h2 className="text-xl font-semibold text-white">Notification Preferences</h2>
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Notification Preferences</h2>
                       <Toggle label="Email Notifications" description="Receive email updates about new messages" checked={settings.emailNotifications} onChange={(v) => setSettings({ ...settings, emailNotifications: v })} />
                       <Toggle label="Chat Alerts" description="Get notified of new chat messages" checked={settings.chatAlerts} onChange={(v) => setSettings({ ...settings, chatAlerts: v })} />
                       <Toggle label="Weekly Reports" description="Receive weekly performance summaries" checked={settings.weeklyReports} onChange={(v) => setSettings({ ...settings, weeklyReports: v })} />
@@ -165,7 +165,7 @@ export default function SettingsPage() {
 
                   {activeTab === "chatbot" && (
                     <div className="space-y-5">
-                      <h2 className="text-xl font-semibold text-white">Chatbot Configuration</h2>
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Chatbot Configuration</h2>
                       <Input label="Bot Name" value={settings.botName} onChange={(e) => setSettings({ ...settings, botName: e.target.value })} placeholder="Support Assistant" />
                       <Textarea label="Welcome Message" value={settings.welcomeMessage} onChange={(e) => setSettings({ ...settings, welcomeMessage: e.target.value })} rows={3} />
                       <Select label="Response Delay" value={settings.responseDelay} onChange={(e) => setSettings({ ...settings, responseDelay: e.target.value })}
@@ -183,14 +183,14 @@ export default function SettingsPage() {
                           { value: "german", label: "German" },
                         ]}
                       />
-                      <p className="text-gray-400 text-sm">Widget appearance is managed in the <a href="/dashboard/integration" className="text-purple-400 hover:underline">Integration</a> page.</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">Widget appearance is managed in the <a href="/dashboard/integration" className="text-purple-600 dark:text-purple-400 hover:underline">Integration</a> page.</p>
                       <div className="pt-2"><SaveBtn onClick={handleSaveSettings} /></div>
                     </div>
                   )}
 
                   {activeTab === "security" && (
                     <div className="space-y-5">
-                      <h2 className="text-xl font-semibold text-white">Security Settings</h2>
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Security Settings</h2>
                       <Select label="Session Timeout" value={settings.sessionTimeout} onChange={(e) => setSettings({ ...settings, sessionTimeout: e.target.value })}
                         options={[
                           { value: "15", label: "15 minutes" },
@@ -199,8 +199,8 @@ export default function SettingsPage() {
                           { value: "never", label: "Never" },
                         ]}
                       />
-                      <div className="border-t border-gray-800/30 pt-5">
-                        <h3 className="text-white font-medium mb-4">Change Password</h3>
+                      <div className="border-t border-gray-200 dark:border-gray-800/30 pt-5">
+                        <h3 className="text-gray-900 dark:text-white font-medium mb-4">Change Password</h3>
                         <div className="space-y-4">
                           <Input
                             label="Current Password"
@@ -209,7 +209,7 @@ export default function SettingsPage() {
                             onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
                             placeholder="••••••••"
                             rightElement={
-                              <button type="button" onClick={() => setShowPw({ ...showPw, current: !showPw.current })} className="text-gray-500 hover:text-gray-300">
+                              <button type="button" onClick={() => setShowPw({ ...showPw, current: !showPw.current })} className="text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
                                 {showPw.current ? <EyeOff size={16} /> : <Eye size={16} />}
                               </button>
                             }
@@ -221,7 +221,7 @@ export default function SettingsPage() {
                             onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
                             placeholder="••••••••"
                             rightElement={
-                              <button type="button" onClick={() => setShowPw({ ...showPw, new: !showPw.new })} className="text-gray-500 hover:text-gray-300">
+                              <button type="button" onClick={() => setShowPw({ ...showPw, new: !showPw.new })} className="text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
                                 {showPw.new ? <EyeOff size={16} /> : <Eye size={16} />}
                               </button>
                             }
@@ -231,7 +231,7 @@ export default function SettingsPage() {
                       </div>
                       <div className="flex gap-3 pt-2">
                         <button onClick={handleSaveSettings} disabled={saving}
-                          className="bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 hover:border-purple-500/30 rounded-lg px-6 py-2.5 text-white text-sm font-medium transition-all">
+                          className="bg-purple-100 dark:bg-purple-500/10 hover:bg-purple-200 dark:hover:bg-purple-500/20 border border-purple-300 dark:border-purple-500/20 hover:border-purple-400 dark:hover:border-purple-500/30 rounded-lg px-6 py-2.5 text-purple-600 dark:text-white text-sm font-medium transition-all">
                           {saving ? "Saving..." : "Save Timeout"}
                         </button>
                         <button onClick={handleChangePassword} disabled={saving || !passwords.currentPassword || !passwords.newPassword}
@@ -250,3 +250,4 @@ export default function SettingsPage() {
     </DashboardLayout>
   );
 }
+

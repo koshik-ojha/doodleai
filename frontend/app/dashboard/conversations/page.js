@@ -106,8 +106,8 @@ export default function ConversationsPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Conversations</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Conversations</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             {isAdmin ? "All conversations across all users" : "View all chat conversations"}
           </p>
         </div>
@@ -115,19 +115,19 @@ export default function ConversationsPage() {
         {loading ? (
           <div className="space-y-3">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-xl px-4 py-3 animate-pulse">
-                <div className="h-4 bg-purple-500/10 rounded w-3/4 mb-2" />
-                <div className="h-3 bg-purple-500/5 rounded w-full mb-1" />
-                <div className="h-3 bg-purple-500/5 rounded w-1/4" />
+              <div key={i} className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-xl px-4 py-3 animate-pulse">
+                <div className="h-4 bg-gray-200 dark:bg-purple-500/10 rounded w-3/4 mb-2" />
+                <div className="h-3 bg-gray-100 dark:bg-purple-500/5 rounded w-full mb-1" />
+                <div className="h-3 bg-gray-100 dark:bg-purple-500/5 rounded w-1/4" />
               </div>
             ))}
           </div>
         ) : conversations.length === 0 ? (
           <div className="text-center py-12">
-            <div className="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center mx-auto mb-3">
-              <MessageSquare size={24} className="text-purple-400" />
+            <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-500/10 flex items-center justify-center mx-auto mb-3">
+              <MessageSquare size={24} className="text-purple-600 dark:text-purple-400" />
             </div>
-            <p className="text-gray-400">No conversations yet</p>
+            <p className="text-gray-600 dark:text-gray-400">No conversations yet</p>
           </div>
         ) : isAdmin ? (
           // ── Admin grouped by user ──
@@ -138,9 +138,9 @@ export default function ConversationsPage() {
                   <div className="w-7 h-7 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-400 text-xs font-bold flex-shrink-0">
                     {user?.name?.[0]?.toUpperCase() || "?"}
                   </div>
-                  <span className="text-white font-semibold text-sm">{user?.name || "Unknown"}</span>
-                  <span className="text-gray-500 text-xs">({user?.email || "—"})</span>
-                  <span className="ml-auto text-gray-600 text-xs">{convs.length} chat{convs.length !== 1 ? "s" : ""}</span>
+                  <span className="text-gray-900 dark:text-white font-semibold text-sm">{user?.name || "Unknown"}</span>
+                  <span className="text-gray-600 dark:text-gray-500 text-xs">({user?.email || "—"})</span>
+                  <span className="ml-auto text-gray-500 dark:text-gray-600 text-xs">{convs.length} chat{convs.length !== 1 ? "s" : ""}</span>
                 </div>
                 <div className="space-y-2">
                   {convs.map((conv) => (
@@ -164,7 +164,7 @@ export default function ConversationsPage() {
           <>
             {todayConvs.length > 0 && (
               <div>
-                <h2 className="text-white font-semibold text-lg mb-3">Today</h2>
+                <h2 className="text-gray-900 dark:text-white font-semibold text-lg mb-3">Today</h2>
                 <div className="space-y-2">
                   {todayConvs.map((conv) => (
                     <ConvItem
@@ -182,7 +182,7 @@ export default function ConversationsPage() {
             )}
             {last30Convs.length > 0 && (
               <div className="pt-2">
-                <h2 className="text-white font-semibold text-lg mb-3">Last 30 days</h2>
+                <h2 className="text-gray-900 dark:text-white font-semibold text-lg mb-3">Last 30 days</h2>
                 <div className="space-y-2">
                   {last30Convs.map((conv) => (
                     <ConvItem
@@ -211,7 +211,7 @@ export default function ConversationsPage() {
         )}
 
         {!hasMore && conversations.length > 0 && (
-          <p className="text-center text-gray-700 text-xs py-2">All conversations loaded</p>
+          <p className="text-center text-gray-500 dark:text-gray-700 text-xs py-2">All conversations loaded</p>
         )}
       </div>
 
@@ -232,15 +232,15 @@ function ConvItem({ conv, openMenu, setOpenMenu, setConfirmId, timeAgo, onView, 
   const summary = firstMessage.length > 100 ? firstMessage.substring(0, 100) + "..." : firstMessage;
 
   return (
-    <div className="bg-[#1a1a2e]/50 border border-purple-500/10 rounded-xl px-4 py-3 hover:bg-[#1a1a2e]/70 hover:border-purple-500/20 transition-all">
+    <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-xl px-4 py-3 hover:bg-gray-50 dark:hover:bg-[#1a1a2e]/70 hover:border-gray-300 dark:hover:border-purple-500/20 transition-all">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0 cursor-pointer" onClick={onView}>
-          <h3 className="text-white font-normal text-sm mb-1 truncate">{conv.title}</h3>
-          <p className="text-gray-500 text-xs leading-relaxed line-clamp-2">{summary}</p>
+          <h3 className="text-gray-900 dark:text-white font-normal text-sm mb-1 truncate">{conv.title}</h3>
+          <p className="text-gray-600 dark:text-gray-500 text-xs leading-relaxed line-clamp-2">{summary}</p>
           <div className="flex items-center gap-3 mt-1">
-            <span className="text-gray-600 text-xs">{timeAgo(conv.updatedAt)}</span>
+            <span className="text-gray-500 dark:text-gray-600 text-xs">{timeAgo(conv.updatedAt)}</span>
             {conv.messageCount > 0 && (
-              <span className="text-gray-700 text-xs">{conv.messageCount} msg{conv.messageCount !== 1 ? "s" : ""}</span>
+              <span className="text-gray-500 dark:text-gray-700 text-xs">{conv.messageCount} msg{conv.messageCount !== 1 ? "s" : ""}</span>
             )}
           </div>
         </div>
@@ -248,25 +248,25 @@ function ConvItem({ conv, openMenu, setOpenMenu, setConfirmId, timeAgo, onView, 
         <div className="relative flex-shrink-0">
           <button
             onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === conv._id ? null : conv._id); }}
-            className="p-1 hover:bg-gray-800/50 rounded transition-colors"
+            className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded transition-colors"
           >
-            <MoreVertical size={16} className="text-gray-400" />
+            <MoreVertical size={16} className="text-gray-500 dark:text-gray-400" />
           </button>
 
           {openMenu === conv._id && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setOpenMenu(null)} />
-              <div className="absolute right-0 top-8 z-20 bg-[#1a1a2e]/95 border border-purple-500/20 rounded-lg shadow-xl overflow-hidden min-w-[140px]">
+              <div className="absolute right-0 top-8 z-20 bg-white dark:bg-[#1a1a2e]/95 border border-gray-200 dark:border-purple-500/20 rounded-lg shadow-xl overflow-hidden min-w-[140px]">
                 <button
                   onClick={(e) => { e.stopPropagation(); onView(); setOpenMenu(null); }}
-                  className="w-full px-4 py-2.5 text-left text-sm text-gray-300 hover:bg-purple-500/10 transition-colors flex items-center gap-2"
+                  className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-purple-500/10 transition-colors flex items-center gap-2"
                 >
                   <Eye size={14} /> View
                 </button>
                 {!isAdmin && (
                   <button
                     onClick={(e) => { e.stopPropagation(); setConfirmId(conv._id); setOpenMenu(null); }}
-                    className="w-full px-4 py-2.5 text-left text-sm text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-2"
+                    className="w-full px-4 py-2.5 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center gap-2"
                   >
                     <Trash2 size={14} /> Delete
                   </button>
@@ -279,3 +279,4 @@ function ConvItem({ conv, openMenu, setOpenMenu, setConfirmId, timeAgo, onView, 
     </div>
   );
 }
+

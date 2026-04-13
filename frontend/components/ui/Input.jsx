@@ -4,22 +4,22 @@ import { forwardRef, useState } from "react";
 
 const variantStyles = {
   dark: {
-    base: "w-full bg-gray-800/20 border border-gray-700/30 rounded-lg text-white placeholder-gray-500 outline-none transition-all",
+    base: "w-full bg-gray-100 dark:bg-gray-800/20 border border-gray-300 dark:border-gray-700/30 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none transition-all",
     focus: "focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20",
     size: "px-4 py-2.5 text-sm",
-    label: "text-sm text-gray-400 font-medium",
+    label: "text-gray-700 dark:text-gray-400 font-medium text-sm",
   },
   light: {
-    base: "w-full bg-gray-100 border border-gray-200 rounded-lg text-gray-800 placeholder-gray-400 outline-none transition-all",
+    base: "w-full bg-gray-100 dark:bg-gray-800/20 border border-gray-300 dark:border-gray-700/30 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none transition-all",
     focus: "focus:border-violet-400 focus:ring-1 focus:ring-violet-400/30",
     size: "px-3 py-1.5 text-xs",
-    label: "text-xs text-gray-500 font-medium",
+    label: "text-gray-600 dark:text-gray-400 font-medium text-xs",
   },
   auth: {
-    base: "w-full bg-zinc-800/50 border rounded-xl text-white placeholder-zinc-500 outline-none transition-all duration-200",
+    base: "w-full bg-gray-100 dark:bg-zinc-800/50 border rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 outline-none transition-all duration-200",
     focus: "",
     size: "px-4 py-3 pl-11 text-sm",
-    label: "text-sm text-zinc-400 font-medium",
+    label: "text-gray-700 dark:text-zinc-400 font-medium text-sm",
   },
 };
 
@@ -51,7 +51,7 @@ const Input = forwardRef(function Input(
   const authBorder = variant === "auth"
     ? focused
       ? `${fc.border} shadow-lg ${fc.shadow}`
-      : "border-zinc-700/50"
+      : "border-gray-300 dark:border-zinc-700/50"
     : "";
 
   return (
@@ -86,9 +86,10 @@ const Input = forwardRef(function Input(
           </div>
         )}
       </div>
-      {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+      {error && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{error}</p>}
     </div>
   );
 });
 
 export default Input;
+
