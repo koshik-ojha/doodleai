@@ -26,19 +26,15 @@ export const register = async (req, res) => {
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ error: "Email already registered" });
 
+    // OTP verification temporarily disabled
     const hashed = await bcrypt.hash(password, 10);
-    const otp = generateOtp();
+    const user = await User.create({ name, email, password: hashed });
 
-    // Remove any previous OTP for this email
-    await Otp.deleteMany({ email });
-
-    // Store pending registration + OTP
-    await Otp.create({ email, otp, userData: { name, email, password: hashed } });
-
-    // Send OTP email
-    await sendOtpEmail(email, otp, name);
-
-    res.status(200).json({ requiresOtp: true, email });
+    res.status(201).json({
+      success: true,
+      token: createToken(user),
+      user: { id: user._id, name: user.name, email: user.email, role: user.role || "user" },
+    });
   } catch (error) {
     console.error("Register error:", error.message);
     res.status(500).json({ error: "Registration failed. Please try again." });

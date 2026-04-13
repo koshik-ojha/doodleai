@@ -1163,10 +1163,16 @@ function AuthModal({ isLogin, setIsLogin, onClose }) {
         localStorage.setItem("user", JSON.stringify(data.user));
         router.push("/dashboard");
       } else {
-        await api.post("/auth/register", form);
-        setPendingEmail(form.email);
-        setStep("register-otp");
-        startCooldown();
+        const { data } = await api.post("/auth/register", form);
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          router.push("/dashboard");
+        } else {
+          setPendingEmail(form.email);
+          setStep("register-otp");
+          startCooldown();
+        }
       }
     } catch (err) {
       setError(err.response?.data?.error || "Something went wrong");
