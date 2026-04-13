@@ -1,5 +1,4 @@
 import nodemailer from "nodemailer";
-import { Resend } from "resend";
 
 function otpBlock(otp) {
   return `
@@ -23,6 +22,26 @@ function emailWrapper(subtitle, body) {
     </div>`;
 }
 
+async function sendViaBrevo(to, subject, html) {
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": process.env.BREVO_API_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sender: { name: "Doodle AI", email: process.env.BREVO_FROM },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Brevo send failed");
+  }
+}
+
 async function sendViaSmtp(to, subject, html) {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -42,19 +61,9 @@ async function sendViaSmtp(to, subject, html) {
   });
 }
 
-async function sendViaResend(to, subject, html) {
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  await resend.emails.send({
-    from: process.env.RESEND_FROM,
-    to,
-    subject,
-    html,
-  });
-}
-
 async function sendEmail(to, subject, html) {
-  if (process.env.RESEND_API_KEY) {
-    await sendViaResend(to, subject, html);
+  if (process.env.BREVO_API_KEY) {
+    await sendViaBrevo(to, subject, html);
   } else {
     await sendViaSmtp(to, subject, html);
   }
