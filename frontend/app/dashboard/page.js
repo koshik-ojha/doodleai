@@ -24,7 +24,7 @@ export default function DashboardPage() {
         setStats(statsData);
         setAnalytics(analyticsData);
       })
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

@@ -6,6 +6,7 @@ import DashboardLayout from "@components/DashboardLayout";
 import { Plus, Settings, Trash2, Bot, CheckCircle, XCircle, Calendar, Loader2 } from "lucide-react";
 import { ConfirmModal } from "@components/ui";
 import api from "@lib/api";
+import showToast from "@utils/toast";
 
 export default function ChatbotsPage() {
   const router = useRouter();
@@ -40,8 +41,8 @@ export default function ChatbotsPage() {
       setChatbots((prev) => reset ? data.chatbots : [...prev, ...data.chatbots]);
       setHasMore(data.hasMore);
       setPage(pageNum);
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // Errors (including suspension 403) are handled by the api interceptor
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -64,16 +65,20 @@ export default function ChatbotsPage() {
   }, [hasMore, loadingMore, loading, page, fetchPage]);
 
   const handleCreate = async () => {
-    if (!newName.trim()) return;
+    if (!newName.trim()) {
+      showToast.warning("Please enter a chatbot name");
+      return;
+    }
     setCreating(true);
     try {
       const { data } = await api.post("/chatbots", { name: newName.trim(), botName: newName.trim() });
       setChatbots((prev) => [data, ...prev]);
       setNewName("");
       setShowCreate(false);
+      showToast.success("Chatbot created successfully!");
       router.push(`/dashboard/integration?botId=${data._id}`);
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // Error toast is shown by the API interceptor in lib/api.js
     } finally {
       setCreating(false);
     }
@@ -83,8 +88,9 @@ export default function ChatbotsPage() {
     try {
       await api.delete(`/chatbots/${confirmId}`);
       setChatbots((prev) => prev.filter((b) => b._id !== confirmId));
-    } catch (e) {
-      console.error(e);
+      showToast.success("Chatbot deleted successfully");
+    } catch {
+      // Error toast is shown by the API interceptor in lib/api.js
     } finally {
       setConfirmId(null);
     }

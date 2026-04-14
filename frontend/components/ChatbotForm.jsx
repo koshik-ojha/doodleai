@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X, Check } from "lucide-react";
 import { Input, Select, Textarea } from "@components/ui";
+import showToast from "@utils/toast";
 
 const FORM_CONFIG = {
   contact:      { title: "Contact Us",              submitLabel: "Send Message" },
@@ -67,13 +68,25 @@ export default function ChatbotForm({ onSubmit, onClose, formType = "contact", p
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onSubmit) onSubmit(formData);
-    if (whatsappNumber) {
-      const msg = buildWhatsAppMessage(formType, formData);
-      window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, "_blank");
+    
+    try {
+      if (onSubmit) onSubmit(formData);
+      
+      if (whatsappNumber) {
+        const msg = buildWhatsAppMessage(formType, formData);
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, "_blank");
+      }
+      
+      setSubmitted(true);
+      showToast.success("Form submitted successfully!");
+      
+      setTimeout(() => { 
+        if (onClose) onClose(); 
+      }, 2000);
+    } catch (error) {
+      showToast.error("Failed to submit form. Please try again.");
+      console.error("Form submission error:", error);
     }
-    setSubmitted(true);
-    setTimeout(() => { if (onClose) onClose(); }, 2000);
   };
 
   const cfg = FORM_CONFIG[formType] || FORM_CONFIG.contact;

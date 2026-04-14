@@ -38,8 +38,8 @@ export default function ConversationsPage() {
       setConversations((prev) => reset ? data.chats : [...prev, ...data.chats]);
       setHasMore(data.hasMore);
       setPage(pageNum);
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // handled by api interceptor
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -64,8 +64,8 @@ export default function ConversationsPage() {
     try {
       await api.delete(`/chats/${confirmId}`);
       setConversations((prev) => prev.filter((c) => c._id !== confirmId));
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // handled by api interceptor
     } finally {
       setConfirmId(null);
       setOpenMenu(null);

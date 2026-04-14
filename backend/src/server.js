@@ -24,6 +24,10 @@ dotenv.config();
 
 const app = express();
 
+// Trust reverse proxy (Render, Railway, Heroku, etc.) so rate limiting
+// uses the real client IP from X-Forwarded-For instead of the proxy IP
+app.set("trust proxy", 1);
+
 const allowedOrigins = [
   "http://localhost:3000",
   "https://doodleai-murex.vercel.app",
@@ -54,10 +58,17 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-app.use(rateLimit({
+// Strict rate limit only on auth endpoints to prevent brute-force attacks
+const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
-}));
+  max: 20,
+  message: { error: "Too many attempts, please try again later." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
+app.use("/api/auth/forgot-password", authLimiter);
 
 async function seedAdmin() {
   const email = "admin@wedoodles.com";

@@ -1,4 +1,5 @@
 import Chatbot from "../models/Chatbot.js";
+import User from "../models/User.js";
 import { crawlSite } from "../services/crawlService.js";
 import { encryptBotId } from "../utils/embedToken.js";
 import { getAIResponse } from "../services/aiService.js";
@@ -60,6 +61,15 @@ export const getChatbots = async (req, res) => {
 
 export const createChatbot = async (req, res) => {
   try {
+    const user = await User.findById(req.user.id);
+    const maxChatbots = user?.maxChatbots ?? 1;
+    const count = await Chatbot.countDocuments({ userId: req.user.id });
+    if (count >= maxChatbots) {
+      return res.status(403).json({
+        error: `You've reached your limit of ${maxChatbots} chatbot${maxChatbots !== 1 ? "s" : ""}. Please upgrade your plan to create more.`,
+        limitReached: true,
+      });
+    }
     const chatbot = await Chatbot.create({ ...req.body, userId: req.user.id });
     res.status(201).json(chatbot);
   } catch {

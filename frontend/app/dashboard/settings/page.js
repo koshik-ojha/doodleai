@@ -36,7 +36,7 @@ export default function SettingsPage() {
           weeklyReports: s.weeklyReports, sessionTimeout: s.sessionTimeout,
         });
       })
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

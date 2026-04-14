@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import Chatbot from "../models/Chatbot.js";
+import { clearSuspensionCache } from "../middleware/authMiddleware.js";
 
 export const getUsers = async (req, res) => {
   try {
@@ -52,9 +53,29 @@ export const reactivateUser = async (req, res) => {
       { new: true }
     ).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });
+    // Immediately evict from suspension cache so the user regains access
+    clearSuspensionCache(req.params.id);
     res.json({ success: true, user });
   } catch {
     res.status(500).json({ error: "Failed to reactivate user" });
+  }
+};
+
+export const updateChatbotLimit = async (req, res) => {
+  try {
+    const maxChatbots = parseInt(req.body.maxChatbots);
+    if (isNaN(maxChatbots) || maxChatbots < 0) {
+      return res.status(400).json({ error: "Invalid limit value" });
+    }
+    const user = await User.findOneAndUpdate(
+      { _id: req.params.id, role: { $ne: "admin" } },
+      { $set: { maxChatbots } },
+      { new: true }
+    ).select("-password");
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ success: true, user });
+  } catch {
+    res.status(500).json({ error: "Failed to update chatbot limit" });
   }
 };
 

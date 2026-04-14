@@ -213,7 +213,7 @@ export default function IntegrationPage() {
         setSelectedBotId(list[0]._id);
       }
       setTelegram({ botToken: s.telegramBotToken || "", chatId: s.telegramChatId || "" });
-    }).catch(console.error).finally(() => setLoading(false));
+    }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
   // Load selected bot config
@@ -235,13 +235,13 @@ export default function IntegrationPage() {
       setQuickReplies(data.quickReplies || []);
       setCrawledSources(data.crawledSources || []);
       setShowWidget(false);
-    }).catch(console.error);
+    }).catch(() => {});
 
     // Fetch encrypted embed token
     setEmbedToken(null);
     api.get(`/chatbots/${selectedBotId}/embed-token`)
       .then(({ data }) => setEmbedToken(data.token))
-      .catch(console.error);
+      .catch(() => {});
   }, [selectedBotId]);
 
   const [embedFramework, setEmbedFramework] = useState("html");
@@ -299,8 +299,8 @@ export default function IntegrationPage() {
       // Update chatbots list name
       setChatbots((prev) => prev.map((b) => b._id === selectedBotId ? { ...b, name: config.name, botName: config.botName, primaryColor: config.primaryColor } : b));
       setTimeout(() => setSaved(false), 2000);
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // handled by api interceptor
     } finally {
       setSaving(false);
     }

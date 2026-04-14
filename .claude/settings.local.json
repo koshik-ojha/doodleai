@@ -6,7 +6,8 @@
       "Bash(npx next:*)",
       "Bash(npm install:*)",
       "WebFetch(domain:prnt.sc)",
-      "WebFetch(domain:img.lightshot.app)"
+      "WebFetch(domain:img.lightshot.app)",
+      "Bash(xargs wc:*)"
     ]
   }
 }

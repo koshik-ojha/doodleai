@@ -89,8 +89,7 @@ export default function AnalyticsPage() {
     api
       .get(`/analytics?range=${RANGE_API[range]}`)
       .then(({ data: res }) => setData(res))
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
         setError("Failed to load analytics. Please try again.");
       })
       .finally(() => setLoading(false));

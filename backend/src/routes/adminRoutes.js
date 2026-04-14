@@ -1,7 +1,7 @@
 import express from "express";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 import {
-  getUsers, getAllChatbots, suspendUser, reactivateUser,
+  getUsers, getAllChatbots, suspendUser, reactivateUser, updateChatbotLimit,
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -12,5 +12,6 @@ router.get("/users", getUsers);
 router.get("/chatbots", getAllChatbots);
 router.patch("/users/:id/suspend", suspendUser);
 router.patch("/users/:id/reactivate", reactivateUser);
+router.patch("/users/:id/chatbot-limit", updateChatbotLimit);
 
 export default router;

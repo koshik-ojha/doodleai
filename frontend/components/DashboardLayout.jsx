@@ -14,7 +14,9 @@ import {
   BarChart3,
   Users,
   Code,
-  Bot
+  Bot,
+  ShieldBan,
+  Mail,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -23,6 +25,7 @@ import LightLogo from "@images/light-logo.svg";
 import LogoIcon from "@images/logo-icon.svg";
 import ThemeToggle from "./ThemeToggle";
 import { useTheme } from "@context/ThemeContext";
+import api from "@lib/api";
 
 export default function DashboardLayout({ children }) {
   const router = useRouter();
@@ -31,6 +34,7 @@ export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [isSuspended, setIsSuspended] = useState(false);
 
   // Detect mobile screen size
   useEffect(() => {
@@ -45,19 +49,66 @@ export default function DashboardLayout({ children }) {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Load user data from localStorage
+  // Load user data and check suspension status
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const user = localStorage.getItem("user");
-      if (user) {
-        try {
-          setUserData(JSON.parse(user));
-        } catch (error) {
-          console.error("Error parsing user data:", error);
+    if (typeof window === "undefined") return;
+
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        setUserData(parsed);
+        if (parsed.isSuspended) {
+          setIsSuspended(true);
+          return;
         }
-      }
+      } catch {}
     }
+
+    // Only fetch fresh profile once per browser session to check suspension
+    // (subsequent checks happen via the api interceptor event on any API call)
+    if (!sessionStorage.getItem("profileChecked")) {
+      sessionStorage.setItem("profileChecked", "1");
+      api.get("/auth/profile").then(({ data }) => {
+        if (data.isSuspended) {
+          const updated = { ...(JSON.parse(localStorage.getItem("user") || "{}")), isSuspended: true };
+          localStorage.setItem("user", JSON.stringify(updated));
+          setIsSuspended(true);
+        }
+      }).catch(() => {
+        // suspension 403 is handled by the api interceptor event
+      });
+    }
+
+    // Listen for suspension event dispatched by the api interceptor
+    const onSuspended = () => setIsSuspended(true);
+    window.addEventListener("account-suspended", onSuspended);
+    return () => window.removeEventListener("account-suspended", onSuspended);
   }, []);
+
+  // While suspended: poll every 10 s so the modal clears as soon as admin reactivates
+  useEffect(() => {
+    if (!isSuspended) return;
+    const interval = setInterval(() => {
+      api.get("/auth/profile")
+        .then(({ data }) => {
+          if (!data.isSuspended) {
+            // Reactivated — clear flag and dismiss modal
+            try {
+              const stored = JSON.parse(localStorage.getItem("user") || "{}");
+              delete stored.isSuspended;
+              localStorage.setItem("user", JSON.stringify(stored));
+            } catch {}
+            sessionStorage.removeItem("profileChecked");
+            setIsSuspended(false);
+          }
+        })
+        .catch(() => {
+          // Still suspended — 403 handled silently by api interceptor
+        });
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [isSuspended]);
 
   const isAdmin = userData?.role === "admin";
 
@@ -232,6 +283,50 @@ export default function DashboardLayout({ children }) {
           )}
         </div>
       </aside>
+
+      {/* Suspended Account Modal — uncloseable fullscreen overlay */}
+      {isSuspended && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-md mx-4 bg-white dark:bg-[#0f0f1a] border border-red-500/30 rounded-2xl shadow-2xl shadow-red-900/20 p-8 flex flex-col items-center text-center">
+            {/* Icon */}
+            <div className="w-20 h-20 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
+              <ShieldBan size={36} className="text-red-500" />
+            </div>
+
+            {/* Title */}
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              Account Suspended
+            </h2>
+
+            {/* Message */}
+            <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-2">
+              Your account has been suspended by an administrator.
+              You cannot access the dashboard until your account is reactivated.
+            </p>
+            <p className="text-gray-500 dark:text-gray-500 text-xs mb-8">
+              If you believe this is a mistake, please reach out to our support team.
+            </p>
+
+            {/* Actions */}
+            <div className="flex flex-col gap-3 w-full">
+              <a
+                href="mailto:support@doodleai.com"
+                className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-red-600 hover:bg-red-500 text-white font-medium rounded-xl transition-colors text-sm"
+              >
+                <Mail size={16} />
+                Contact Support
+              </a>
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-colors text-sm"
+              >
+                <LogOut size={16} />
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">

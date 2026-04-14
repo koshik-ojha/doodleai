@@ -8,7 +8,8 @@
       "@store/*": ["store/*"],
       "@app/*": ["app/*"],
       "@images/*": ["assets/images/*"],
-      "@context/*": ["context/*"]
+      "@context/*": ["context/*"],
+      "@utils/*": ["utils/*"]
     }
   }
 }

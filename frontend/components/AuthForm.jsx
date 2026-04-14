@@ -4,27 +4,34 @@ import { useState } from "react";
 import api from "@lib/api";
 import { useRouter } from "next/navigation";
 import Input from "@components/ui/Input";
+import showToast from "@utils/toast";
 
 export default function AuthForm() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     try {
       const endpoint = isLogin ? "/auth/login" : "/auth/register";
       const { data } = await api.post(endpoint, form);
+      
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      router.push("/dashboard");
+      
+      showToast.success(isLogin ? "Welcome back!" : "Account created successfully!");
+      
+      // Small delay for the user to see the success message
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 500);
     } catch (err) {
-      setError(err.response?.data?.error || "Something went wrong");
+      // Error toast is handled by API interceptor
+      console.error("Auth error:", err);
     } finally {
       setLoading(false);
     }
@@ -32,7 +39,6 @@ export default function AuthForm() {
 
   const toggleMode = () => {
     setIsLogin(!isLogin);
-    setError("");
     setForm({ name: "", email: "", password: "" });
   };
 
@@ -162,16 +168,6 @@ export default function AuthForm() {
               )}
             />
           </div>
-
-          {/* Error message */}
-          {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl animate-shake">
-              <svg className="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className="text-red-400 text-sm">{error}</p>
-            </div>
-          )}
 
           {/* Submit button */}
           <button 

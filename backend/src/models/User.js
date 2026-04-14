@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   company: { type: String, default: "" },
   role: { type: String, enum: ["user", "admin"], default: "user" },
   isSuspended: { type: Boolean, default: false },
+  maxChatbots: { type: Number, default: 1, min: 0 },
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);

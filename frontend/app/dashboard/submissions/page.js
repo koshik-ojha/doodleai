@@ -46,8 +46,8 @@ export default function SubmissionsPage() {
         // stats from first page total
         setStats({ total: data.total });
       }
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // handled by api interceptor
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -74,8 +74,8 @@ export default function SubmissionsPage() {
       const { data } = await api.patch(`/submissions/${id}/status`, { status });
       setSubmissions((prev) => prev.map((s) => s._id === id ? data : s));
       if (selectedSubmission?._id === id) setSelectedSubmission(data);
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // handled by api interceptor
     } finally {
       setUpdating(null);
     }
@@ -86,8 +86,8 @@ export default function SubmissionsPage() {
       await api.delete(`/submissions/${confirmId}`);
       setSubmissions((prev) => prev.filter((s) => s._id !== confirmId));
       if (selectedSubmission?._id === confirmId) setSelectedSubmission(null);
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // handled by api interceptor
     } finally {
       setConfirmId(null);
     }
