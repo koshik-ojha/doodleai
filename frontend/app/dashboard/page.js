@@ -35,9 +35,9 @@ export default function DashboardPage() {
       value: stats?.totalChats ?? "—",
     },
     {
-      icon: Users,
-      label: "TOTAL USERS",
-      value: stats?.totalUsers ?? "—",
+      icon: MessageSquare,
+      label: "TOTAL CHATBOTS",
+      value: stats?.totalChatbots ?? "—",
     },
     {
       icon: FileText,
