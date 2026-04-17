@@ -90,8 +90,9 @@ export const widgetMessage = async (req, res) => {
     if (!message) return res.status(400).json({ error: "Message is required" });
 
     let systemPrompt = `You are a customer support assistant. Only answer questions related to this service. For anything else, reply: "${FALLBACK_REPLY}"`;
+    let chatbot = null;
     if (botId) {
-      const chatbot = await Chatbot.findById(botId).catch(() => null);
+      chatbot = await Chatbot.findById(botId).catch(() => null);
       if (chatbot) {
         if (domain && chatbot.allowedDomains?.length > 0) {
           const allowed = chatbot.allowedDomains.some((d) => normalizeDomain(d) === normalizeDomain(domain));
@@ -110,7 +111,7 @@ export const widgetMessage = async (req, res) => {
       history = history.slice(history.length - MAX_HISTORY);
     }
 
-    const aiReply = await getAIResponse(history, systemPrompt);
+    const aiReply = await getAIResponse(history, systemPrompt, chatbot);
 
     history.push({ role: "assistant", content: aiReply });
     sessions.set(id, history);

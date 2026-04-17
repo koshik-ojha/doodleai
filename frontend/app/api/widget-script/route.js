@@ -175,7 +175,7 @@ function widgetScript(botId, apiUrl) {
     /* Input area */
     var inputArea = mk('div', 'padding:16px;background:#fff;border-top:1px solid #f3f4f6;flex-shrink:0;');
     inputArea.id = 'doodleai-widget-input';
-    var backBtn = mk('button', 'background:none;border:none;cursor:pointer;color:#9ca3af;font-size:12px;line-height:1.5;margin-bottom:8px;display:none;padding:0;');
+    var backBtn = mk('button', 'background:none;border:none;cursor:pointer;color:#9ca3af;font-size:12px!important;line-height:1.5;margin-bottom:8px;display:none;padding:0;');
     backBtn.textContent = '\u2190 Back to menu';
     backBtn.onmouseover = function () { backBtn.style.color = '#6b7280'; };
     backBtn.onmouseout  = function () { backBtn.style.color = '#9ca3af'; };
