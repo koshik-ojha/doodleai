@@ -1,6 +1,6 @@
 import Chat from "../models/Chat.js";
 import Message from "../models/Message.js";
-import { getAIResponse } from "../services/aiService.js";
+import { getLLMResponse } from "../services/llmService.js";
 
 export const createChat = async (req, res) => {
   try {
@@ -104,7 +104,7 @@ export const sendMessage = async (req, res) => {
     const history = await Message.find({ chatId }).sort({ createdAt: 1 });
     const formatted = history.map(msg => ({ role: msg.role, content: msg.content }));
 
-    const aiReply = await getAIResponse(formatted);
+    const aiReply = await getLLMResponse(formatted);
 
     const assistantMessage = await Message.create({
       chatId,
