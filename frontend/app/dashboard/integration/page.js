@@ -1062,9 +1062,9 @@ export default function IntegrationPage() {
                   </div>
                 )}
               </div>
-              <div className="">
+              <div className="sticky top-[-20px] self-start">
                 {/* Live Preview — always visible */}
-                <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-6 hover:border-gray-300 dark:hover:border-purple-500/20 transition-colors h-full min-h-[780px]">
+                <div className="bg-white dark:bg-[#1a1a2e]/50 border border-gray-200 dark:border-purple-500/10 rounded-2xl p-6 hover:border-gray-300 dark:hover:border-purple-500/20 transition-colors h-full min-h-[100vh]">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Live Preview</h2>
@@ -1078,11 +1078,13 @@ export default function IntegrationPage() {
                       {showWidget ? "Hide Widget" : "Preview Widget"}
                     </button>
                   </div>
-                  <div className="bg-gray-100 dark:bg-gray-900 rounded-xl h-[calc(100%-70px)] relative border border-gray-300 dark:border-gray-700 overflow-hidden flex items-center justify-center">
-                    <div className="text-center text-gray-500 dark:text-gray-600 pointer-events-none select-none">
-                      <Code size={48} className="mx-auto mb-3 opacity-20" />
-                      <p className="text-sm opacity-60">Your website content here</p>
-                      <p className="text-xs mt-1 opacity-40">Click "Preview Widget" to test the chatbot</p>
+                  <div className="bg-gray-100 dark:bg-gray-900 rounded-xl h-[calc(100vh-70px)] relative border border-gray-300 dark:border-gray-700 overflow-hidden">
+                    <div className="absolute inset-0 flex items-center justify-center text-center text-gray-500 dark:text-gray-600 pointer-events-none select-none">
+                      <div>
+                        <Code size={48} className="mx-auto mb-3 opacity-20" />
+                        <p className="text-sm opacity-60">Your website content here</p>
+                        <p className="text-xs mt-1 opacity-40">{showWidget ? "Widget preview active — interact with it!" : "Click 'Preview Widget' to test the chatbot"}</p>
+                      </div>
                     </div>
                     {showWidget && (
                       <ChatWidget

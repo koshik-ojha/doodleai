@@ -22,7 +22,7 @@ export default function ChatWidget({
   quickReplies = [],
   whatsappNumber = "",
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(preview); // Auto-open in preview mode
   const [view, setView] = useState("quick"); // "quick" | "chat" | "form"
   const [formType, setFormType] = useState("contact"); // "contact" | "quote" | "consultation"
   const [messages, setMessages] = useState([]);
@@ -102,12 +102,11 @@ export default function ChatWidget({
 
   return (
     <div className={`
-      fixed z-50 flex flex-col overflow-hidden bg-white dark:bg-white bg-white shadow-2xl
-      inset-0 w-full h-full rounded-none
-      md:${positionClass} md:w-[380px] md:h-[600px] md:rounded-3xl md:inset-auto
+      ${positionClass} z-50 flex flex-col overflow-hidden bg-white dark:bg-white shadow-2xl
+      ${preview ? 'w-[380px] h-[600px] rounded-3xl' : 'inset-0 w-full h-full rounded-none md:w-[380px] md:h-[600px] md:rounded-3xl md:inset-auto'}
     `}>
       {/* Header */}
-      <div style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}cc)` }} className="p-4 flex items-center justify-between safe-top">
+      <div style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}cc)` }} className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative">
             <BotIcon size={44} className="rounded-full" />
@@ -130,13 +129,13 @@ export default function ChatWidget({
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-50 bg-gray-50">
+      <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-50 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {view === "quick" && (
           <div className="p-4">
             <div className="flex gap-3 mb-4">
               <BotIcon size={40} className="flex-shrink-0" />
-              <div className="bg-white dark:bg-white bg-white rounded-2xl rounded-tl-none px-4 py-3 shadow-sm max-w-[80%]">
-                <p className="text-gray-800 dark:text-gray-800 text-gray-800 text-sm">{welcomeMessage}</p>
+              <div className="bg-white dark:bg-white rounded-2xl rounded-tl-none px-4 py-3 shadow-sm max-w-[80%]">
+                <p className="text-gray-800 dark:text-gray-800 text-[13px]">{welcomeMessage}</p>
               </div>
             </div>
             <QuickReplies
@@ -187,15 +186,15 @@ export default function ChatWidget({
                   <BotIcon size={36} className="flex-shrink-0" />
                 )}
                 {msg.role === "user" && (
-                  <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-200 bg-gray-200 flex items-center justify-center flex-shrink-0">
-                    <span className="text-gray-600 dark:text-gray-600 text-gray-600 text-sm font-semibold">U</span>
+                  <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-200 flex items-center justify-center flex-shrink-0">
+                    <span className="text-gray-600 dark:text-gray-600 text-[13px] font-semibold">U</span>
                   </div>
                 )}
                 <div className={`flex flex-col max-w-[80%] md:max-w-[72%]`}>
-                  <div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                  <div className={`rounded-2xl px-4 py-3 text-[13px] leading-relaxed ${
                     msg.role === "user"
-                      ? "text-white dark:text-white text-white rounded-tr-none"
-                      : "bg-white dark:bg-white bg-white text-gray-800 dark:text-gray-800 text-gray-800 shadow-sm rounded-tl-none"
+                      ? "text-white dark:text-white rounded-tr-none"
+                      : "bg-white dark:bg-white text-gray-800 dark:text-gray-800 shadow-sm rounded-tl-none"
                   }`} style={msg.role === "user" ? { backgroundColor: primaryColor } : {}}>
                     {msg.content}
                   </div>
@@ -212,7 +211,7 @@ export default function ChatWidget({
                 </div>
                 <div className="bg-white rounded-2xl rounded-tl-none px-4 py-3 shadow-sm flex items-center gap-2">
                   <Loader2 size={16} className="animate-spin text-gray-400" />
-                  <span className="text-gray-400 text-sm">Typing...</span>
+                  <span className="text-gray-400 text-[13px]">Typing...</span>
                 </div>
               </div>
             )}
@@ -223,7 +222,7 @@ export default function ChatWidget({
 
       {/* Input */}
       {view !== "form" && (
-        <div className="p-4 bg-white border-t border-gray-100 safe-bottom">
+        <div className="p-4 bg-white border-t border-gray-100">
           {view === "chat" && (
             <button
               onClick={() => setView("quick")}
@@ -239,7 +238,8 @@ export default function ChatWidget({
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
               placeholder="Type a message..."
-              className="flex-1 !rounded-full !py-2.5"
+              style={{ "--primary": primaryColor }}
+              className="!flex-1 !border !bg-gray-50 !text-gray-900 !rounded-full !px-4 !py-2.5 !leading-normal !text-[13px] !shadow-none !outline-none focus:!outline-none focus-visible:!outline-none focus:![border-color:var(--primary)] transition-all"
             />
             <button
               onClick={() => sendMessage()}

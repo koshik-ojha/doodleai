@@ -444,7 +444,7 @@ function widgetScript(botId, apiUrl) {
     function fSel(name, options) {
       var el = mk('select',
         'width:100%;border:1.5px solid #e5e7eb;background:#f9fafb;color:#111827;' +
-        'border-radius:8px;padding:9px 12px;font-size:13px;');
+        'border-radius:6px;padding:6px 12px;font-size:13px!important;font-weight:400!important;');
       el.name = name;
       options.forEach(function (opt) {
         var o = document.createElement('option');

@@ -17,7 +17,7 @@ export default function QuickReplies({ onSelect, primaryColor = "#7c3aed", faqs 
       {/* Quick reply buttons */}
       {questions.length > 0 && (
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-zinc-400 text-sm">
+          <div className="flex items-center gap-2 text-zinc-400 text-[13px]">
             <HelpCircle size={16} />
             <span>Common Questions</span>
           </div>
@@ -31,7 +31,7 @@ export default function QuickReplies({ onSelect, primaryColor = "#7c3aed", faqs 
 
       {/* Contact / form actions — always shown */}
       <div className="space-y-2">
-        <div className="flex items-center gap-2 text-zinc-400 text-sm">
+        <div className="flex items-center gap-2 text-zinc-400 text-[13px]">
           <FileText size={16} />
           <span>Contact Us</span>
         </div>
@@ -60,7 +60,7 @@ function QuickButton({ label, primaryColor, onSelect }) {
         e.currentTarget.style.color = primaryColor;
         e.currentTarget.querySelector("svg").style.color = primaryColor;
       }}
-      className="text-left rounded-lg px-4 py-3 text-sm transition-colors flex items-center justify-between"
+      className="text-left rounded-lg px-4 py-3 !text-[13px] transition-colors flex items-center justify-between"
     >
       <span>{label}</span>
       <Send size={14} style={{ color: primaryColor }} className="transition-colors" />

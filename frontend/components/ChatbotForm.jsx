@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X, Check } from "lucide-react";
-import { Input, Select, Textarea } from "@components/ui";
+import { Input, Textarea } from "@components/ui";
 import showToast from "@utils/toast";
 
 const FORM_CONFIG = {
@@ -28,8 +28,9 @@ const TIME_OPTIONS = [
   { value: "3:00 PM – 5:00 PM",   label: "3:00 PM – 5:00 PM" },
 ];
 
-// Consistent height override for all single-line fields
-const h = "!py-2 !text-sm";
+// Consistent styling for all form inputs
+const inputClassName = "!w-full !border !border-gray-200 !bg-gray-50 !text-gray-900 !rounded-md !px-3 !py-1.5 !text-[13px] !font-normal !outline-none !shadow-none !focus:outline-none !focus:[border-color:var(--primary)] !transition-all";
+const inputStyle = (primaryColor) => ({ "--primary": primaryColor });
 
 const buildWhatsAppMessage = (formType, formData) => {
   const lines = [];
@@ -117,35 +118,43 @@ export default function ChatbotForm({ onSubmit, onClose, formType = "contact", p
       <form onSubmit={handleSubmit} className="space-y-2">
 
         {/* ── Common fields ── */}
-        <Input variant="light" className={h} placeholder="Full name *" required value={formData.name} onChange={set("name")} />
-        <Input variant="light" className={h} placeholder="Email address *" type="email" required value={formData.email} onChange={set("email")} />
-        <Input variant="light" className={h} placeholder="Phone number" type="tel" value={formData.phone} onChange={set("phone")} />
+        <Input className={inputClassName} style={inputStyle(primaryColor)} placeholder="Full name *" required value={formData.name} onChange={set("name")} />
+        <Input className={inputClassName} style={inputStyle(primaryColor)} placeholder="Email address *" type="email" required value={formData.email} onChange={set("email")} />
+        <Input className={inputClassName} style={inputStyle(primaryColor)} placeholder="Phone number" type="tel" value={formData.phone} onChange={set("phone")} />
 
         {/* ── Contact ── */}
         {formType === "contact" && (
           <>
-            <Input    variant="light" className={h}  placeholder="Company"  value={formData.company} onChange={set("company")} />
-            <Input    variant="light" className={h}  placeholder="Subject"  value={formData.subject} onChange={set("subject")} />
-            <Textarea variant="light" className="!text-sm" rows={3} placeholder="Message *" required value={formData.message} onChange={set("message")} />
+            <Input    className={inputClassName} style={inputStyle(primaryColor)} placeholder="Company"  value={formData.company} onChange={set("company")} />
+            <Input    className={inputClassName} style={inputStyle(primaryColor)} placeholder="Subject"  value={formData.subject} onChange={set("subject")} />
+            <Textarea className={inputClassName} style={inputStyle(primaryColor)} rows={3} placeholder="Message *" required value={formData.message} onChange={set("message")} />
           </>
         )}
 
         {/* ── Quote ── */}
         {formType === "quote" && (
           <>
-            <Input    variant="light" className={h} placeholder="Company" value={formData.company} onChange={set("company")} />
-            <Textarea variant="light" className="!text-sm" rows={3} placeholder="Describe your project *" required value={formData.message} onChange={set("message")} />
-            <Select   variant="light" className={h} value={formData.budget} onChange={set("budget")} options={BUDGET_OPTIONS} />
+            <Input    className={inputClassName} style={inputStyle(primaryColor)} placeholder="Company" value={formData.company} onChange={set("company")} />
+            <Textarea className={inputClassName} style={inputStyle(primaryColor)} rows={3} placeholder="Describe your project *" required value={formData.message} onChange={set("message")} />
+            <select   className={inputClassName} style={inputStyle(primaryColor)} value={formData.budget} onChange={set("budget")}>
+              {BUDGET_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
           </>
         )}
 
         {/* ── Consultation ── */}
         {formType === "consultation" && (
           <>
-            <Input    variant="light" className={h} placeholder="Topic / what to discuss *" required value={formData.topic} onChange={set("topic")} />
-            <Textarea variant="light" className="!text-sm" rows={2} placeholder="Additional details" value={formData.message} onChange={set("message")} />
-            {/* <Input    variant="light" className={h} type="date" required value={formData.preferredDate} onChange={set("preferredDate")} min={new Date().toISOString().split("T")[0]} /> */}
-            {/* <Select   variant="light" className={h} value={formData.preferredTime} onChange={set("preferredTime")} options={TIME_OPTIONS} /> */}
+            <Input    className={inputClassName} style={inputStyle(primaryColor)} placeholder="Topic / what to discuss *" required value={formData.topic} onChange={set("topic")} />
+            <Textarea className={inputClassName} style={inputStyle(primaryColor)} rows={2} placeholder="Additional details" value={formData.message} onChange={set("message")} />
+            {/* <Input    className={inputClassName} style={inputStyle(primaryColor)} type="date" required value={formData.preferredDate} onChange={set("preferredDate")} min={new Date().toISOString().split("T")[0]} /> */}
+            {/* <select   className={inputClassName} style={inputStyle(primaryColor)} value={formData.preferredTime} onChange={set("preferredTime")}>
+              {TIME_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select> */}
           </>
         )}
 
