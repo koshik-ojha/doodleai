@@ -144,7 +144,10 @@ export default function IntegrationPage() {
     autoOpen: false,
     whatsappNumber: "",
     allowedDomains: [],
+    botIconUrl: "",
   });
+  const [canChangeIcon, setCanChangeIcon] = useState(false);
+  const iconInputRef = useRef(null);
   const [newDomain, setNewDomain] = useState("");
 
   // Knowledge base state
@@ -202,7 +205,8 @@ export default function IntegrationPage() {
     Promise.all([
       api.get("/chatbots?limit=100"),
       api.get("/settings"),
-    ]).then(([{ data: botsData }, { data: s }]) => {
+      api.get("/auth/profile"),
+    ]).then(([{ data: botsData }, { data: s }, { data: profile }]) => {
       const list = Array.isArray(botsData) ? botsData : (botsData.chatbots || []);
       setChatbots(list);
       const params = new URLSearchParams(window.location.search);
@@ -213,6 +217,7 @@ export default function IntegrationPage() {
         setSelectedBotId(list[0]._id);
       }
       setTelegram({ botToken: s.telegramBotToken || "", chatId: s.telegramChatId || "" });
+      setCanChangeIcon(!!profile.canChangeIcon);
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
@@ -229,6 +234,7 @@ export default function IntegrationPage() {
         autoOpen: data.autoOpen,
         whatsappNumber: data.whatsappNumber || "",
         allowedDomains: data.allowedDomains || [],
+        botIconUrl: data.botIconUrl || "",
       });
       setKnowledgeBase(data.knowledgeBase || "");
       setFaqs(data.faqs || []);
@@ -304,6 +310,20 @@ export default function IntegrationPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleIconUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 300 * 1024) {
+      alert("Image must be smaller than 300 KB.");
+      e.target.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => update("botIconUrl", ev.target.result);
+    reader.readAsDataURL(file);
+    e.target.value = "";
   };
 
   const handleDetectChatId = async () => {
@@ -576,6 +596,45 @@ export default function IntegrationPage() {
                     </div>
 
                     <Toggle label="Auto-open on load" description="Show widget expanded when page loads" checked={config.autoOpen} onChange={(v) => update("autoOpen", v)} />
+
+                    {/* Custom Bot Icon */}
+                    {canChangeIcon && (
+                      <div>
+                        <label className="block text-sm text-gray-600 dark:text-gray-400 font-medium mb-1.5">
+                          Bot Widget Icon
+                          <span className="ml-2 text-xs text-gray-500 dark:text-gray-600 font-normal">PNG/JPG/SVG · max 300 KB</span>
+                        </label>
+                        <div className="flex items-center gap-4">
+                          {/* Preview */}
+                          <div className="w-14 h-14 rounded-full border-2 border-dashed border-gray-300 dark:border-purple-500/30 flex items-center justify-center overflow-hidden flex-shrink-0 bg-gray-50 dark:bg-black/20">
+                            {config.botIconUrl ? (
+                              <img src={config.botIconUrl} alt="bot icon" className="w-full h-full object-cover rounded-full" />
+                            ) : (
+                              <Upload size={20} className="text-gray-400" />
+                            )}
+                          </div>
+                          <div className="flex gap-2 flex-wrap">
+                            <input ref={iconInputRef} type="file" accept="image/*" onChange={handleIconUpload} className="hidden" />
+                            <button
+                              type="button"
+                              onClick={() => iconInputRef.current?.click()}
+                              className="flex items-center gap-1.5 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium rounded-xl transition-all"
+                            >
+                              <Upload size={14} /> {config.botIconUrl ? "Change Icon" : "Upload Icon"}
+                            </button>
+                            {config.botIconUrl && (
+                              <button
+                                type="button"
+                                onClick={() => update("botIconUrl", "")}
+                                className="flex items-center gap-1.5 px-4 py-2 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 text-sm font-medium rounded-xl transition-all"
+                              >
+                                <Trash2 size={14} /> Remove
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     {/* <div>
                       <label className="block text-sm text-gray-400 font-medium mb-1.5">
@@ -1097,6 +1156,7 @@ export default function IntegrationPage() {
                         faqs={faqs}
                         quickReplies={quickReplies}
                         whatsappNumber={config.whatsappNumber}
+                        botIconUrl={config.botIconUrl}
                       />
                     )}
                   </div>

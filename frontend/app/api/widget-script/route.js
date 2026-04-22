@@ -108,6 +108,15 @@ function widgetScript(botId, apiUrl) {
     var qrs      = cfg.quickReplies   || [];
     var faqs     = cfg.faqs           || [];
     var autoOpen = cfg.autoOpen       || false;
+    var iconUrl  = cfg.botIconUrl     || '';
+
+    function bIcon(size) {
+      if (iconUrl) {
+        var s = String(size);
+        return '<img src="' + esc(iconUrl) + '" width="' + s + '" height="' + s + '" style="border-radius:50%;object-fit:cover;display:block;" />';
+      }
+      return botSvg(size);
+    }
 
     var isRight  = pos.indexOf('right')  !== -1;
     var isBottom = pos.indexOf('bottom') !== -1;
@@ -127,7 +136,7 @@ function widgetScript(botId, apiUrl) {
     toggleBtn.innerHTML =
       '<div style="position:relative;display:inline-flex;align-items:center;justify-content:center;">' +
         '<span style="position:absolute;inset:0;border-radius:50%;background:rgba(139,92,246,0.2);animation:daiPing 2s ease infinite;"></span>' +
-        '<div style="position:relative;animation:daiFloat 3s ease-in-out infinite;">' + botSvg(80) + '</div>' +
+        '<div style="position:relative;animation:daiFloat 3s ease-in-out infinite;">' + bIcon(80) + '</div>' +
       '</div>';
     root.appendChild(toggleBtn);
 
@@ -147,7 +156,7 @@ function widgetScript(botId, apiUrl) {
     hdr.id = 'doodleai-widget-header';
     var hdrL = mk('div', 'display:flex;align-items:center;gap:12px;');
     var avWrap = mk('div', 'position:relative;flex-shrink:0;');
-    avWrap.innerHTML = botSvg(44) +
+    avWrap.innerHTML = bIcon(44) +
       '<div style="position:absolute;bottom:0;right:0;width:12px;height:12px;background:#4ade80;border-radius:50%;border:2px solid #fff;"></div>';
     var hdrTxt = mk('div', '');
     hdrTxt.innerHTML =
@@ -219,7 +228,7 @@ function widgetScript(botId, apiUrl) {
       /* Welcome bubble */
       var wRow = mk('div', 'display:flex;gap:12px;margin-bottom:20px;align-items:flex-start;');
       var wAvatar = mk('div', 'flex-shrink:0;');
-      wAvatar.innerHTML = botSvg(36);
+      wAvatar.innerHTML = bIcon(36);
       var wBubble = mk('div',
         'background:#fff;border-radius:16px 16px 16px 4px;padding:12px 16px;' +
         'box-shadow:0 1px 4px rgba(0,0,0,0.08);max-width:80%;');
@@ -477,7 +486,7 @@ function widgetScript(botId, apiUrl) {
           'display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;';
         avatar.innerHTML = '<span style="color:#6b7280;font-size:12px;font-weight:600;line-height:1;">U</span>';
       } else {
-        avatar.innerHTML = botSvg(36);
+        avatar.innerHTML = bIcon(36);
       }
 
       /* Bubble + timestamp */
@@ -502,7 +511,7 @@ function widgetScript(botId, apiUrl) {
       if (!msgsDiv) return null;
       var row = mk('div', 'display:flex;gap:12px;');
       var av = mk('div', 'flex-shrink:0;');
-      av.innerHTML = botSvg(36);
+      av.innerHTML = bIcon(36);
       var bubble = mk('div',
         'border-radius:4px 16px 16px 16px;padding:12px 16px;background:#fff;' +
         'box-shadow:0 1px 4px rgba(0,0,0,0.08);display:flex;align-items:center;gap:6px;');

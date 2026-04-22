@@ -61,6 +61,21 @@ export const reactivateUser = async (req, res) => {
   }
 };
 
+export const updateIconPermission = async (req, res) => {
+  try {
+    const { canChangeIcon } = req.body;
+    const user = await User.findOneAndUpdate(
+      { _id: req.params.id, role: { $ne: "admin" } },
+      { $set: { canChangeIcon: !!canChangeIcon } },
+      { new: true }
+    ).select("-password");
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ success: true, user });
+  } catch {
+    res.status(500).json({ error: "Failed to update icon permission" });
+  }
+};
+
 export const updateChatbotLimit = async (req, res) => {
   try {
     const maxChatbots = parseInt(req.body.maxChatbots);

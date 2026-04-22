@@ -93,7 +93,14 @@ export const updateChatbot = async (req, res) => {
   try {
     const isAdmin = req.user.role === "admin";
     const filter = isAdmin ? { _id: req.params.id } : { _id: req.params.id, userId: req.user.id };
-    const chatbot = await Chatbot.findOneAndUpdate(filter, { $set: req.body }, { new: true, runValidators: false });
+
+    const updateBody = { ...req.body };
+    if (!isAdmin && "botIconUrl" in updateBody) {
+      const owner = await User.findById(req.user.id).select("canChangeIcon");
+      if (!owner?.canChangeIcon) delete updateBody.botIconUrl;
+    }
+
+    const chatbot = await Chatbot.findOneAndUpdate(filter, { $set: updateBody }, { new: true, runValidators: false });
     if (!chatbot) return res.status(404).json({ error: "Not found" });
     res.json(chatbot);
   } catch (err) {

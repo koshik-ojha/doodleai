@@ -1,6 +1,16 @@
 import * as React from "react";
 
-const SvgIcon = ({ size = 80, className = "", ...props }) => (
+const SvgIcon = ({ size = 80, className = "", iconUrl = "", ...props }) => iconUrl ? (
+  <img
+    src={iconUrl}
+    width={size}
+    height={size}
+    className={className}
+    style={{ borderRadius: "50%", objectFit: "cover" }}
+    alt="bot icon"
+    {...props}
+  />
+) : (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -107,18 +117,15 @@ const SvgIcon = ({ size = 80, className = "", ...props }) => (
   </svg>
 );
 
-const BotWidget = () => (
+const BotWidget = ({ iconUrl = "" }) => (
   <div className="relative inline-flex items-center justify-center">
-    {/* Outer pulse ring */}
     <span className="absolute inset-0 rounded-full bg-purple-500/20 animate-ping" />
-    {/* Inner glow ring */}
     <span className="absolute inset-1 rounded-full bg-purple-500/10 animate-pulse" />
-    {/* Bot icon with gentle float animation */}
     <div
       className="relative"
       style={{ animation: "botFloat 3s ease-in-out infinite" }}
     >
-      <SvgIcon size={80} />
+      <SvgIcon size={80} iconUrl={iconUrl} />
     </div>
     <style>{`
       @keyframes botFloat {

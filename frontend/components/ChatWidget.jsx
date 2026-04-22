@@ -21,6 +21,7 @@ export default function ChatWidget({
   faqs = [],
   quickReplies = [],
   whatsappNumber = "",
+  botIconUrl = "",
 }) {
   const [isOpen, setIsOpen] = useState(preview); // Auto-open in preview mode
   const [view, setView] = useState("quick"); // "quick" | "chat" | "form"
@@ -95,7 +96,7 @@ export default function ChatWidget({
         onClick={() => setIsOpen(true)}
         className={`${positionClass} z-50 hover:scale-110 transition-transform bg-transparent border-0 p-0 cursor-pointer`}
       >
-        <BotWidget />
+        <BotWidget iconUrl={botIconUrl} />
       </button>
     );
   }
@@ -109,7 +110,7 @@ export default function ChatWidget({
       <div style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}cc)` }} className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <BotIcon size={44} className="rounded-full" />
+            <BotIcon size={44} className="rounded-full" iconUrl={botIconUrl} />
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
           </div>
           <div>
@@ -133,7 +134,7 @@ export default function ChatWidget({
         {view === "quick" && (
           <div className="p-4">
             <div className="flex gap-3 mb-4">
-              <BotIcon size={40} className="flex-shrink-0" />
+              <BotIcon size={40} className="flex-shrink-0" iconUrl={botIconUrl} />
               <div className="bg-white dark:bg-white rounded-2xl rounded-tl-none px-4 py-3 shadow-sm max-w-[80%]">
                 <p className="text-gray-800 dark:text-gray-800 text-[13px]">{welcomeMessage}</p>
               </div>
@@ -183,7 +184,7 @@ export default function ChatWidget({
             {messages.map((msg, i) => (
               <div key={i} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
                 {msg.role === "assistant" && (
-                  <BotIcon size={36} className="flex-shrink-0" />
+                  <BotIcon size={36} className="flex-shrink-0" iconUrl={botIconUrl} />
                 )}
                 {msg.role === "user" && (
                   <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-200 flex items-center justify-center flex-shrink-0">

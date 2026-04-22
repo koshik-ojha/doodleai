@@ -17,6 +17,7 @@ const chatbotSchema = new mongoose.Schema({
   knowledgeBase: { type: String, default: "" },
   faqs: [faqSchema],
   quickReplies: [{ question: { type: String, required: true }, answer: { type: String, default: "" } }],
+  botIconUrl: { type: String, default: "" },
   isActive: { type: Boolean, default: true },
   allowedDomains: [{ type: String }],
   crawledSources: [{

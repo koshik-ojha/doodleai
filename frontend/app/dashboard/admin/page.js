@@ -93,6 +93,18 @@ export default function AdminUsersPage() {
     }
   };
 
+  const handleIconPermission = async (userId, allow) => {
+    setActionLoading(userId + "-icon");
+    try {
+      await api.patch(`/admin/users/${userId}/icon-permission`, { canChangeIcon: allow });
+      setUsers((prev) => prev.map((u) => u._id === userId ? { ...u, canChangeIcon: allow } : u));
+    } catch (e) {
+      alert(e.response?.data?.error || "Failed");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const handleLimitSave = async (userId) => {
     const val = parseInt(limitEdit[userId]);
     if (isNaN(val) || val < 0) return;
@@ -147,6 +159,7 @@ export default function AdminUsersPage() {
                   <th className="text-left px-5 py-3">Email</th>
                   <th className="text-left px-5 py-3">Joined</th>
                   <th className="text-left px-5 py-3">Chatbot Limit</th>
+                  <th className="text-left px-5 py-3">Custom Icon</th>
                   <th className="text-left px-5 py-3">Action</th>
                 </tr>
               </thead>
@@ -211,6 +224,22 @@ export default function AdminUsersPage() {
                           </button>
                         )}
                       </div>
+                    </td>
+
+                    {/* Custom Icon Permission */}
+                    <td className="px-5 py-3.5">
+                      <button
+                        onClick={() => handleIconPermission(u._id, !u.canChangeIcon)}
+                        disabled={actionLoading === u._id + "-icon"}
+                        title={u.canChangeIcon ? "Disallow custom icon" : "Allow custom icon"}
+                        className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none disabled:opacity-50 ${
+                          u.canChangeIcon ? "bg-purple-600" : "bg-gray-300 dark:bg-gray-600"
+                        }`}
+                      >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          u.canChangeIcon ? "translate-x-4" : "translate-x-0"
+                        }`} />
+                      </button>
                     </td>
 
                     {/* Action */}
