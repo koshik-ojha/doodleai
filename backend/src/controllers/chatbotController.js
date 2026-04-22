@@ -182,14 +182,26 @@ export const getEmbedToken = async (req, res) => {
 
 export const getPublicChatbot = async (req, res) => {
   try {
-    const chatbot = await Chatbot.findById(req.params.id).select("-userId");
+    const chatbot = await Chatbot.findById(req.params.id);
     if (!chatbot) return res.status(404).json({ error: "Not found" });
 
     if (!isDomainAllowed(chatbot.allowedDomains, req.query.domain)) {
       return res.status(403).json({ error: "Domain not allowed" });
     }
 
-    res.json(chatbot);
+    // Hide widget entirely if owner's account is suspended or trial expired
+    const TRIAL_MS = 14 * 24 * 60 * 60 * 1000;
+    const owner = await User.findById(chatbot.userId).select("isSuspended role adminActivated createdAt");
+    if (owner) {
+      const trialExpired = owner.role === "user" && !owner.adminActivated &&
+        Date.now() > new Date(owner.createdAt).getTime() + TRIAL_MS;
+      if (owner.isSuspended || trialExpired) {
+        return res.status(403).json({ error: "Chatbot unavailable" });
+      }
+    }
+
+    const { userId: _uid, ...publicData } = chatbot.toObject();
+    res.json(publicData);
   } catch {
     res.status(500).json({ error: "Failed to fetch chatbot" });
   }

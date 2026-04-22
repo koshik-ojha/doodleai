@@ -147,7 +147,7 @@ export default function IntegrationPage() {
     botIconUrl: "",
   });
   const [canChangeIcon, setCanChangeIcon] = useState(false);
-  const [iconInputKey, setIconInputKey] = useState(0);
+  const iconInputRef = useRef(null);
   const [newDomain, setNewDomain] = useState("");
 
   // Knowledge base state
@@ -202,11 +202,15 @@ export default function IntegrationPage() {
     const token = localStorage.getItem("token");
     if (!token) { router.push("/"); return; }
 
+    // Fetch icon permission independently so any failure doesn't block the page
+    api.get("/auth/profile")
+      .then(({ data }) => setCanChangeIcon(!!data.canChangeIcon))
+      .catch(() => {});
+
     Promise.all([
       api.get("/chatbots?limit=100"),
       api.get("/settings"),
-      api.get("/auth/profile"),
-    ]).then(([{ data: botsData }, { data: s }, { data: profile }]) => {
+    ]).then(([{ data: botsData }, { data: s }]) => {
       const list = Array.isArray(botsData) ? botsData : (botsData.chatbots || []);
       setChatbots(list);
       const params = new URLSearchParams(window.location.search);
@@ -217,7 +221,6 @@ export default function IntegrationPage() {
         setSelectedBotId(list[0]._id);
       }
       setTelegram({ botToken: s.telegramBotToken || "", chatId: s.telegramChatId || "" });
-      setCanChangeIcon(!!profile.canChangeIcon);
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
@@ -312,19 +315,23 @@ export default function IntegrationPage() {
     }
   };
 
+  const openIconPicker = () => {
+    if (iconInputRef.current) {
+      iconInputRef.current.value = ""; // reset so same file can be re-picked
+      iconInputRef.current.click();
+    }
+  };
+
   const handleIconUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 300 * 1024) {
-      alert("Image must be smaller than 300 KB.");
-      setIconInputKey((k) => k + 1);
+      alert("Image must be smaller than 300 KB. Please choose a smaller file.");
       return;
     }
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      update("botIconUrl", ev.target.result);
-      setIconInputKey((k) => k + 1); // recreate input so same file can be re-selected
-    };
+    reader.onload = (ev) => update("botIconUrl", ev.target.result);
+    reader.onerror = () => alert("Failed to read the image file. Please try again.");
     reader.readAsDataURL(file);
   };
 
@@ -616,20 +623,29 @@ export default function IntegrationPage() {
                             )}
                           </div>
                           <div className="flex gap-2 flex-wrap">
-                            <label className="flex items-center gap-1.5 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium rounded-xl transition-all cursor-pointer">
-                              <Upload size={14} /> {config.botIconUrl ? "Change Icon" : "Upload Icon"}
-                              <input
-                                key={iconInputKey}
-                                type="file"
-                                accept="image/*"
-                                onChange={handleIconUpload}
-                                className="hidden"
-                              />
-                            </label>
+                            {/* Hidden real file input */}
+                            <input
+                              ref={iconInputRef}
+                              type="file"
+                              accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
+                              onChange={handleIconUpload}
+                              style={{ display: "none" }}
+                            />
+                            <button
+                              type="button"
+                              onClick={openIconPicker}
+                              className="flex items-center gap-1.5 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium rounded-xl transition-all"
+                            >
+                              <Upload size={14} />
+                              {config.botIconUrl ? "Change Icon" : "Upload Icon"}
+                            </button>
                             {config.botIconUrl && (
                               <button
                                 type="button"
-                                onClick={() => update("botIconUrl", "")}
+                                onClick={() => {
+                                  update("botIconUrl", "");
+                                  if (iconInputRef.current) iconInputRef.current.value = "";
+                                }}
                                 className="flex items-center gap-1.5 px-4 py-2 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 text-sm font-medium rounded-xl transition-all"
                               >
                                 <Trash2 size={14} /> Remove
