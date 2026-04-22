@@ -21,6 +21,7 @@ export default function HomePage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [isYearly, setIsYearly] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 text-gray-900 dark:text-white overflow-x-hidden">
       {/* Animated background elements */}
@@ -844,7 +845,9 @@ export default function HomePage() {
                     <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300">Custom Integration</span>
                   </div>
                 </div>
-                <button className="w-full px-6 py-3 bg-gray-100 dark:bg-zinc-800/50 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-900 dark:text-white border border-gray-300 dark:border-zinc-700 rounded-xl font-semibold transition-all">
+                <button 
+                  onClick={() => setShowContactModal(true)}
+                  className="w-full px-6 py-3 bg-gray-100 dark:bg-zinc-800/50 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-900 dark:text-white border border-gray-300 dark:border-zinc-700 rounded-xl font-semibold transition-all">
                   Contact Us
                 </button>
               </div>
@@ -936,7 +939,9 @@ export default function HomePage() {
 
           <div className="mt-10 sm:mt-12 text-center">
             <p className="text-gray-400 mb-4">Still have questions?</p>
-            <button className="px-6 sm:px-8 py-3 sm:py-4 bg-gray-100 dark:bg-zinc-800/50 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-900 dark:text-white border border-gray-300 dark:border-zinc-700 rounded-xl font-semibold transition-all">
+            <button 
+              onClick={() => setShowContactModal(true)}
+              className="px-6 sm:px-8 py-3 sm:py-4 bg-gray-100 dark:bg-zinc-800/50 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-900 dark:text-white border border-gray-300 dark:border-zinc-700 rounded-xl font-semibold transition-all">
               Contact Support
             </button>
           </div>
@@ -968,7 +973,9 @@ export default function HomePage() {
                   Start Your Free Trial
                   <ArrowRight size={20} className="sm:w-6 sm:h-6" />
                 </button>
-                <button className="px-7 sm:px-9 py-3.5 sm:py-4 text-base sm:text-lg bg-gray-100 dark:bg-zinc-800/50 hover:bg-gray-200 dark:hover:bg-zinc-800 text-gray-900 dark:text-white border border-gray-300 dark:border-zinc-700 rounded-xl font-semibold transition-all w-full sm:w-auto touch-manipulation">
+                <button 
+                  onClick={() => setShowContactModal(true)}
+                  className="px-7 sm:px-9 py-3.5 sm:py-4 text-base sm:text-lg bg-gray-100 dark:bg-zinc-800/50 hover:bg-gray-200 dark:hover:bg-zinc-800 text-gray-900 dark:text-white border border-gray-300 dark:border-zinc-700 rounded-xl font-semibold transition-all w-full sm:w-auto touch-manipulation">
                   Schedule a Demo
                 </button>
               </div>
@@ -1062,6 +1069,11 @@ links: ["About", "Blog", "Careers", "Contact"]
           setIsLogin={setIsLogin}
           onClose={() => setShowAuthModal(false)}
         />
+      )}
+
+      {/* Contact Modal */}
+      {showContactModal && (
+        <ContactModal onClose={() => setShowContactModal(false)} />
       )}
 
       <style jsx>{`
@@ -1434,6 +1446,87 @@ function AuthModal({ isLogin, setIsLogin, onClose }) {
             </form>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+// Contact Modal Component
+function ContactModal({ onClose }) {
+  const contactNumber = "+91 8128305710";
+  
+  const handleCall = () => {
+    window.location.href = `tel:${contactNumber}`;
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(contactNumber);
+      // You could add a toast notification here if desired
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={onClose}>
+      <div className="relative bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors p-2 text-2xl touch-manipulation">✕</button>
+        
+        <div className="text-center">
+          {/* Icon */}
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-purple-600 to-purple-500 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          </div>
+
+          {/* Title */}
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            Contact Us
+          </h2>
+          
+          {/* Description */}
+          <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base mb-6">
+            Have questions? We're here to help!
+          </p>
+
+          {/* Phone Number */}
+          <div className="bg-purple-50 dark:bg-purple-500/10 border border-purple-300 dark:border-purple-500/20 rounded-xl p-4 sm:p-6 mb-6">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-2">Call us at</p>
+            <a href={`tel:${contactNumber}`} className="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
+              {contactNumber}
+            </a>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={handleCall}
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white rounded-xl font-semibold transition-all shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 flex items-center justify-center gap-2"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              Call Now
+            </button>
+            <button
+              onClick={handleCopy}
+              className="flex-1 px-6 py-3 bg-gray-100 dark:bg-zinc-800/50 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-900 dark:text-white border border-gray-300 dark:border-zinc-700 rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Copy Number
+            </button>
+          </div>
+
+          {/* Additional Info */}
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-500 mt-6">
+            Available Monday - Friday, 9 AM - 6 PM IST
+          </p>
+        </div>
       </div>
     </div>
   );
