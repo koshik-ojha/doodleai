@@ -49,7 +49,7 @@ export const reactivateUser = async (req, res) => {
   try {
     const user = await User.findOneAndUpdate(
       { _id: req.params.id, role: { $ne: "admin" } },
-      { $set: { isSuspended: false } },
+      { $set: { isSuspended: false, adminActivated: true } },
       { new: true }
     ).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });

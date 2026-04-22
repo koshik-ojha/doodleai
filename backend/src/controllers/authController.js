@@ -147,7 +147,19 @@ export const login = async (req, res) => {
     if (!ok) return res.status(400).json({ error: "Invalid credentials" });
 
     if (user.isSuspended) {
-      return res.status(403).json({ error: "Your account has been suspended. Please contact support." });
+      return res.status(403).json({
+        error: "Your account has been suspended. Please contact support.",
+        suspended: true,
+      });
+    }
+
+    const TRIAL_MS = 14 * 24 * 60 * 60 * 1000;
+    if (user.role === "user" && !user.adminActivated && Date.now() > new Date(user.createdAt).getTime() + TRIAL_MS) {
+      return res.status(403).json({
+        error: "Your free trial of 14 days has expired. Please contact admin.",
+        suspended: true,
+        trialExpired: true,
+      });
     }
 
     res.json({

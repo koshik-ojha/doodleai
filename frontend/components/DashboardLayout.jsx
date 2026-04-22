@@ -35,6 +35,7 @@ export default function DashboardLayout({ children }) {
   const [isMobile, setIsMobile] = useState(false);
   const [userData, setUserData] = useState(null);
   const [isSuspended, setIsSuspended] = useState(false);
+  const [isTrialExpired, setIsTrialExpired] = useState(false);
 
   // Detect mobile screen size
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function DashboardLayout({ children }) {
         const parsed = JSON.parse(stored);
         setUserData(parsed);
         if (parsed.isSuspended) {
+          setIsTrialExpired(!!parsed.trialExpired);
           setIsSuspended(true);
           return;
         }
@@ -81,7 +83,10 @@ export default function DashboardLayout({ children }) {
     }
 
     // Listen for suspension event dispatched by the api interceptor
-    const onSuspended = () => setIsSuspended(true);
+    const onSuspended = (e) => {
+      setIsTrialExpired(!!e?.detail?.trialExpired);
+      setIsSuspended(true);
+    };
     window.addEventListener("account-suspended", onSuspended);
     return () => window.removeEventListener("account-suspended", onSuspended);
   }, []);
@@ -284,7 +289,7 @@ export default function DashboardLayout({ children }) {
         </div>
       </aside>
 
-      {/* Suspended Account Modal — uncloseable fullscreen overlay */}
+      {/* Suspended / Trial Expired Modal — uncloseable fullscreen overlay */}
       {isSuspended && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
           <div className="relative w-full max-w-md mx-4 bg-white dark:bg-[#0f0f1a] border border-red-500/30 rounded-2xl shadow-2xl shadow-red-900/20 p-8 flex flex-col items-center text-center">
@@ -293,29 +298,57 @@ export default function DashboardLayout({ children }) {
               <ShieldBan size={36} className="text-red-500" />
             </div>
 
-            {/* Title */}
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-              Account Suspended
-            </h2>
-
-            {/* Message */}
-            <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-2">
-              Your account has been suspended by an administrator.
-              You cannot access the dashboard until your account is reactivated.
-            </p>
-            <p className="text-gray-500 dark:text-gray-500 text-xs mb-8">
-              If you believe this is a mistake, please reach out to our support team.
-            </p>
+            {isTrialExpired ? (
+              <>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                  Free Trial Expired
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6">
+                  Your free trial of <span className="font-semibold text-red-400">14 days</span> has expired.
+                  Your account and chatbots have been suspended. Please contact the admin to reactivate your account.
+                </p>
+                <div className="w-full bg-gray-50 dark:bg-black/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-6 text-left space-y-2">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wider mb-1">Contact Admin</p>
+                  <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <Mail size={14} className="text-red-400 flex-shrink-0" />
+                    <a href="mailto:wedoodlesinfotech@gmail.com" className="hover:text-red-400 transition-colors break-all">
+                      wedoodlesinfotech@gmail.com
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <span className="text-red-400 flex-shrink-0 text-xs">📞</span>
+                    <a href="tel:+918128305710" className="hover:text-red-400 transition-colors">
+                      +91 8128305710
+                    </a>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                  Account Suspended
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-2">
+                  Your account has been suspended by an administrator.
+                  You cannot access the dashboard until your account is reactivated.
+                </p>
+                <p className="text-gray-500 dark:text-gray-500 text-xs mb-8">
+                  If you believe this is a mistake, please reach out to our support team.
+                </p>
+              </>
+            )}
 
             {/* Actions */}
             <div className="flex flex-col gap-3 w-full">
-              <a
-                href="mailto:support@doodleai.com"
-                className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-red-600 hover:bg-red-500 text-white font-medium rounded-xl transition-colors text-sm"
-              >
-                <Mail size={16} />
-                Contact Support
-              </a>
+              {!isTrialExpired && (
+                <a
+                  href="mailto:wedoodlesinfotech@gmail.com"
+                  className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-red-600 hover:bg-red-500 text-white font-medium rounded-xl transition-colors text-sm"
+                >
+                  <Mail size={16} />
+                  Contact Support
+                </a>
+              )}
               <button
                 onClick={handleLogout}
                 className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-colors text-sm"

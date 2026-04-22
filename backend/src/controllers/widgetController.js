@@ -1,5 +1,8 @@
 import Chatbot from "../models/Chatbot.js";
+import User from "../models/User.js";
 import { getAIResponse } from "../services/aiService.js";
+
+const TRIAL_MS = 14 * 24 * 60 * 60 * 1000;
 
 const sessions = new Map();
 const MAX_HISTORY = 10; // keep last 10 turns (5 pairs)
@@ -94,6 +97,16 @@ export const widgetMessage = async (req, res) => {
     if (botId) {
       chatbot = await Chatbot.findById(botId).catch(() => null);
       if (chatbot) {
+        // Block widget if owner's account is suspended or trial has expired
+        const owner = await User.findById(chatbot.userId).select("isSuspended role adminActivated createdAt").catch(() => null);
+        if (owner) {
+          const trialExpired = owner.role === "user" && !owner.adminActivated &&
+            Date.now() > new Date(owner.createdAt).getTime() + TRIAL_MS;
+          if (owner.isSuspended || trialExpired) {
+            return res.status(403).json({ error: "This chatbot is currently unavailable." });
+          }
+        }
+
         if (domain && chatbot.allowedDomains?.length > 0) {
           const allowed = chatbot.allowedDomains.some((d) => normalizeDomain(d) === normalizeDomain(domain));
           if (!allowed) return res.status(403).json({ error: "Domain not allowed" });

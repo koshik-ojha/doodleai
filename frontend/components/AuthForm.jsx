@@ -5,12 +5,14 @@ import api from "@lib/api";
 import { useRouter } from "next/navigation";
 import Input from "@components/ui/Input";
 import showToast from "@utils/toast";
+import { ShieldBan, Mail } from "lucide-react";
 
 export default function AuthForm() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [trialExpiredModal, setTrialExpiredModal] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -30,7 +32,9 @@ export default function AuthForm() {
         router.push("/dashboard");
       }, 500);
     } catch (err) {
-      // Error toast is handled by API interceptor
+      if (err.response?.data?.trialExpired) {
+        setTrialExpiredModal(true);
+      }
       console.error("Auth error:", err);
     } finally {
       setLoading(false);
@@ -219,6 +223,45 @@ export default function AuthForm() {
           By continuing, you agree to our Terms of Service and Privacy Policy
         </p>
       </div>
+
+      {/* Trial Expired Modal */}
+      {trialExpiredModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-white dark:bg-[#0f0f1a] border border-red-500/30 rounded-2xl shadow-2xl shadow-red-900/20 p-8 flex flex-col items-center text-center">
+            <div className="w-20 h-20 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
+              <ShieldBan size={36} className="text-red-500" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              Free Trial Expired
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6">
+              Your free trial of <span className="font-semibold text-red-400">14 days</span> has expired.
+              Please contact the admin to reactivate your account.
+            </p>
+            <div className="w-full bg-gray-50 dark:bg-black/30 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-6 text-left space-y-3">
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wider">Contact Admin</p>
+              <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <Mail size={14} className="text-red-400 flex-shrink-0" />
+                <a href="mailto:wedoodlesinfotech@gmail.com" className="hover:text-red-400 transition-colors break-all">
+                  wedoodlesinfotech@gmail.com
+                </a>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <span className="text-red-400 flex-shrink-0">📞</span>
+                <a href="tel:+918128305710" className="hover:text-red-400 transition-colors">
+                  +91 8128305710
+                </a>
+              </div>
+            </div>
+            <button
+              onClick={() => setTrialExpiredModal(false)}
+              className="w-full px-5 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-colors text-sm"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

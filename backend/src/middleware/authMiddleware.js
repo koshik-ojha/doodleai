@@ -1,9 +1,13 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
-// Cache suspension status per user for 30 seconds to avoid a DB hit on every request
-const suspensionCache = new Map(); // userId -> { suspended: boolean, expiresAt: number }
+const suspensionCache = new Map();
 const CACHE_TTL = 30_000;
+const TRIAL_MS = 14 * 24 * 60 * 60 * 1000;
+
+const isTrialExpired = (user) =>
+  user.role === "user" && !user.adminActivated &&
+  Date.now() > new Date(user.createdAt).getTime() + TRIAL_MS;
 
 export const protect = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -18,7 +22,6 @@ export const protect = async (req, res, next) => {
     const userId = String(decoded.id);
     const now = Date.now();
 
-    // Serve from cache when still fresh
     const cached = suspensionCache.get(userId);
     if (cached && cached.expiresAt > now) {
       if (cached.suspended) {
@@ -27,20 +30,39 @@ export const protect = async (req, res, next) => {
           suspended: true,
         });
       }
+      if (cached.trialExpired) {
+        return res.status(403).json({
+          error: "Your free trial of 14 days has expired. Please contact admin.",
+          suspended: true,
+          trialExpired: true,
+        });
+      }
       req.user = decoded;
       return next();
     }
 
-    // Cache miss — query DB and populate cache
-    const user = await User.findById(userId).select("isSuspended");
+    const user = await User.findById(userId).select("isSuspended role adminActivated createdAt");
     if (!user) return res.status(401).json({ error: "User not found" });
 
-    suspensionCache.set(userId, { suspended: !!user.isSuspended, expiresAt: now + CACHE_TTL });
+    const trialExpired = isTrialExpired(user);
+    suspensionCache.set(userId, {
+      suspended: !!user.isSuspended,
+      trialExpired,
+      expiresAt: now + CACHE_TTL,
+    });
 
     if (user.isSuspended) {
       return res.status(403).json({
         error: "Your account has been suspended. Please contact support.",
         suspended: true,
+      });
+    }
+
+    if (trialExpired) {
+      return res.status(403).json({
+        error: "Your free trial of 14 days has expired. Please contact admin.",
+        suspended: true,
+        trialExpired: true,
       });
     }
 
@@ -51,7 +73,6 @@ export const protect = async (req, res, next) => {
   }
 };
 
-// Call this when a user is reactivated so the cache doesn't keep them blocked
 export const clearSuspensionCache = (userId) => {
   suspensionCache.delete(String(userId));
 };

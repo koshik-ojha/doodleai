@@ -35,12 +35,12 @@ api.interceptors.response.use(
         localStorage.removeItem("user");
         window.location.href = "/";
       } else if (isSuspended) {
-        // Mark user as suspended in localStorage and notify the dashboard
+        const isTrialExpired = error.response?.data?.trialExpired === true;
         try {
           const stored = JSON.parse(localStorage.getItem("user") || "{}");
-          localStorage.setItem("user", JSON.stringify({ ...stored, isSuspended: true }));
+          localStorage.setItem("user", JSON.stringify({ ...stored, isSuspended: true, trialExpired: isTrialExpired }));
         } catch {}
-        window.dispatchEvent(new CustomEvent("account-suspended"));
+        window.dispatchEvent(new CustomEvent("account-suspended", { detail: { trialExpired: isTrialExpired } }));
       } else {
         toast.error(errorMessage);
       }

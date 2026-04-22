@@ -64,6 +64,10 @@ export default function AdminUsersPage() {
     return () => observerRef.current?.disconnect();
   }, [hasMore, loadingMore, loading, page, fetchPage]);
 
+  const TRIAL_MS = 14 * 24 * 60 * 60 * 1000;
+  const isTrialExpired = (u) =>
+    !u.adminActivated && Date.now() > new Date(u.createdAt).getTime() + TRIAL_MS;
+
   const handleSuspend = async (userId) => {
 
     setActionLoading(userId + "-suspend");
@@ -216,19 +220,21 @@ export default function AdminUsersPage() {
                           className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                             u.isSuspended
                               ? "bg-red-900/40 text-red-400"
+                              : isTrialExpired(u)
+                              ? "bg-orange-900/40 text-orange-400"
                               : "bg-green-900/40 text-green-400"
                           }`}
                         >
-                          {u.isSuspended ? "Suspended" : "Active"}
+                          {u.isSuspended ? "Suspended" : isTrialExpired(u) ? "Trial Expired" : "Active"}
                         </span>
 
-                        {u.isSuspended ? (
+                        {(u.isSuspended || isTrialExpired(u)) ? (
                           <button
                             onClick={() => handleReactivate(u._id)}
                             disabled={!!actionLoading}
                             className="px-3 py-1 text-xs rounded-lg bg-green-700/20 text-green-400 hover:bg-green-700/40 transition-colors disabled:opacity-50"
                           >
-                            {actionLoading === u._id + "-reactivate" ? "..." : "Reactivate"}
+                            {actionLoading === u._id + "-reactivate" ? "..." : "Activate"}
                           </button>
                         ) : (
                           <button
