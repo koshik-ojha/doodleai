@@ -147,7 +147,7 @@ export default function IntegrationPage() {
     botIconUrl: "",
   });
   const [canChangeIcon, setCanChangeIcon] = useState(false);
-  const iconInputRef = useRef(null);
+  const [iconInputKey, setIconInputKey] = useState(0);
   const [newDomain, setNewDomain] = useState("");
 
   // Knowledge base state
@@ -317,13 +317,15 @@ export default function IntegrationPage() {
     if (!file) return;
     if (file.size > 300 * 1024) {
       alert("Image must be smaller than 300 KB.");
-      e.target.value = "";
+      setIconInputKey((k) => k + 1);
       return;
     }
     const reader = new FileReader();
-    reader.onload = (ev) => update("botIconUrl", ev.target.result);
+    reader.onload = (ev) => {
+      update("botIconUrl", ev.target.result);
+      setIconInputKey((k) => k + 1); // recreate input so same file can be re-selected
+    };
     reader.readAsDataURL(file);
-    e.target.value = "";
   };
 
   const handleDetectChatId = async () => {
@@ -614,14 +616,16 @@ export default function IntegrationPage() {
                             )}
                           </div>
                           <div className="flex gap-2 flex-wrap">
-                            <input ref={iconInputRef} type="file" accept="image/*" onChange={handleIconUpload} className="hidden" />
-                            <button
-                              type="button"
-                              onClick={() => iconInputRef.current?.click()}
-                              className="flex items-center gap-1.5 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium rounded-xl transition-all"
-                            >
+                            <label className="flex items-center gap-1.5 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium rounded-xl transition-all cursor-pointer">
                               <Upload size={14} /> {config.botIconUrl ? "Change Icon" : "Upload Icon"}
-                            </button>
+                              <input
+                                key={iconInputKey}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleIconUpload}
+                                className="hidden"
+                              />
+                            </label>
                             {config.botIconUrl && (
                               <button
                                 type="button"

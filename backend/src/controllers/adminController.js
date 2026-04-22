@@ -70,6 +70,12 @@ export const updateIconPermission = async (req, res) => {
       { new: true }
     ).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });
+
+    // When disabling, clear any custom icon from all of this user's chatbots
+    if (!canChangeIcon) {
+      await Chatbot.updateMany({ userId: req.params.id }, { $set: { botIconUrl: "" } });
+    }
+
     res.json({ success: true, user });
   } catch {
     res.status(500).json({ error: "Failed to update icon permission" });
