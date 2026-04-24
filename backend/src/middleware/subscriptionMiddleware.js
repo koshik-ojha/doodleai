@@ -10,12 +10,17 @@ export const checkChatbotLimit = async (req, res, next) => {
 
     if (user.role === "admin") return next();
 
-    const sub = await Subscription.findOne({ userId, status: "active" });
-    // If admin force-allocated a specific limit, it takes priority over the plan.
-    // Otherwise use the active subscription's chatbot limit, falling back to user.maxChatbots.
-    const limit = user.forceAllocatedChatbots
-      ? user.maxChatbots
-      : (sub ? sub.chatbotLimit : user.maxChatbots);
+    // If admin force-allocated a specific limit, use it directly (admin override).
+    // Otherwise, use the subscription's plan limit (ignoring user.maxChatbots).
+    let limit;
+    if (user.forceAllocatedChatbots) {
+      // Admin override - use admin-set limit
+      limit = user.maxChatbots;
+    } else {
+      // Plan-based - check for active or authenticated subscription
+      const sub = await Subscription.findOne({ userId, status: { $in: ["active", "authenticated"] } });
+      limit = sub ? sub.chatbotLimit : 1; // Default trial limit is 1 if no subscription
+    }
     const count = await Chatbot.countDocuments({ userId });
 
     if (count >= limit) {
