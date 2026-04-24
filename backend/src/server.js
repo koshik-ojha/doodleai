@@ -18,6 +18,9 @@ import widgetRoutes from "./routes/widgetRoutes.js";
 import chatbotRoutes from "./routes/chatbotRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import subscriptionRoutes from "./routes/subscriptionRoutes.js";
+import { seedPlans } from "./services/planSeeder.js";
+import { startSuspensionJob } from "./jobs/suspensionJob.js";
 import bcrypt from "bcryptjs";
 import User from "./models/User.js";
 
@@ -57,6 +60,9 @@ app.use((req, res, next) => {
   }
 });
 
+// Webhook needs raw body for signature verification — must be before express.json()
+app.use("/api/subscriptions/webhook", express.raw({ type: "*/*" }));
+
 app.use(express.json());
 
 // Strict rate limit only on auth endpoints to prevent brute-force attacks
@@ -88,6 +94,8 @@ mongoose.connect(process.env.MONGO_URI)
   .then(async () => {
     console.log("MongoDB connected");
     await seedAdmin();
+    await seedPlans();
+    startSuspensionJob();
   })
   .catch((err) => console.error("MongoDB error:", err.message));
 
@@ -106,6 +114,7 @@ app.use("/api/widget", widgetRoutes);
 app.use("/api/chatbots", chatbotRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/subscriptions", subscriptionRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

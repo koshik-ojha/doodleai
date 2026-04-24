@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   company: { type: String, default: "" },
   role: { type: String, enum: ["user", "admin"], default: "user" },
   isSuspended: { type: Boolean, default: false },
+  suspendedForPayment: { type: Boolean, default: false }, // true = trial/subscription ended; false = admin action
   adminActivated: { type: Boolean, default: false },
   canChangeIcon: { type: Boolean, default: false },
   maxChatbots: { type: Number, default: 1, min: 0 },

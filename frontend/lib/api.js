@@ -36,11 +36,12 @@ api.interceptors.response.use(
         window.location.href = "/";
       } else if (isSuspended) {
         const isTrialExpired = error.response?.data?.trialExpired === true;
+        const isPaymentSuspended = error.response?.data?.paymentSuspended === true;
         try {
           const stored = JSON.parse(localStorage.getItem("user") || "{}");
-          localStorage.setItem("user", JSON.stringify({ ...stored, isSuspended: true, trialExpired: isTrialExpired }));
+          localStorage.setItem("user", JSON.stringify({ ...stored, isSuspended: true, trialExpired: isTrialExpired, paymentSuspended: isPaymentSuspended }));
         } catch {}
-        window.dispatchEvent(new CustomEvent("account-suspended", { detail: { trialExpired: isTrialExpired } }));
+        window.dispatchEvent(new CustomEvent("account-suspended", { detail: { trialExpired: isTrialExpired, paymentSuspended: isPaymentSuspended } }));
       } else {
         toast.error(errorMessage);
       }

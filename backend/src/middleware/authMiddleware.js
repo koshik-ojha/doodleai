@@ -26,13 +26,16 @@ export const protect = async (req, res, next) => {
     if (cached && cached.expiresAt > now) {
       if (cached.suspended) {
         return res.status(403).json({
-          error: "Your account has been suspended. Please contact support.",
+          error: cached.paymentSuspended
+            ? "Your subscription has expired. Please subscribe to continue."
+            : "Your account has been suspended. Please contact support.",
           suspended: true,
+          paymentSuspended: !!cached.paymentSuspended,
         });
       }
       if (cached.trialExpired) {
         return res.status(403).json({
-          error: "Your free trial of 14 days has expired. Please contact admin.",
+          error: "Your free trial has ended. Please subscribe to continue.",
           suspended: true,
           trialExpired: true,
         });
@@ -41,26 +44,30 @@ export const protect = async (req, res, next) => {
       return next();
     }
 
-    const user = await User.findById(userId).select("isSuspended role adminActivated createdAt");
+    const user = await User.findById(userId).select("isSuspended suspendedForPayment role adminActivated createdAt");
     if (!user) return res.status(401).json({ error: "User not found" });
 
     const trialExpired = isTrialExpired(user);
     suspensionCache.set(userId, {
       suspended: !!user.isSuspended,
+      paymentSuspended: !!user.suspendedForPayment,
       trialExpired,
       expiresAt: now + CACHE_TTL,
     });
 
     if (user.isSuspended) {
       return res.status(403).json({
-        error: "Your account has been suspended. Please contact support.",
+        error: user.suspendedForPayment
+          ? "Your subscription has expired. Please subscribe to continue."
+          : "Your account has been suspended. Please contact support.",
         suspended: true,
+        paymentSuspended: !!user.suspendedForPayment,
       });
     }
 
     if (trialExpired) {
       return res.status(403).json({
-        error: "Your free trial of 14 days has expired. Please contact admin.",
+        error: "Your free trial has ended. Please subscribe to continue.",
         suspended: true,
         trialExpired: true,
       });
@@ -75,6 +82,9 @@ export const protect = async (req, res, next) => {
 
 // Same as protect but skips trial-expiry block — used on payment routes so
 // trial-expired users can still complete a purchase to reactivate their account.
+// Skips trial-expiry and payment-suspension checks so users can reach
+// billing/subscription routes even after their account is suspended for non-payment.
+// Still blocks admin-suspended accounts (suspendedForPayment = false).
 export const protectAllowTrial = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -85,10 +95,12 @@ export const protectAllowTrial = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = String(decoded.id);
 
-    const user = await User.findById(userId).select("isSuspended");
+    const user = await User.findById(userId).select("isSuspended suspendedForPayment");
     if (!user) return res.status(401).json({ error: "User not found" });
-    if (user.isSuspended) {
-      return res.status(403).json({ error: "Your account has been suspended.", suspended: true });
+
+    // Only block if suspended by an admin (not trial/subscription expiry)
+    if (user.isSuspended && !user.suspendedForPayment) {
+      return res.status(403).json({ error: "Your account has been suspended. Please contact support.", suspended: true });
     }
 
     req.user = decoded;

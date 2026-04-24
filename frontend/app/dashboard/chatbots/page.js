@@ -3,10 +3,11 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@components/DashboardLayout";
-import { Plus, Settings, Trash2, Bot, CheckCircle, XCircle, Calendar, Loader2 } from "lucide-react";
+import { Plus, Settings, Trash2, Bot, CheckCircle, XCircle, Calendar, Loader2, AlertTriangle } from "lucide-react";
 import { ConfirmModal } from "@components/ui";
 import api from "@lib/api";
 import showToast from "@utils/toast";
+import Link from "next/link";
 
 export default function ChatbotsPage() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function ChatbotsPage() {
   const [newName, setNewName] = useState("");
   const [confirmId, setConfirmId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [subLimit, setSubLimit] = useState(null); // { limit, count, planKey }
   const sentinelRef = useRef(null);
   const observerRef = useRef(null);
 
@@ -29,6 +31,11 @@ export default function ChatbotsPage() {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       setIsAdmin(user.role === "admin");
+      if (user.role !== "admin") {
+        api.get("/subscriptions/me").then(({ data }) => {
+          if (data) setSubLimit({ limit: data.chatbotLimit, planKey: data.planKey, billing: data.billing });
+        }).catch(() => {});
+      }
     } catch {}
     fetchPage(1, true);
   }, []);
@@ -122,15 +129,33 @@ export default function ChatbotsPage() {
               {isAdmin ? "All chatbots across all users" : "Manage your chatbot instances"}
             </p>
           </div>
-          {!isAdmin && (
-            <button
-              onClick={() => setShowCreate(true)}
-              className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 rounded-lg px-5 py-2.5 text-white font-medium transition-all hover:shadow-lg hover:shadow-purple-500/20"
-            >
-              <Plus size={18} /> New Chatbot
-            </button>
-          )}
+          {!isAdmin && (() => {
+            const atLimit = subLimit && chatbots.length >= subLimit.limit;
+            return (
+              <button
+                onClick={() => atLimit ? router.push("/dashboard/billing") : setShowCreate(true)}
+                className={`flex items-center gap-2 rounded-lg px-5 py-2.5 font-medium transition-all ${
+                  atLimit
+                    ? "bg-amber-100 dark:bg-amber-500/10 border border-amber-400 dark:border-amber-500/30 text-amber-700 dark:text-amber-400"
+                    : "bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white hover:shadow-lg hover:shadow-purple-500/20"
+                }`}
+              >
+                {atLimit ? <><AlertTriangle size={18} /> Upgrade Plan</> : <><Plus size={18} /> New Chatbot</>}
+              </button>
+            );
+          })()}
         </div>
+
+        {/* Limit banner */}
+        {!isAdmin && subLimit && chatbots.length >= subLimit.limit && (
+          <div className="flex items-center gap-3 p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl text-sm text-amber-700 dark:text-amber-400">
+            <AlertTriangle size={16} className="flex-shrink-0" />
+            <span>
+              You&apos;ve reached the <strong>{subLimit.limit}-chatbot limit</strong> on your {subLimit.planKey} plan.{" "}
+              <Link href="/dashboard/billing" className="underline font-medium hover:text-amber-600">Upgrade your plan</Link> to create more.
+            </span>
+          </div>
+        )}
 
         {/* Create form */}
         {showCreate && !isAdmin && (
