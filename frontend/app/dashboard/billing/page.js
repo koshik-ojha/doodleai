@@ -3,42 +3,72 @@
 import { useState } from "react";
 import DashboardLayout from "@components/DashboardLayout";
 import RazorpayCheckout from "@components/RazorpayCheckout";
-import { Check, Zap, Crown } from "lucide-react";
+import { Check, Zap, Crown, Star, Trophy } from "lucide-react";
 
 const PLANS = [
   {
-    id: "basic",
-    name: "Basic",
+    id: "starter",
+    name: "Starter",
     icon: Zap,
-    price: 49900,
-    display: "₹499",
+    price: 50000,
+    display: "₹500",
     period: "/month",
     description: "Perfect for small businesses getting started",
     features: [
-      "5 Chatbots",
-      "5,000 messages/month",
-      "Basic analytics",
-      "Email support",
-      "Widget customization",
+      "1 Chatbot",
+      "AI-Powered Responses",
+      "Basic Analytics",
+      "Email Support",
     ],
   },
   {
-    id: "pro",
-    name: "Pro",
+    id: "growth",
+    name: "Growth",
     icon: Crown,
-    price: 99900,
-    display: "₹999",
+    price: 120000,
+    display: "₹1,200",
     period: "/month",
     description: "For growing teams that need more power",
     features: [
-      "Unlimited Chatbots",
-      "50,000 messages/month",
-      "Advanced analytics",
-      "Priority support",
-      "Custom branding",
-      "API access",
+      "3 Chatbots",
+      "Advanced AI Features",
+      "Advanced Analytics",
+      "Priority Support",
+      "Custom Branding",
     ],
     popular: true,
+  },
+  {
+    id: "professional",
+    name: "Professional",
+    icon: Star,
+    price: 200000,
+    display: "₹2,000",
+    period: "/month",
+    description: "For professionals scaling their business",
+    features: [
+      "5 Chatbots",
+      "Premium AI Features",
+      "Full Analytics Suite",
+      "24/7 Priority Support",
+      "White Label Option",
+    ],
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise",
+    icon: Trophy,
+    price: null,
+    display: "Custom",
+    period: "",
+    description: "Tailored solutions for large organizations",
+    features: [
+      "5+ Chatbots",
+      "Custom AI Training",
+      "Dedicated Account Manager",
+      "SLA Guarantee",
+      "Custom Integration",
+    ],
   },
 ];
 
@@ -80,7 +110,7 @@ export default function BillingPage() {
           <p className="text-gray-600 dark:text-gray-400 mt-1">Choose a plan that fits your needs</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {PLANS.map((plan) => {
             const Icon = plan.icon;
             return (
@@ -122,18 +152,27 @@ export default function BillingPage() {
                   ))}
                 </ul>
 
-                <RazorpayCheckout
-                  amount={plan.price}
-                  planName={`DoodleAI ${plan.name} Plan`}
-                  onSuccess={(info) => handleSuccess(plan.name, info)}
-                  className={`w-full py-2.5 rounded-lg text-sm font-medium transition-all ${
-                    plan.popular
-                      ? "bg-gradient-to-r from-violet-600 to-violet-500 hover:from-violet-500 hover:to-violet-400 text-white hover:shadow-lg hover:shadow-violet-500/20"
-                      : "bg-violet-100 dark:bg-violet-500/10 hover:bg-violet-200 dark:hover:bg-violet-500/20 border border-violet-300 dark:border-violet-500/20 text-violet-700 dark:text-white"
-                  } disabled:opacity-60`}
-                >
-                  Subscribe to {plan.name}
-                </RazorpayCheckout>
+                {plan.price !== null ? (
+                  <RazorpayCheckout
+                    amount={plan.price}
+                    planName={`DoodleAI ${plan.name} Plan`}
+                    onSuccess={(info) => handleSuccess(plan.name, info)}
+                    className={`w-full py-2.5 rounded-lg text-sm font-medium transition-all ${
+                      plan.popular
+                        ? "bg-gradient-to-r from-violet-600 to-violet-500 hover:from-violet-500 hover:to-violet-400 text-white hover:shadow-lg hover:shadow-violet-500/20"
+                        : "bg-violet-100 dark:bg-violet-500/10 hover:bg-violet-200 dark:hover:bg-violet-500/20 border border-violet-300 dark:border-violet-500/20 text-violet-700 dark:text-white"
+                    } disabled:opacity-60`}
+                  >
+                    Subscribe to {plan.name}
+                  </RazorpayCheckout>
+                ) : (
+                  <button
+                    onClick={() => alert("Please contact us at support@doodleai.com for Enterprise pricing")}
+                    className="w-full py-2.5 rounded-lg text-sm font-medium transition-all bg-violet-100 dark:bg-violet-500/10 hover:bg-violet-200 dark:hover:bg-violet-500/20 border border-violet-300 dark:border-violet-500/20 text-violet-700 dark:text-white"
+                  >
+                    Contact Us
+                  </button>
+                )}
               </div>
             );
           })}

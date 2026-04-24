@@ -73,6 +73,31 @@ export const protect = async (req, res, next) => {
   }
 };
 
+// Same as protect but skips trial-expiry block — used on payment routes so
+// trial-expired users can still complete a purchase to reactivate their account.
+export const protectAllowTrial = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+  try {
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = String(decoded.id);
+
+    const user = await User.findById(userId).select("isSuspended");
+    if (!user) return res.status(401).json({ error: "User not found" });
+    if (user.isSuspended) {
+      return res.status(403).json({ error: "Your account has been suspended.", suspended: true });
+    }
+
+    req.user = decoded;
+    next();
+  } catch {
+    res.status(401).json({ error: "Invalid token" });
+  }
+};
+
 export const clearSuspensionCache = (userId) => {
   suspensionCache.delete(String(userId));
 };

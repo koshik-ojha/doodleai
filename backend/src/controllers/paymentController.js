@@ -21,16 +21,21 @@ export const createOrder = async (req, res) => {
       return res.status(400).json({ error: "Amount must be at least 100 paise" });
     }
 
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      console.error("Razorpay env vars missing");
+      return res.status(500).json({ error: "Payment gateway not configured" });
+    }
+
     const order = await getRazorpay().orders.create({
       amount: Math.round(amount),
       currency,
-      receipt: `rcpt_${req.user.id}_${Date.now()}`,
+      receipt: `rcpt_${Date.now()}`,
     });
 
     res.json({ order_id: order.id, amount: order.amount, currency: order.currency });
   } catch (err) {
-    console.error("Razorpay create-order error:", err.message);
-    res.status(500).json({ error: "Failed to create payment order" });
+    console.error("Razorpay create-order error:", err.error || err.message, err.statusCode);
+    res.status(500).json({ error: err.error?.description || "Failed to create payment order" });
   }
 };
 
