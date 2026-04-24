@@ -5,13 +5,17 @@ import User from "../models/User.js";
 export const checkChatbotLimit = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const user = await User.findById(userId).select("role maxChatbots");
+    const user = await User.findById(userId).select("role maxChatbots forceAllocatedChatbots");
     if (!user) return res.status(401).json({ error: "User not found" });
 
     if (user.role === "admin") return next();
 
     const sub = await Subscription.findOne({ userId, status: "active" });
-    const limit = sub ? sub.chatbotLimit : user.maxChatbots;
+    // If admin force-allocated a specific limit, it takes priority over the plan.
+    // Otherwise use the active subscription's chatbot limit, falling back to user.maxChatbots.
+    const limit = user.forceAllocatedChatbots
+      ? user.maxChatbots
+      : (sub ? sub.chatbotLimit : user.maxChatbots);
     const count = await Chatbot.countDocuments({ userId });
 
     if (count >= limit) {

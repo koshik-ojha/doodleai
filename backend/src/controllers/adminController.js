@@ -88,9 +88,10 @@ export const updateChatbotLimit = async (req, res) => {
     if (isNaN(maxChatbots) || maxChatbots < 0) {
       return res.status(400).json({ error: "Invalid limit value" });
     }
+    const forceAllocatedChatbots = !!req.body.forceAllocatedChatbots;
     const user = await User.findOneAndUpdate(
       { _id: req.params.id, role: { $ne: "admin" } },
-      { $set: { maxChatbots } },
+      { $set: { maxChatbots, forceAllocatedChatbots } },
       { new: true }
     ).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });

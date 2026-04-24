@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
   adminActivated: { type: Boolean, default: false },
   canChangeIcon: { type: Boolean, default: false },
   maxChatbots: { type: Number, default: 1, min: 0 },
+  forceAllocatedChatbots: { type: Boolean, default: false }, // true = admin limit overrides plan
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);

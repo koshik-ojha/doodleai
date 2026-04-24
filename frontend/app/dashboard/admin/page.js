@@ -16,6 +16,7 @@ export default function AdminUsersPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
   const [limitEdit, setLimitEdit] = useState({});
+  const [forceEdit, setForceEdit] = useState({});
   const sentinelRef = useRef(null);
   const observerRef = useRef(null);
 
@@ -105,14 +106,23 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleLimitSave = async (userId) => {
+  const handleLimitSave = async (userId, currentForce) => {
     const val = parseInt(limitEdit[userId]);
     if (isNaN(val) || val < 0) return;
+    const force = forceEdit[userId] !== undefined ? forceEdit[userId] : currentForce;
     setActionLoading(userId + "-limit");
     try {
-      const { data } = await api.patch(`/admin/users/${userId}/chatbot-limit`, { maxChatbots: val });
-      setUsers((prev) => prev.map((u) => u._id === userId ? { ...u, maxChatbots: data.user.maxChatbots } : u));
+      const { data } = await api.patch(`/admin/users/${userId}/chatbot-limit`, {
+        maxChatbots: val,
+        forceAllocatedChatbots: force,
+      });
+      setUsers((prev) => prev.map((u) =>
+        u._id === userId
+          ? { ...u, maxChatbots: data.user.maxChatbots, forceAllocatedChatbots: data.user.forceAllocatedChatbots }
+          : u
+      ));
       setLimitEdit((prev) => { const next = { ...prev }; delete next[userId]; return next; });
+      setForceEdit((prev) => { const next = { ...prev }; delete next[userId]; return next; });
     } catch (e) {
       alert(e.response?.data?.error || "Failed");
     } finally {
@@ -158,7 +168,7 @@ export default function AdminUsersPage() {
                   <th className="text-left px-5 py-3">Name</th>
                   <th className="text-left px-5 py-3">Email</th>
                   <th className="text-left px-5 py-3">Joined</th>
-                  <th className="text-left px-5 py-3">Chatbot Limit</th>
+                  <th className="text-left px-5 py-3">Chatbot Limit / Force</th>
                   <th className="text-left px-5 py-3">Custom Icon</th>
                   <th className="text-left px-5 py-3">Action</th>
                 </tr>
@@ -206,23 +216,36 @@ export default function AdminUsersPage() {
 
                     {/* Chatbot Limit */}
                     <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-1.5">
-                        <input
-                          type="number"
-                          min="0"
-                          value={limitEdit[u._id] !== undefined ? limitEdit[u._id] : (u.maxChatbots ?? 1)}
-                          onChange={(e) => setLimitEdit((prev) => ({ ...prev, [u._id]: e.target.value }))}
-                          className="w-16 bg-gray-50 dark:bg-black/30 border border-gray-300 dark:border-purple-500/20 text-gray-900 dark:text-white rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-purple-500/50"
-                        />
-                        {limitEdit[u._id] !== undefined && String(limitEdit[u._id]) !== String(u.maxChatbots ?? 1) && (
-                          <button
-                            onClick={() => handleLimitSave(u._id)}
-                            disabled={actionLoading === u._id + "-limit"}
-                            className="px-2 py-1 text-xs rounded-lg bg-purple-700/20 text-purple-400 hover:bg-purple-700/40 transition-colors disabled:opacity-50"
-                          >
-                            {actionLoading === u._id + "-limit" ? "..." : "Save"}
-                          </button>
-                        )}
+                      <div className="flex flex-col gap-1.5">
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="number"
+                            min="0"
+                            value={limitEdit[u._id] !== undefined ? limitEdit[u._id] : (u.maxChatbots ?? 1)}
+                            onChange={(e) => setLimitEdit((prev) => ({ ...prev, [u._id]: e.target.value }))}
+                            className="w-16 bg-gray-50 dark:bg-black/30 border border-gray-300 dark:border-purple-500/20 text-gray-900 dark:text-white rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-purple-500/50"
+                          />
+                          {(limitEdit[u._id] !== undefined && String(limitEdit[u._id]) !== String(u.maxChatbots ?? 1)) ||
+                           (forceEdit[u._id] !== undefined && forceEdit[u._id] !== !!u.forceAllocatedChatbots) ? (
+                            <button
+                              onClick={() => handleLimitSave(u._id, !!u.forceAllocatedChatbots)}
+                              disabled={actionLoading === u._id + "-limit"}
+                              className="px-2 py-1 text-xs rounded-lg bg-purple-700/20 text-purple-400 hover:bg-purple-700/40 transition-colors disabled:opacity-50"
+                            >
+                              {actionLoading === u._id + "-limit" ? "..." : "Save"}
+                            </button>
+                          ) : null}
+                        </div>
+                        {/* Force allocate toggle */}
+                        <label className="flex items-center gap-1.5 cursor-pointer select-none w-fit">
+                          <input
+                            type="checkbox"
+                            checked={forceEdit[u._id] !== undefined ? forceEdit[u._id] : !!u.forceAllocatedChatbots}
+                            onChange={(e) => setForceEdit((prev) => ({ ...prev, [u._id]: e.target.checked }))}
+                            className="w-3.5 h-3.5 rounded accent-purple-600 cursor-pointer"
+                          />
+                          <span className="text-xs text-gray-500 dark:text-gray-400">Force allocate</span>
+                        </label>
                       </div>
                     </td>
 

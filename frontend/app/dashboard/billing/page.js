@@ -6,6 +6,7 @@ import { ConfirmModal } from "@components/ui";
 import {
   Check, Zap, Crown, Star, AlertTriangle, Calendar,
   RefreshCw, XCircle, CheckCircle, Loader2, CreditCard,
+  ToggleLeft, ToggleRight,
 } from "lucide-react";
 import api from "@lib/api";
 import toast from "react-hot-toast";
@@ -103,23 +104,55 @@ function SubscriptionStatus({ sub, onCancel }) {
         </div>
       </div>
 
-      {isCancelled && (
-        <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl text-sm text-amber-700 dark:text-amber-400">
-          Autopay cancelled. Your account will stay active until <strong>{fmt(sub.suspensionDate)}</strong>, then be suspended. Subscribe again to continue.
-        </div>
-      )}
+      {/* Autopay section */}
+      <div className="mt-5 pt-4 border-t border-gray-100 dark:border-purple-500/10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+              isCancelled ? "bg-amber-500/10" : "bg-emerald-500/10"
+            }`}>
+              {isCancelled
+                ? <ToggleLeft size={18} className="text-amber-500" />
+                : <ToggleRight size={18} className="text-emerald-500" />
+              }
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                Autopay
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                  isCancelled
+                    ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                    : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                }`}>
+                  {isCancelled ? "Disabled" : "Enabled"}
+                </span>
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                {isCancelled
+                  ? <>Access continues until <strong className="text-amber-600 dark:text-amber-400">{fmt(sub.suspensionDate)}</strong>, then suspended.</>
+                  : "Your subscription renews automatically each billing period."
+                }
+              </p>
+            </div>
+          </div>
 
-      {sub.status === "active" && (
-        <div className="mt-4 flex justify-end">
-          <button
-            onClick={onCancel}
-            className="text-sm text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 flex items-center gap-1.5 transition-colors"
-          >
-            <XCircle size={15} />
-            Cancel autopay
-          </button>
+          {sub.status === "active" && (
+            <button
+              onClick={onCancel}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/5 hover:bg-red-100 dark:hover:bg-red-500/10 transition-colors flex-shrink-0"
+            >
+              <XCircle size={15} />
+              Disable Autopay
+            </button>
+          )}
         </div>
-      )}
+
+        {isCancelled && (
+          <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl text-xs text-amber-700 dark:text-amber-400">
+            Autopay is disabled. You won&apos;t be charged again. Subscribe to a plan below to re-enable autopay and continue after your current period ends.
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -362,10 +395,10 @@ export default function BillingPage() {
 
       <ConfirmModal
         open={showCancelModal}
-        title="Cancel Autopay?"
-        message={`Your subscription will continue until ${fmt(sub?.currentEnd || sub?.suspensionDate)}. After that your account will be suspended. You can subscribe again at any time.`}
-        confirmLabel={cancelling ? "Cancelling..." : "Yes, Cancel Autopay"}
-        cancelLabel="Keep Subscription"
+        title="Disable Autopay?"
+        message={`Your plan stays active until ${fmt(sub?.currentEnd || sub?.suspensionDate)} — you won't lose access immediately. After that date your account will be suspended unless you subscribe again. You can re-subscribe at any time.`}
+        confirmLabel={cancelling ? "Disabling..." : "Yes, Disable Autopay"}
+        cancelLabel="Keep Autopay On"
         danger
         onConfirm={handleCancel}
         onCancel={() => setShowCancelModal(false)}
