@@ -106,8 +106,8 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleLimitSave = async (userId, currentForce) => {
-    const val = parseInt(limitEdit[userId]);
+  const handleLimitSave = async (userId, currentMaxChatbots, currentForce) => {
+    const val = limitEdit[userId] !== undefined ? parseInt(limitEdit[userId]) : currentMaxChatbots;
     if (isNaN(val) || val < 0) return;
     const force = forceEdit[userId] !== undefined ? forceEdit[userId] : currentForce;
     setActionLoading(userId + "-limit");
@@ -228,7 +228,7 @@ export default function AdminUsersPage() {
                           {(limitEdit[u._id] !== undefined && String(limitEdit[u._id]) !== String(u.maxChatbots ?? 1)) ||
                            (forceEdit[u._id] !== undefined && forceEdit[u._id] !== !!u.forceAllocatedChatbots) ? (
                             <button
-                              onClick={() => handleLimitSave(u._id, !!u.forceAllocatedChatbots)}
+                              onClick={() => handleLimitSave(u._id, u.maxChatbots ?? 1, !!u.forceAllocatedChatbots)}
                               disabled={actionLoading === u._id + "-limit"}
                               className="px-2 py-1 text-xs rounded-lg bg-purple-700/20 text-purple-400 hover:bg-purple-700/40 transition-colors disabled:opacity-50"
                             >

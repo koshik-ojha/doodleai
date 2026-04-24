@@ -136,7 +136,7 @@ function SubscriptionStatus({ sub, onCancel }) {
             </div>
           </div>
 
-          {sub.status === "active" && (
+          {["active", "authenticated"].includes(sub.status) && (
             <button
               onClick={onCancel}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/5 hover:bg-red-100 dark:hover:bg-red-500/10 transition-colors flex-shrink-0"

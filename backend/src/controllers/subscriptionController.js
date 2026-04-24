@@ -119,16 +119,19 @@ export const getMySubscription = async (req, res) => {
 // POST /api/subscriptions/cancel
 export const cancelSubscription = async (req, res) => {
   try {
-    // Only allow cancellation of an active subscription (currentEnd is guaranteed to be set)
     const sub = await Subscription.findOne({
       userId: req.user.id,
-      status: "active",
+      status: { $in: ["active", "authenticated"] },
     });
     if (!sub) return res.status(404).json({ error: "No active subscription found to cancel" });
 
-    await getRazorpay().subscriptions.cancel(sub.razorpaySubscriptionId, true);
+    // cancelAtCycleEnd=true for active (user keeps access until period end);
+    // false for authenticated (no billing period started yet, cancel immediately)
+    const cancelAtCycleEnd = sub.status === "active";
+    await getRazorpay().subscriptions.cancel(sub.razorpaySubscriptionId, cancelAtCycleEnd);
 
-    const suspensionDate = sub.currentEnd;
+    // For authenticated subs currentEnd is null — suspend immediately
+    const suspensionDate = sub.currentEnd || new Date();
 
     await Subscription.findByIdAndUpdate(sub._id, {
       status: "cancelled",

@@ -26,8 +26,6 @@ import User from "./models/User.js";
 
 dotenv.config();
 
-console.log("[Razorpay] KEY_ID length:", process.env.RAZORPAY_KEY_ID?.length, "| starts with:", process.env.RAZORPAY_KEY_ID?.slice(0, 9));
-console.log("[Razorpay] KEY_SECRET length:", process.env.RAZORPAY_KEY_SECRET?.length);
 
 const app = express();
 
