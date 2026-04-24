@@ -17,6 +17,7 @@ import settingsRoutes from "./routes/settingsRoutes.js";
 import widgetRoutes from "./routes/widgetRoutes.js";
 import chatbotRoutes from "./routes/chatbotRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 import bcrypt from "bcryptjs";
 import User from "./models/User.js";
 
@@ -104,6 +105,7 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/widget", widgetRoutes);
 app.use("/api/chatbots", chatbotRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/payment", paymentRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

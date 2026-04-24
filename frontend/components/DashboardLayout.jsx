@@ -17,6 +17,7 @@ import {
   Bot,
   ShieldBan,
   Mail,
+  CreditCard,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -126,6 +127,7 @@ export default function DashboardLayout({ children }) {
     { name: "Analytics", icon: BarChart3, href: "/dashboard/analytics" },
     ...(isAdmin ? [{ name: "Users", icon: Users, href: "/dashboard/admin" }] : []),
     ...(!isAdmin ? [{ name: "Integration", icon: Code, href: "/dashboard/integration" }] : []),
+    ...(!isAdmin ? [{ name: "Billing", icon: CreditCard, href: "/dashboard/billing" }] : []),
     { name: "Settings", icon: Settings, href: "/dashboard/settings" },
   ];
 
