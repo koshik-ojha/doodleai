@@ -33,7 +33,11 @@ export default function ChatbotsPage() {
       setIsAdmin(user.role === "admin");
       if (user.role !== "admin") {
         api.get("/subscriptions/me").then(({ data }) => {
-          if (data) setSubLimit({ limit: data.chatbotLimit, planKey: data.planKey, billing: data.billing });
+          if (data) setSubLimit({ 
+            limit: data.totalChatbotLimit ?? data.chatbotLimit, 
+            planKey: data.planKey, 
+            billing: data.billing 
+          });
         }).catch(() => {});
       }
     } catch {}

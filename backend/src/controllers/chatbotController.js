@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import { crawlSite } from "../services/crawlService.js";
 import { encryptBotId } from "../utils/embedToken.js";
 import { getAIResponse } from "../services/aiService.js";
+import { getChatbotLimit } from "../middleware/subscriptionMiddleware.js";
 
 async function generateQuickReplies(text) {
   try {
@@ -62,12 +63,19 @@ export const getChatbots = async (req, res) => {
 export const createChatbot = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
-    const maxChatbots = user?.maxChatbots ?? 1;
+    if (!user) return res.status(401).json({ error: "User not found" });
+    
+    // Use plan-based limit with admin extra allocation
+    const { totalLimit, planKey } = await getChatbotLimit(req.user.id);
     const count = await Chatbot.countDocuments({ userId: req.user.id });
-    if (count >= maxChatbots) {
+    
+    if (count >= totalLimit) {
       return res.status(403).json({
-        error: `You've reached your limit of ${maxChatbots} chatbot${maxChatbots !== 1 ? "s" : ""}. Please upgrade your plan to create more.`,
+        error: `You've reached your limit of ${totalLimit} chatbot${totalLimit !== 1 ? "s" : ""}. Please upgrade your plan to create more.`,
         limitReached: true,
+        limit: totalLimit,
+        count,
+        planKey,
       });
     }
     const chatbot = await Chatbot.create({ ...req.body, userId: req.user.id });

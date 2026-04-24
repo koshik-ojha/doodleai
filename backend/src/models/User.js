@@ -10,8 +10,7 @@ const userSchema = new mongoose.Schema({
   suspendedForPayment: { type: Boolean, default: false }, // true = trial/subscription ended; false = admin action
   adminActivated: { type: Boolean, default: false },
   canChangeIcon: { type: Boolean, default: false },
-  maxChatbots: { type: Number, default: 1, min: 0 },
-  forceAllocatedChatbots: { type: Boolean, default: false }, // true = admin limit overrides plan
+  extraChatbotAllocation: { type: Number, default: 0, min: 0 }, // Extra chatbots beyond plan limit (admin override)
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);

@@ -84,20 +84,19 @@ export const updateIconPermission = async (req, res) => {
 
 export const updateChatbotLimit = async (req, res) => {
   try {
-    const maxChatbots = parseInt(req.body.maxChatbots);
-    if (isNaN(maxChatbots) || maxChatbots < 0) {
-      return res.status(400).json({ error: "Invalid limit value" });
+    const extraAllocation = parseInt(req.body.extraChatbotAllocation);
+    if (isNaN(extraAllocation) || extraAllocation < 0) {
+      return res.status(400).json({ error: "Invalid extra allocation value" });
     }
-    const forceAllocatedChatbots = !!req.body.forceAllocatedChatbots;
     const user = await User.findOneAndUpdate(
       { _id: req.params.id, role: { $ne: "admin" } },
-      { $set: { maxChatbots, forceAllocatedChatbots } },
+      { $set: { extraChatbotAllocation: extraAllocation } },
       { new: true }
     ).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });
     res.json({ success: true, user });
   } catch {
-    res.status(500).json({ error: "Failed to update chatbot limit" });
+    res.status(500).json({ error: "Failed to update chatbot allocation" });
   }
 };
 

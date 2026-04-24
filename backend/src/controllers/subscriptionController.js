@@ -5,6 +5,7 @@ import PlanConfig from "../models/PlanConfig.js";
 import User from "../models/User.js";
 import { PLANS } from "../config/plans.js";
 import { clearSuspensionCache } from "../middleware/authMiddleware.js";
+import { getChatbotLimit } from "../middleware/subscriptionMiddleware.js";
 
 let _razorpay = null;
 const getRazorpay = () => {
@@ -109,7 +110,25 @@ export const verifySubscription = async (req, res) => {
 export const getMySubscription = async (req, res) => {
   try {
     const sub = await Subscription.findOne({ userId: req.user.id }).sort({ createdAt: -1 });
-    res.json(sub || null);
+    
+    // Get the effective chatbot limit (plan limit + extra allocation)
+    const limitInfo = await getChatbotLimit(req.user.id);
+    
+    if (sub) {
+      // Include total limit info in the response
+      const subObj = sub.toObject();
+      subObj.totalChatbotLimit = limitInfo.totalLimit;
+      subObj.extraChatbotAllocation = limitInfo.extraAllocation;
+      res.json(subObj);
+    } else {
+      // No subscription - return trial info with limit
+      res.json({
+        planKey: "trial",
+        chatbotLimit: limitInfo.planLimit,
+        totalChatbotLimit: limitInfo.totalLimit,
+        extraChatbotAllocation: limitInfo.extraAllocation,
+      });
+    }
   } catch (err) {
     console.error("Get subscription error:", err.message);
     res.status(500).json({ error: "Failed to fetch subscription" });
@@ -185,7 +204,6 @@ export const handleWebhook = async (req, res) => {
             isSuspended: false,
             suspendedForPayment: false,
             adminActivated: true,
-            maxChatbots: sub.chatbotLimit,
           });
           clearSuspensionCache(String(sub.userId));
         }
@@ -211,7 +229,6 @@ export const handleWebhook = async (req, res) => {
             isSuspended: false,
             suspendedForPayment: false,
             adminActivated: true,
-            maxChatbots: sub.chatbotLimit,
           });
           clearSuspensionCache(String(sub.userId));
         }
