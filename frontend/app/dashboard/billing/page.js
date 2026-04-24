@@ -183,9 +183,15 @@ export default function BillingPage() {
             // api interceptor shows error
           }
         },
-        prefill: { name: user.name || "", email: user.email || "" },
+        prefill: { name: user.name || "", email: user.email || "", method: "upi" },
         theme: { color: "#7c3aed" },
         modal: { ondismiss: () => toast("Payment cancelled") },
+        config: {
+          display: {
+            hide: [{ method: "card" }],
+            preferences: { show_default_blocks: true },
+          },
+        },
       };
 
       new window.Razorpay(options).open();

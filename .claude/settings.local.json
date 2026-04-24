@@ -9,7 +9,8 @@
       "WebFetch(domain:img.lightshot.app)",
       "Bash(xargs wc:*)",
       "Bash(node -e \"import\\('razorpay'\\).then\\(m => console.log\\('razorpay OK:', m.default.name\\)\\).catch\\(e => console.error\\(e\\)\\)\")",
-      "Bash(node --input-type=module)"
+      "Bash(node --input-type=module)",
+      "Bash(node *)"
     ]
   }
 }
